@@ -1,96 +1,426 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+/* ============================================
+   Heritage Jewelry Global Styles
+   "Candlelit Study Meets Fantasy Craft"
+   ============================================ */
+
+/* Font Imports - Renaissance & Old-Style Serifs */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,400&family=Spectral:wght@300;400;500;600&family=Courier+Prime&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-  }
-}
+/* ============================================
+   Base Layer - Document Foundation
+   ============================================ */
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+    * {
+        @apply border-obsidian;
+    }
 
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  }
+    html {
+        scroll-behavior: smooth;
+        /* DARKER: Almost pure black with purple tint */
+        background-color: #08060a;
+    }
 
-  html {
-    scroll-behavior: smooth;
-  }
+    body {
+        @apply bg-ink-black text-ash-grey antialiased;
+        font-family: "Crimson Pro", Georgia, serif;
+        font-weight: 400;
+        line-height: 1.75;
+        /* HEAVIER: Stronger texture + vignette for more weight */
+        background-image:
+            radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                rgba(8, 6, 10, 0.6) 100%
+            ),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
+    /* Typography Hierarchy */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-cinzel text-bone-white leading-tight;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
 
-  ::-webkit-scrollbar-track {
-    background: #0a0a0a;
-  }
+    h1 {
+        @apply text-6xl;
+    }
 
-  ::-webkit-scrollbar-thumb {
-    background: #262626;
-    border-radius: 4px;
-  }
+    h2 {
+        @apply text-4xl;
+    }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #333333;
-  }
+    h3 {
+        @apply text-3xl;
+    }
 
-  /* Selection */
-  ::selection {
-    background: #8b0000;
-    color: #f5f5f5;
-  }
+    h4 {
+        @apply text-2xl;
+    }
+
+    p {
+        @apply font-crimson text-ash-grey leading-relaxed;
+    }
+
+    /* Links - Underlined with decorative border */
+    a {
+        @apply transition-colors duration-500;
+    }
+
+    a:not(.btn-primary):not(.btn-secondary) {
+        @apply text-aged-gold underline decoration-1 underline-offset-4;
+        @apply hover:text-amber-glow hover:decoration-2;
+    }
+
+    /* Focus States - Aged Gold Ring */
+    *:focus-visible {
+        @apply outline-none;
+        box-shadow: 0 0 0 2px #d4af37;
+    }
+
+    /* Selection - Warm Highlight */
+    ::selection {
+        background-color: #d4af37;
+        color: #0d0a07;
+    }
+
+    /* Custom Scrollbar - Parchment Style */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1a1612;
+        border-left: 1px solid #1c1814;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #4a453f;
+        border: 2px solid #1a1612;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #8a7f73;
+    }
+
+    /* Firefox Scrollbar */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #4a453f #1a1612;
+    }
 }
 
-/* Font families */
-.font-serif {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+/* ============================================
+   Components Layer - Reusable Patterns
+   ============================================ */
+
+@layer components {
+    /* ============================================
+     Buttons - "Illuminated" Style
+     ============================================ */
+
+    .btn-primary {
+        @apply relative overflow-hidden;
+        @apply inline-flex items-center justify-center;
+        @apply px-space-5 py-space-4;
+        @apply bg-blood-ruby border-2 border-aged-gold;
+        @apply font-spectral text-base tracking-wide uppercase;
+        @apply text-bone-white;
+        @apply transition-all duration-500 ease-entrance;
+        min-height: 44px;
+    }
+
+    .btn-primary::before {
+        content: "";
+        @apply absolute inset-0;
+        @apply bg-gradient-to-r from-transparent via-amber-glow/20 to-transparent;
+        @apply -translate-x-full;
+        @apply transition-transform duration-700 ease-entrance;
+    }
+
+    .btn-primary:hover::before {
+        @apply translate-x-full;
+    }
+
+    .btn-primary:hover {
+        @apply bg-transparent text-aged-gold;
+    }
+
+    .btn-primary::after {
+        content: "";
+        @apply absolute bottom-0 left-0 right-0 h-px bg-aged-gold;
+        @apply scale-x-0 transition-transform duration-500 ease-entrance;
+    }
+
+    .btn-primary:hover::after {
+        @apply scale-x-100;
+    }
+
+    /* Secondary Button - "Manuscript" Style */
+    .btn-secondary {
+        @apply relative;
+        @apply inline-flex items-center justify-center;
+        @apply px-space-4 py-space-3;
+        @apply border border-obsidian;
+        @apply font-spectral text-sm tracking-wide;
+        @apply text-ash-grey;
+        @apply transition-all duration-500 ease-entrance;
+        min-height: 44px;
+    }
+
+    .btn-secondary::after {
+        content: "";
+        @apply absolute inset-0 border border-aged-gold;
+        @apply scale-90 opacity-0;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-secondary:hover::after {
+        @apply scale-100 opacity-100;
+    }
+
+    .btn-secondary:hover {
+        @apply border-aged-gold text-bone-white;
+    }
+
+    /* ============================================
+     Cards - "Layered Parchment"
+     ============================================ */
+
+    .card {
+        @apply relative;
+        @apply bg-parchment-dark border border-obsidian;
+        @apply p-space-6;
+        @apply transition-all duration-700 ease-entrance;
+    }
+
+    .card:hover {
+        @apply border-aged-gold;
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+    }
+
+    .card::before {
+        content: "";
+        @apply absolute inset-0;
+        @apply bg-gradient-to-br from-aged-gold/5 via-transparent to-transparent;
+        @apply opacity-0 transition-opacity duration-700 ease-entrance;
+        pointer-events: none;
+    }
+
+    .card:hover::before {
+        @apply opacity-100;
+    }
+
+    /* ============================================
+     Form Inputs - "Handwritten Feel"
+     ============================================ */
+
+    .form-input {
+        @apply w-full;
+        @apply px-space-4 py-space-3;
+        @apply bg-vellum;
+        @apply border-b-2 border-obsidian;
+        @apply font-crimson text-base text-ash-grey;
+        @apply placeholder:text-sepia-shadow placeholder:italic;
+        @apply transition-colors duration-500 ease-entrance;
+        @apply focus:outline-none focus:border-aged-gold;
+        min-height: 44px;
+    }
+
+    .form-input:focus {
+        box-shadow: 0 1px 0 0 #d4af37;
+    }
+
+    .form-label {
+        @apply block font-spectral text-sm tracking-wide uppercase;
+        @apply text-charcoal-mist mb-space-2;
+    }
+
+    .form-textarea {
+        @apply form-input;
+        @apply min-h-[150px] resize-y;
+        @apply border-2 border-obsidian;
+    }
+
+    .form-select {
+        @apply form-input;
+        @apply cursor-pointer;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23d4af37' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 3rem;
+    }
+
+    /* ============================================
+     Layout Sections
+     ============================================ */
+
+    .section {
+        @apply py-space-10;
+    }
+
+    .section-container {
+        @apply max-w-container-wide mx-auto px-space-4 md:px-space-6;
+    }
+
+    .section-narrow {
+        @apply max-w-container-narrow mx-auto px-space-4;
+    }
+
+    .section-reading {
+        @apply max-w-container-reading mx-auto px-space-4;
+    }
+
+    /* ============================================
+     Typography Utilities
+     ============================================ */
+
+    .heading-display {
+        @apply font-cinzel text-6xl text-bone-white leading-tight tracking-tighter;
+    }
+
+    .heading-section {
+        @apply font-cinzel text-4xl text-bone-white leading-tight mb-space-6;
+    }
+
+    .text-body {
+        @apply font-crimson text-lg text-ash-grey leading-relaxed;
+    }
+
+    .text-caption {
+        @apply font-crimson text-sm text-charcoal-mist italic;
+    }
+
+    .text-label {
+        @apply font-spectral text-sm tracking-wide uppercase text-sepia-shadow;
+    }
+
+    /* Drop Cap for Blog Posts */
+    .drop-cap::first-letter {
+        @apply font-cinzel text-6xl float-left;
+        @apply mr-space-3 mt-space-2;
+        @apply text-aged-gold;
+        line-height: 0.8;
+    }
+}
+
+/* ============================================
+   Utilities Layer - Helper Classes
+   ============================================ */
+
+@layer utilities {
+    /* Backgrounds */
+    .bg-parchment {
+        @apply bg-parchment-dark;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    .bg-vignette {
+        background: radial-gradient(
+            ellipse at center,
+            transparent 0%,
+            #0d0a07 100%
+        );
+    }
+
+    /* Aged Border Effect */
+    .border-aged {
+        @apply border border-obsidian;
+        box-shadow:
+            inset 0 1px 0 rgba(244, 237, 228, 0.03),
+            0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Metallic Gold Text */
+    .text-metallic-gold {
+        background: linear-gradient(
+            135deg,
+            #d4af37 0%,
+            #f4e5b0 50%,
+            #d4af37 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Glassmorphism (for modals, overlays) */
+    .glass {
+        @apply bg-ink-black/90 backdrop-blur-md;
+        border: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Ornamental Divider Line */
+    .divider-ornamental {
+        @apply relative;
+        @apply h-px bg-gradient-to-r from-transparent via-aged-gold to-transparent;
+        @apply my-space-6;
+    }
+
+    .divider-ornamental::before {
+        content: "◆";
+        @apply absolute top-1/2 left-1/2;
+        @apply -translate-x-1/2 -translate-y-1/2;
+        @apply text-aged-gold text-xs;
+        @apply bg-ink-black px-space-3;
+    }
+
+    /* Custom Gradient Overlay */
+    .overlay-gradient {
+        @apply absolute inset-0;
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(8, 6, 10, 0.5) 50%,
+            #08060a 100%
+        );
+    }
+
+    /* METALLIC EFFECTS - Add visual weight and dissonance */
+    .metallic-border {
+        border: 1px solid rgba(201, 169, 97, 0.3);
+        box-shadow:
+            inset 0 1px 0 rgba(201, 169, 97, 0.1),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.8),
+            0 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    .heavy-shadow {
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.8),
+            0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .steel-edge {
+        border: 1px solid rgba(74, 74, 82, 0.4);
+        box-shadow: inset 0 1px 0 rgba(232, 223, 213, 0.05);
+    }
+
+    /* Visual tension through asymmetric borders */
+    .tension-border {
+        border-top: 2px solid rgba(201, 169, 97, 0.2);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.9);
+        border-left: 1px solid rgba(22, 20, 18, 0.8);
+        border-right: 1px solid rgba(201, 169, 97, 0.1);
+    }
 }
