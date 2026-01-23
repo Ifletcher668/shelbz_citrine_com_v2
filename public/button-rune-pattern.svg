@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" preserveAspectRatio="none">
+  <!-- Top border with runes -->
+  <line x1="0" y1="1" x2="400" y2="1" stroke="#b4aa96" stroke-width="1" opacity="0.6"/>
+  <line x1="0" y1="3" x2="400" y2="3" stroke="#b4aa96" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Bottom border with runes -->
+  <line x1="0" y1="99" x2="400" y2="99" stroke="#b4aa96" stroke-width="1" opacity="0.6"/>
+  <line x1="0" y1="97" x2="400" y2="97" stroke="#b4aa96" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Left border -->
+  <line x1="1" y1="0" x2="1" y2="100" stroke="#b4aa96" stroke-width="1" opacity="0.6"/>
+  <line x1="3" y1="0" x2="3" y2="100" stroke="#b4aa96" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Right border -->
+  <line x1="399" y1="0" x2="399" y2="100" stroke="#b4aa96" stroke-width="1" opacity="0.6"/>
+  <line x1="397" y1="0" x2="397" y2="100" stroke="#b4aa96" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Top-left corner rune -->
+  <path d="M 15,15 L 25,5 M 15,15 L 5,25 M 15,15 L 25,15 M 15,15 L 15,25" stroke="#d4c5a9" stroke-width="1.5" fill="none" opacity="0.8"/>
+  <circle cx="15" cy="15" r="3" stroke="#d4c5a9" stroke-width="1" fill="none" opacity="0.6"/>
+
+  <!-- Top-right corner rune -->
+  <path d="M 385,15 L 375,5 M 385,15 L 395,25 M 385,15 L 375,15 M 385,15 L 385,25" stroke="#d4c5a9" stroke-width="1.5" fill="none" opacity="0.8"/>
+  <circle cx="385" cy="15" r="3" stroke="#d4c5a9" stroke-width="1" fill="none" opacity="0.6"/>
+
+  <!-- Bottom-left corner rune -->
+  <path d="M 15,85 L 25,95 M 15,85 L 5,75 M 15,85 L 25,85 M 15,85 L 15,75" stroke="#d4c5a9" stroke-width="1.5" fill="none" opacity="0.8"/>
+  <circle cx="15" cy="85" r="3" stroke="#d4c5a9" stroke-width="1" fill="none" opacity="0.6"/>
+
+  <!-- Bottom-right corner rune -->
+  <path d="M 385,85 L 375,95 M 385,85 L 395,75 M 385,85 L 375,85 M 385,85 L 385,75" stroke="#d4c5a9" stroke-width="1.5" fill="none" opacity="0.8"/>
+  <circle cx="385" cy="85" r="3" stroke="#d4c5a9" stroke-width="1" fill="none" opacity="0.6"/>
+
+  <!-- Top decorative marks -->
+  <line x1="100" y1="2" x2="110" y2="2" stroke="#d4c5a9" stroke-width="2" opacity="0.5"/>
+  <line x1="200" y1="2" x2="210" y2="2" stroke="#d4c5a9" stroke-width="2" opacity="0.5"/>
+  <line x1="290" y1="2" x2="300" y2="2" stroke="#d4c5a9" stroke-width="2" opacity="0.5"/>
+
+  <!-- Bottom decorative marks -->
+  <line x1="100" y1="98" x2="110" y2="98" stroke="#d4c5a9" stroke-width="2" opacity="0.5"/>
+  <line x1="200" y1="98" x2="210" y2="98" stroke="#d4c5a9" stroke-width="2" opacity="0.5"/>
+  <line x1="290" y1="98" x2="300" y2="98" stroke="#d4c5a9" stroke-width="2" opacity="0.5"/>
+</svg>

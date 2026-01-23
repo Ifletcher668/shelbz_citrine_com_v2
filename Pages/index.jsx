@@ -55,7 +55,6 @@ export default function Home() {
 
       <div className="min-h-screen bg-ink-black">
         <Header />
-
         <main>
           <HeroSection />
           <ProblemSolutionSection />

@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
@@ -17,12 +16,11 @@ export default function CTASection() {
       ref={ref}
       className="section bg-stone-dark relative overflow-hidden"
     >
-      <BackgroundTexture variant="stone" opacity={0.03} />
-
-      {/* Subtle background glow */}
+      {/* Heavy background elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-pale-gold/2 rounded-full blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-b from-void/40 via-transparent to-void/40" />
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-pale-gold/3 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blood-ruby/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink-black/60 via-transparent to-ink-black/60" />
       </div>
 
       <div className="section-container relative z-10">
@@ -32,7 +30,7 @@ export default function CTASection() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-12"
+            className="mb-space-6"
           >
             <div className="inline-flex items-center justify-center w-20 h-20 metallic-border heavy-shadow bg-stone-deeper">
               <Sparkles className="w-10 h-10 text-pale-gold" />
@@ -44,7 +42,7 @@ export default function CTASection() {
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="font-garamond text-4xl md:text-5xl text-silver-white leading-tight mb-8"
+            className="font-garamond text-4xl md:text-5xl text-silver-white leading-tight mb-space-5"
           >
             Ready to Create
             <br />
@@ -56,7 +54,7 @@ export default function CTASection() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="font-garamond text-lg text-stone-grey mb-16 max-w-xl mx-auto leading-relaxed"
+            className="font-garamond text-lg text-stone-grey mb-space-8 max-w-xl mx-auto leading-relaxed"
           >
             No obligation. Just a conversation about your vision, your style,
             and how we can bring your dream piece to life through the hands of
@@ -68,9 +66,12 @@ export default function CTASection() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-12"
+            className="mb-space-6"
           >
-            <Link href="/consultation" className="btn-primary text-lg">
+            <Link
+              href="/consultation"
+              className="btn-primary text-lg px-space-8 py-space-5"
+            >
               Book Free Consultation
             </Link>
           </motion.div>
@@ -80,14 +81,14 @@ export default function CTASection() {
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: 1, delay: 0.8 }}
-            className="space-y-2"
+            className="space-y-space-2"
           >
             <p className="font-mono text-sm text-fog uppercase tracking-wide">
               In-person in Olympia or via Zoom nationwide
             </p>
 
             {/* Decorative line */}
-            <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="flex items-center justify-center gap-space-3 mt-space-4">
               <div className="w-12 h-px bg-pale-gold/20" />
               <div className="w-1 h-1 bg-pale-gold/40 rotate-45" />
               <div className="w-12 h-px bg-pale-gold/20" />

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
 
 /**
  * Hero Section - "Grimoire Opening"
@@ -13,50 +14,34 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background - Candlelit darkness */}
-      <div className="absolute inset-0 bg-ink-black">
-        {/* Vignette overlay */}
-        <div className="absolute inset-0 bg-vignette" />
-
-        {/* Parchment texture */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        {/* Subtle amber glow - DULLER for more tension */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-glow/3 rounded-full blur-3xl" />
-
-        {/* Additional dark overlay for weight */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-ink-black/40 to-ink-black" />
+    <section className="section relative min-h-screen flex items-center justify-center overflow-hidden bg-void">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-void/60 to-void" />
       </div>
 
-      <div className="relative z-10 section-container text-center pt-24">
+      <div className="relative z-10 section-container text-center">
         {/* Main Headline - Illuminated manuscript style */}
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="font-cinzel text-6xl text-bone-white leading-tight mb-space-6 mt-space-6"
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          className="font-garamond text-6xl text-silver-white leading-tight mb-12 font-light"
         >
           Custom Black Spinel
           <br className="hidden md:block" />
-          <span className="text-metallic-gold">Engagement Rings</span>
+          <span className="text-metallic-cold">Engagement Rings</span>
         </motion.h1>
 
         {/* Subheadline */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="font-crimson text-lg md:text-xl text-ash-grey max-w-2xl mx-auto mb-space-5 leading-relaxed"
+          transition={{ duration: 0.6, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+          className="font-garamond text-lg md:text-xl text-stone-grey max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           Crafted by seventh-generation Indian artisans.
           <br className="hidden md:block" />
-          <span className="text-charcoal-mist italic">
+          <span className="text-fog/80">
             Ethical sourcing. Multigenerational craft. Your vision, realized.
           </span>
         </motion.p>
@@ -65,8 +50,8 @@ export default function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-space-4 mb-space-10"
+          transition={{ duration: 0.5, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16"
         >
           <Link href="/consultation" className="btn-primary">
             Book Free Consultation
@@ -76,41 +61,28 @@ export default function HeroSection() {
           </button>
         </motion.div>
 
-        {/* Decorative divider */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-xs mx-auto mb-space-8"
-        >
-          <div className="h-px bg-gradient-to-r from-transparent via-aged-gold to-transparent relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-aged-gold rotate-45" />
-          </div>
-        </motion.div>
+        <SimpleDivider className="mb-12" />
 
-        {/* Hero Image Placeholder - Parchment style */}
+        {/* Hero Image Placeholder - Gallery style */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.4, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-space-8 max-w-4xl mx-auto"
+          transition={{ duration: 0.9, delay: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          className="mt-12 max-w-4xl mx-auto"
         >
-          <div className="aspect-[16/9] bg-parchment-dark metallic-border heavy-shadow relative overflow-hidden">
-            {/* Corner flourishes - HEAVIER */}
-            <div className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 border-aged-gold/30" />
-            <div className="absolute top-0 right-0 w-16 h-16 border-r-2 border-t-2 border-aged-gold/30" />
-            <div className="absolute bottom-0 left-0 w-16 h-16 border-l-2 border-b-2 border-aged-gold/30" />
-            <div className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 border-aged-gold/30" />
+          <div className="aspect-[16/9] bg-stone-dark border border-fog/10 heavy-shadow relative overflow-hidden">
+            {/* Minimal corner accents */}
+            <div className="absolute top-0 left-0 w-12 h-12 border-l border-t border-pale-gold/20" />
+            <div className="absolute top-0 right-0 w-12 h-12 border-r border-t border-pale-gold/20" />
+            <div className="absolute bottom-0 left-0 w-12 h-12 border-l border-b border-pale-gold/20" />
+            <div className="absolute bottom-0 right-0 w-12 h-12 border-r border-b border-pale-gold/20" />
 
-            {/* Dark inner shadow for depth */}
-            <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.8)]" />
-
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-space-6">
-              <Sparkles className="w-16 h-16 text-aged-gold/30 mb-space-4" />
-              <p className="font-spectral text-sm uppercase tracking-wider text-charcoal-mist">
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
+              <Sparkles className="w-12 h-12 text-pale-gold/20 mb-4" />
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-fog/70">
                 Hero Image Placeholder
               </p>
-              <p className="font-crimson text-xs text-sepia-shadow italic mt-space-2">
+              <p className="font-garamond text-xs text-fog/50 mt-2">
                 Black Spinel Ring — Macro Shot
               </p>
             </div>
@@ -122,18 +94,18 @@ export default function HeroSection() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        transition={{ duration: 0.8, delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div
-          animate={{ y: [0, 12, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-space-2"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-2"
         >
-          <span className="font-spectral text-xs uppercase tracking-wider text-sepia-shadow">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fog/50">
             Scroll
           </span>
-          <ChevronDown className="w-5 h-5 text-aged-gold/50" />
+          <ChevronDown className="w-4 h-4 text-pale-gold/40" />
         </motion.div>
       </motion.div>
     </section>

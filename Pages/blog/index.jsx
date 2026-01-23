@@ -6,7 +6,7 @@ import Footer from "@/Components/layout/Footer";
 import { BookOpen, Clock } from "lucide-react";
 
 /**
- * Blog Index - "The Blog"
+ * Blog Index - "Blog"
  * Listing of all blog posts (dummy data for now)
  */
 export default function Blog() {
@@ -42,7 +42,7 @@ export default function Blog() {
   return (
     <>
       <Head>
-        <title>The Blog | Heritage Jewelry Blog</title>
+        <title>Blog | Heritage Jewelry Blog</title>
         <meta
           name="description"
           content="Learn about gemstones, ethical sourcing, traditional jewelry-making techniques, and the difference between real craft and mass production."
@@ -53,9 +53,9 @@ export default function Blog() {
       <div className="min-h-screen bg-ink-black">
         <Header />
 
-        <main className="pt-32 pb-space-10">
+        <main className="pb-space-10">
           {/* Hero */}
-          <section className="section-narrow mb-space-10">
+          <section className="section">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
@@ -63,7 +63,7 @@ export default function Blog() {
               className="text-center"
             >
               <h1 className="font-cinzel text-5xl md:text-6xl text-bone-white mb-space-4">
-                The Blog
+                Blog
               </h1>
               <p className="font-crimson text-xl text-ash-grey max-w-2xl mx-auto leading-relaxed">
                 Gemstone education, craft philosophy, and the truth about what

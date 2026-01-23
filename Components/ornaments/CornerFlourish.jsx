@@ -27,20 +27,20 @@ export default function CornerFlourish({ position = 'top-left', className = '' }
         fill="none"
         stroke="currentColor"
         strokeWidth="1"
-        className="text-aged-gold"
+        className="text-pale-gold"
       />
       <path
         d="M 0,0 Q 15,15 30,0"
         fill="none"
         stroke="currentColor"
         strokeWidth="1"
-        className="text-aged-gold"
+        className="text-pale-gold"
       />
 
       {/* Small accent dots */}
-      <circle cx="10" cy="10" r="1.5" fill="currentColor" className="text-aged-gold" />
-      <circle cx="5" cy="15" r="1" fill="currentColor" className="text-aged-gold" />
-      <circle cx="15" cy="5" r="1" fill="currentColor" className="text-aged-gold" />
+      <circle cx="10" cy="10" r="1.5" fill="currentColor" className="text-pale-gold" />
+      <circle cx="5" cy="15" r="1" fill="currentColor" className="text-pale-gold" />
+      <circle cx="15" cy="5" r="1" fill="currentColor" className="text-pale-gold" />
     </svg>
   );
 }
@@ -78,14 +78,14 @@ export function GothicCorner({ position = 'top-left', className = '' }) {
       <path
         d="M 0,40 Q 20,10 40,0 L 40,40 Z"
         fill="currentColor"
-        className="text-aged-gold/10"
+        className="text-pale-gold/10"
       />
       <path
         d="M 0,40 Q 20,10 40,0"
         fill="none"
         stroke="currentColor"
         strokeWidth="1"
-        className="text-aged-gold"
+        className="text-pale-gold"
       />
 
       {/* Inner decorative lines */}
@@ -94,7 +94,7 @@ export function GothicCorner({ position = 'top-left', className = '' }) {
         fill="none"
         stroke="currentColor"
         strokeWidth="0.5"
-        className="text-aged-gold/50"
+        className="text-pale-gold/50"
       />
     </svg>
   );

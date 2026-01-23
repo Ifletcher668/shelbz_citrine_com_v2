@@ -46,15 +46,18 @@ export default function FAQSection() {
 
   return (
     <section ref={ref} className="section bg-void relative">
+      {/* Heavy vignette */}
+      <div className="absolute inset-0 bg-vignette opacity-80" />
+
       <div className="section-container relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-12"
+          className="text-center mb-space-6"
         >
-          <h2 className="font-garamond text-4xl md:text-5xl text-silver-white leading-tight mb-6">
+          <h2 className="font-garamond text-4xl md:text-5xl text-silver-white leading-tight mb-space-4">
             Questions & Answers
           </h2>
           <p className="font-garamond text-lg text-stone-grey max-w-2xl mx-auto">
@@ -69,19 +72,19 @@ export default function FAQSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-3xl mx-auto mt-16"
+          className="max-w-3xl mx-auto mt-space-8"
         >
-          <Accordion type="single" collapsible className="space-y-6">
+          <Accordion type="single" collapsible className="space-y-space-4">
             {faqs.map((faq, index) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-stone-deeper metallic-border heavy-shadow px-12 transition-all duration-700 data-[state=open]:border-pale-gold"
+                className="bg-stone-deeper metallic-border heavy-shadow px-space-6 transition-all duration-700 data-[state=open]:border-pale-gold"
               >
-                <AccordionTrigger className="text-left font-mono text-base text-silver-white hover:text-pale-gold py-8 uppercase tracking-wide transition-colors duration-500">
+                <AccordionTrigger className="text-left font-mono text-base text-silver-white hover:text-pale-gold py-space-5 uppercase tracking-wide transition-colors duration-500">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="font-garamond text-base text-stone-grey pb-8 leading-relaxed">
+                <AccordionContent className="font-garamond text-base text-stone-grey pb-space-5 leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -94,7 +97,7 @@ export default function FAQSection() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 1, delay: 0.6 }}
-          className="mt-16 flex justify-center"
+          className="mt-space-8 flex justify-center"
         >
           <svg
             width="80"

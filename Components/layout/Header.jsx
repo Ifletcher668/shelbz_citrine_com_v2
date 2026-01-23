@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import BackgroundTexture from "@/Components/shared/BackgroundTexture";
+import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
 
 /**
  * Header Component - "Grimoire Navigation"
@@ -16,7 +18,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 0.01);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -46,7 +48,6 @@ export default function Header() {
   }, [isMobileMenuOpen]);
 
   const navLinks = [
-    { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/blog", label: "Blog" },
   ];
@@ -57,35 +58,35 @@ export default function Header() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-entrance ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-entrance ${
           isScrolled
-            ? "bg-parchment-dark/95 backdrop-blur-md border-b border-obsidian shadow-lg"
+            ? "bg-stone-dark/95 backdrop-blur-md border-b border-fog/20 shadow-lg"
             : "bg-transparent"
         }`}
       >
+        <BackgroundTexture variant="rune" opacity={0.0032} />
         <div className="section-container">
-          <nav className="flex items-center justify-between py-space-4">
+          <nav className="flex items-center justify-between py-6">
             {/* Logo - Ornamental */}
             <Link
               href="/"
-              className="group font-cinzel text-xl md:text-2xl tracking-wider text-bone-white hover:text-aged-gold transition-colors duration-500 no-underline"
+              className="group font-garamond text-xl md:text-2xl tracking-wider text-silver-white hover:text-pale-gold transition-colors duration-500 no-underline"
             >
-              <span className="relative">
-                HERITAGE
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-aged-gold group-hover:w-full transition-all duration-700 ease-entrance" />
-              </span>
+              HERITAGE
+              <SimpleDivider className="mt-2" />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-space-6">
+            <div className="hidden md:flex items-center gap-12">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="group relative font-spectral text-sm text-ash-grey hover:text-bone-white uppercase tracking-wider transition-colors duration-500 no-underline"
+                  className="group font-mono text-sm text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 no-underline"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-aged-gold group-hover:w-full transition-all duration-500 ease-entrance" />
+
+                  <SimpleDivider className="mt-1" />
                 </Link>
               ))}
             </div>
@@ -100,7 +101,7 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-space-2 text-ash-grey hover:text-bone-white transition-colors duration-500 border border-obsidian hover:border-aged-gold"
+              className="md:hidden p-2 text-stone-grey hover:text-silver-white transition-colors duration-500 border border-fog/20 hover:border-pale-gold"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
             >
@@ -134,7 +135,7 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="fixed inset-0 bg-ink-black/90 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-void/90 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
               aria-hidden="true"
             >
@@ -151,18 +152,18 @@ export default function Header() {
                 duration: 0.6,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-parchment border-l-2 border-aged-gold/30 z-50 md:hidden"
+              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-parchment border-l-2 border-pale-gold/30 z-50 md:hidden"
               aria-label="Mobile navigation"
             >
-              <div className="flex flex-col h-full p-space-6">
+              <div className="flex flex-col h-full p-12">
                 {/* Close button with ornament */}
-                <div className="flex justify-between items-start mb-space-8">
-                  <span className="font-cinzel text-lg text-bone-white tracking-wider">
+                <div className="flex justify-between items-start mb-16">
+                  <span className="font-garamond text-lg text-silver-white tracking-wider">
                     Menu
                   </span>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="p-space-2 text-ash-grey hover:text-bone-white transition-colors border border-obsidian hover:border-aged-gold"
+                    className="p-2 text-stone-grey hover:text-silver-white transition-colors border border-fog/20 hover:border-pale-gold"
                     aria-label="Close menu"
                   >
                     <X className="w-5 h-5" />
@@ -170,10 +171,10 @@ export default function Header() {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-aged-gold/0 via-aged-gold/50 to-aged-gold/0 mb-space-6" />
+                <div className="h-px bg-gradient-to-r from-aged-gold/0 via-aged-gold/50 to-aged-gold/0 mb-12" />
 
                 {/* Navigation Links */}
-                <div className="flex flex-col gap-space-5 flex-grow">
+                <div className="flex flex-col gap-8 flex-grow">
                   {navLinks.map((link, index) => (
                     <motion.div
                       key={link.href}
@@ -188,11 +189,11 @@ export default function Header() {
                       <Link
                         href={link.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="group block font-spectral text-lg text-ash-grey hover:text-bone-white uppercase tracking-wider transition-colors duration-500 py-space-2 no-underline"
+                        className="group block font-mono text-lg text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 py-2 no-underline"
                       >
                         <span className="relative inline-block">
                           {link.label}
-                          <span className="absolute -bottom-1 left-0 w-0 h-px bg-aged-gold group-hover:w-full transition-all duration-500 ease-entrance" />
+                          <span className="absolute -bottom-1 left-0 w-0 h-px bg-pale-gold group-hover:w-full transition-all duration-500 ease-entrance" />
                         </span>
                       </Link>
                     </motion.div>
@@ -200,7 +201,7 @@ export default function Header() {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-aged-gold/0 via-aged-gold/50 to-aged-gold/0 my-space-6" />
+                <div className="h-px bg-gradient-to-r from-aged-gold/0 via-aged-gold/50 to-aged-gold/0 my-12" />
 
                 {/* Mobile CTA */}
                 <motion.div
@@ -222,12 +223,12 @@ export default function Header() {
                 </motion.div>
 
                 {/* Bottom ornament */}
-                <div className="mt-space-4 flex justify-center">
+                <div className="mt-6 flex justify-center">
                   <svg
                     width="40"
                     height="20"
                     viewBox="0 0 40 20"
-                    className="text-aged-gold/30"
+                    className="text-pale-gold/30"
                   >
                     <circle cx="20" cy="10" r="2" fill="currentColor" />
                     <circle

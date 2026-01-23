@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { X, Check } from "lucide-react";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
 
 /**
  * Problem/Solution Section - "The Industry vs. The Craft"
@@ -27,10 +26,8 @@ export default function ProblemSolutionSection() {
 
   return (
     <section ref={ref} className="section bg-stone-dark relative">
-      {/* Stone texture for gritty feel */}
-      <BackgroundTexture variant="stone" opacity={0.05} />
       {/* Dark overlay for weight */}
-      <div className="absolute inset-0 bg-gradient-to-b from-void via-transparent to-void opacity-60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-ink-black via-transparent to-ink-black opacity-60" />
 
       <div className="section-container relative z-10">
         {/* Section Header */}
@@ -38,9 +35,9 @@ export default function ProblemSolutionSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16"
+          className="text-center mb-space-8"
         >
-          <h2 className="font-garamond text-4xl md:text-5xl text-silver-white leading-tight mb-6">
+          <h2 className="font-garamond text-4xl md:text-5xl text-silver-white leading-tight mb-space-4">
             Beyond Mass Production:
             <br className="hidden md:block" />
             <span className="text-pale-gold italic">
@@ -49,25 +46,25 @@ export default function ProblemSolutionSection() {
           </h2>
         </motion.div>
 
-        <OrnamentalDivider />
+        <SimpleDivider />
 
         {/* Comparison Grid - HEAVY BORDERS */}
-        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto mt-16">
+        <div className="grid md:grid-cols-2 gap-space-6 max-w-5xl mx-auto mt-space-8">
           {/* Problems Column - DARK & OPPRESSIVE */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-stone-deeper tension-border heavy-shadow p-12 relative"
+            className="bg-stone-deeper tension-border heavy-shadow p-space-6 relative"
           >
             {/* Dark corner accent */}
             <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 border-steel-grey" />
 
-            <h3 className="font-mono text-sm uppercase tracking-wider text-fog/70 mb-8 text-center">
+            <h3 className="font-mono text-sm uppercase tracking-wider text-fog/70 mb-space-5 text-center">
               The Industry Standard
             </h3>
 
-            <ul className="space-y-6">
+            <ul className="space-y-space-4">
               {problems.map((problem, index) => (
                 <motion.li
                   key={index}
@@ -78,7 +75,7 @@ export default function ProblemSolutionSection() {
                     delay: 0.5 + index * 0.1,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className="flex items-start gap-3"
+                  className="flex items-start gap-space-3"
                 >
                   <span className="flex-shrink-0 w-6 h-6 bg-obsidian border border-rust flex items-center justify-center mt-0.5">
                     <X className="w-4 h-4 text-rust" />
@@ -96,16 +93,16 @@ export default function ProblemSolutionSection() {
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-stone-dark metallic-border heavy-shadow p-12 relative"
+            className="bg-stone-dark metallic-border heavy-shadow p-space-6 relative"
           >
             {/* Gold corner accent */}
             <div className="absolute top-0 right-0 w-12 h-12 border-r-2 border-t-2 border-pale-gold/40" />
 
-            <h3 className="font-mono text-sm uppercase tracking-wider text-pale-gold mb-8 text-center">
+            <h3 className="font-mono text-sm uppercase tracking-wider text-pale-gold mb-space-5 text-center">
               The Heritage Difference
             </h3>
 
-            <ul className="space-y-6">
+            <ul className="space-y-space-4">
               {solutions.map((solution, index) => (
                 <motion.li
                   key={index}
@@ -116,7 +113,7 @@ export default function ProblemSolutionSection() {
                     delay: 0.5 + index * 0.1,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className="flex items-start gap-3"
+                  className="flex items-start gap-space-3"
                 >
                   <span className="flex-shrink-0 w-6 h-6 bg-blood-ruby/30 border border-pale-gold flex items-center justify-center mt-0.5">
                     <Check className="w-4 h-4 text-pale-gold" />

@@ -36,7 +36,7 @@ export default function BlogPost() {
       <div className="min-h-screen bg-ink-black">
         <Header />
 
-        <main className="pt-32 pb-space-10">
+        <main className="pb-space-10">
           <article className="section-reading">
             {/* Back Link */}
             <Link

@@ -20,7 +20,8 @@ export default function ConsultationSuccess() {
       <div className="min-h-screen bg-ink-black">
         <Header />
 
-        <main className="pt-32 pb-space-10">
+        <main className="pb-space-10">
+          <section className="section bg-parchment-dark relative">
           <div className="section-narrow">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -64,6 +65,7 @@ export default function ConsultationSuccess() {
                   message.
                 </p>
               </div>
+            </section>
 
               {/* Decorative divider */}
               <div className="flex items-center justify-center gap-space-4 mb-space-8">

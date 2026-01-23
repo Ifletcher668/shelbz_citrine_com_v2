@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import Head from "next/head";
+import GlobalSVGDefs from "@/Components/shared/GlobalSVGDefs";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -22,6 +23,9 @@ export default function App({ Component, pageProps }) {
         {/* Theme color */}
         <meta name="theme-color" content="#0d0a07" />
       </Head>
+
+      {/* Global SVG Pattern Definitions */}
+      <GlobalSVGDefs />
 
       <Component {...pageProps} />
     </>
