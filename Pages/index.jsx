@@ -1,12 +1,12 @@
 import Head from "next/head";
 import Header from "@/Components/layout/Header";
 import Footer from "@/Components/layout/Footer";
-import HeroSection from "@/Components/sections/HeroSection";
-import ProblemSolutionSection from "@/Components/sections/ProblemSolutionSection";
-import ProcessSection from "@/Components/sections/ProcessSection";
-import GallerySection from "@/Components/sections/GallerySection";
-import FAQSection from "@/Components/sections/FAQSection";
-import CTASection from "@/Components/sections/CTASection";
+import HeroSection from "@/Components/pages/home/HeroSection";
+import ProblemSolutionSection from "@/Components/pages/home/ProblemSolutionSection";
+import ProcessSection from "@/Components/pages/home/ProcessSection";
+import GallerySection from "@/Components/pages/home/GallerySection";
+import FAQSection from "@/Components/pages/home/FAQSection";
+import CTASection from "@/Components/pages/home/CTASection";
 
 /**
  * Landing Page - "Digital Grimoire"
@@ -21,7 +21,7 @@ export default function Home() {
         <title>Custom Black Spinel Engagement Rings | Heritage Jewelry</title>
         <meta
           name="description"
-          content="Bespoke black spinel engagement rings handcrafted by seventh-generation Indian artisans. Ethical sourcing, free consultation. Olympia, WA & nationwide via Zoom."
+          content="Bespoke black spinel engagement rings handcrafted by seventh-generational Indian artisans. Ethical sourcing, free consultation. Olympia, WA & nationwide via Zoom."
         />
 
         {/* Open Graph */}
@@ -45,7 +45,7 @@ export default function Home() {
         />
         <meta
           name="twitter:description"
-          content="Bespoke black spinel rings by seventh-generation Indian artisans."
+          content="Bespoke black spinel rings by seventh-generational Indian artisans."
         />
         <meta name="twitter:image" content="/og-image.jpg" />
 
@@ -53,7 +53,7 @@ export default function Home() {
         <link rel="canonical" href="https://heritagejewelry.com" />
       </Head>
 
-      <div className="min-h-screen bg-ink-black">
+      <div className="min-h-screen bg-void">
         <Header />
         <main>
           <HeroSection />

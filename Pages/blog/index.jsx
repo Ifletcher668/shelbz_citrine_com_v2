@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Header from "@/Components/layout/Header";
 import Footer from "@/Components/layout/Footer";
 import { BookOpen, Clock } from "lucide-react";
+import { Section, Container } from "@/Components/layout/Section";
 
 /**
  * Blog Index - "Blog"
@@ -50,31 +51,31 @@ export default function Blog() {
         <link rel="canonical" href="https://heritagejewelry.com/blog" />
       </Head>
 
-      <div className="min-h-screen bg-ink-black">
+      <div className="min-h-screen bg-void">
         <Header />
 
-        <main className="pb-space-10">
+        <main>
           {/* Hero */}
-          <section className="section">
+          <Section variant="hero">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="text-center"
             >
-              <h1 className="font-cinzel text-5xl md:text-6xl text-bone-white mb-space-4">
-                Blog
-              </h1>
-              <p className="font-crimson text-xl text-ash-grey max-w-2xl mx-auto leading-relaxed">
-                Gemstone education, craft philosophy, and the truth about what
-                makes jewelry <em className="text-aged-gold">real</em>.
-              </p>
+              <div className="flex flex-col items-center gap-space-4">
+                <h1 className="text-5xl md:text-6xl text-silver-white">Blog</h1>
+                <p className="text-xl text-stone-grey max-w-2xl mx-auto">
+                  Gemstone education, craft philosophy, and the truth about what
+                  makes jewelry <em className="text-pale-gold">real</em>.
+                </p>
+              </div>
             </motion.div>
-          </section>
+          </Section>
 
           {/* Posts Grid */}
-          <section className="section-container">
-            <div className="grid gap-space-8 max-w-4xl mx-auto">
+          <Container>
+            <div className="flex flex-col gap-space-8 max-w-4xl mx-auto">
               {posts.map((post, index) => (
                 <motion.article
                   key={post.slug}
@@ -85,47 +86,53 @@ export default function Blog() {
                     delay: index * 0.15,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className="bg-parchment-dark tension-border heavy-shadow p-space-8 hover:border-aged-gold transition-all duration-700 group relative"
+                  className="bg-stone-deeper tension-border heavy-shadow p-space-8 hover:border-pale-gold transition-all duration-700 group relative"
                 >
                   {/* Corner accent */}
-                  <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 border-aged-gold/20 group-hover:border-aged-gold/50 transition-colors duration-700" />
+                  <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 border-pale-gold/20 group-hover:border-pale-gold/50 transition-colors duration-700" />
 
-                  <div className="flex flex-col md:flex-row md:items-start gap-space-4 mb-space-4">
-                    <div className="flex-shrink-0 w-16 h-16 bg-vellum border border-obsidian flex items-center justify-center group-hover:border-aged-gold transition-colors duration-700">
-                      <BookOpen className="w-7 h-7 text-aged-gold" />
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-space-3 mb-space-2">
-                        <span className="font-spectral text-xs uppercase tracking-wider text-aged-gold">
-                          {post.category}
-                        </span>
-                        <span className="text-sepia-shadow">•</span>
-                        <span className="font-crimson text-sm text-charcoal-mist flex items-center gap-space-1">
-                          <Clock className="w-3 h-3" />
-                          {post.readTime}
-                        </span>
+                  <div className="flex flex-col gap-space-4">
+                    <div className="flex flex-col md:flex-row gap-space-4 items-start">
+                      <div className="flex-shrink-0 w-16 h-16 bg-stone-dark border border-fog/20 group-hover:border-pale-gold transition-colors duration-700">
+                        <div className="w-full h-full flex items-center justify-center">
+                          <BookOpen className="w-7 h-7 text-pale-gold" />
+                        </div>
                       </div>
 
-                      <Link href={`/blog/${post.slug}`}>
-                        <h2 className="font-cinzel text-2xl md:text-3xl text-bone-white group-hover:text-aged-gold mb-space-3 leading-tight transition-colors duration-500">
-                          {post.title}
-                        </h2>
-                      </Link>
+                      <div className="flex flex-col gap-space-3 flex-1">
+                        <div className="flex flex-row gap-space-3 items-center">
+                          <span className="font-display text-xs uppercase tracking-wider text-pale-gold">
+                            {post.category}
+                          </span>
+                          <span className="text-fog/50">•</span>
+                          <div className="flex flex-row gap-space-1 items-center text-sm text-fog">
+                            <Clock className="w-3 h-3" />
+                            <span>{post.readTime}</span>
+                          </div>
+                        </div>
 
-                      <p className="font-crimson text-base text-ash-grey leading-relaxed mb-space-4">
-                        {post.excerpt}
-                      </p>
+                        <Link href={`/blog/${post.slug}`}>
+                          <h2 className="text-2xl md:text-3xl text-silver-white group-hover:text-pale-gold transition-colors duration-500">
+                            {post.title}
+                          </h2>
+                        </Link>
 
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="inline-flex items-center gap-space-2 font-spectral text-sm text-aged-gold hover:text-amber-glow uppercase tracking-wider transition-colors duration-500"
-                      >
-                        Read More
-                        <span className="group-hover:translate-x-1 transition-transform duration-500">
-                          →
-                        </span>
-                      </Link>
+                        <p className="text-md text-stone-grey">
+                          {post.excerpt}
+                        </p>
+
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="inline-flex items-center gap-space-2 font-display text-sm text-pale-gold hover:text-silver-white uppercase tracking-wider transition-colors duration-500"
+                        >
+                          <div className="flex flex-row gap-space-2 items-center">
+                            <span>Read More</span>
+                            <span className="group-hover:translate-x-1 transition-transform duration-500">
+                              →
+                            </span>
+                          </div>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </motion.article>
@@ -139,11 +146,9 @@ export default function Blog() {
               transition={{ duration: 1, delay: 0.8 }}
               className="text-center mt-space-10"
             >
-              <p className="font-crimson text-base text-charcoal-mist italic">
-                More blogs coming soon.
-              </p>
+              <p className="text-md text-fog italic">More blogs coming soon.</p>
             </motion.div>
-          </section>
+          </Container>
         </main>
 
         <Footer />

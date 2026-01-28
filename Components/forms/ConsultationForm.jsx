@@ -142,7 +142,6 @@ export default function ConsultationForm() {
         throw new Error("Form submission failed");
       }
     } catch (error) {
-      console.error("Submission error:", error);
       setErrors({ submit: "Something went wrong. Please try again." });
     } finally {
       setIsSubmitting(false);
@@ -168,7 +167,7 @@ export default function ConsultationForm() {
         </div>
         <div className="h-1 bg-charcoal overflow-hidden">
           <motion.div
-            className="h-full bg-crimson"
+            className="h-full bg-body"
             initial={{ width: 0 }}
             animate={{ width: progressWidth }}
             transition={{ duration: 0.3 }}
@@ -220,7 +219,7 @@ export default function ConsultationForm() {
             >
               <div>
                 <label htmlFor="fullName" className="form-label">
-                  Full Name <span className="text-crimson">*</span>
+                  Full Name <span className="text-body">*</span>
                 </label>
                 <input
                   type="text"
@@ -237,7 +236,7 @@ export default function ConsultationForm() {
 
               <div>
                 <label htmlFor="email" className="form-label">
-                  Email <span className="text-crimson">*</span>
+                  Email <span className="text-body">*</span>
                 </label>
                 <input
                   type="email"
@@ -268,7 +267,7 @@ export default function ConsultationForm() {
 
               <div>
                 <label className="form-label">
-                  Consultation Type <span className="text-crimson">*</span>
+                  Consultation Type <span className="text-body">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   {[
@@ -287,7 +286,7 @@ export default function ConsultationForm() {
                       }
                       className={`p-4 border text-left transition-all ${
                         formData.consultationType === option.value
-                          ? "border-crimson bg-crimson/10"
+                          ? "border-body bg-body/10"
                           : "border-charcoal hover:border-slate"
                       }`}
                     >
@@ -314,7 +313,7 @@ export default function ConsultationForm() {
             >
               <div>
                 <label htmlFor="budgetRange" className="form-label">
-                  Budget Range <span className="text-crimson">*</span>
+                  Budget Range <span className="text-body">*</span>
                 </label>
                 <select
                   id="budgetRange"
@@ -337,7 +336,7 @@ export default function ConsultationForm() {
 
               <div>
                 <label className="form-label">
-                  Metal Preference <span className="text-crimson">*</span>
+                  Metal Preference <span className="text-body">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
@@ -355,7 +354,7 @@ export default function ConsultationForm() {
                       }
                       className={`p-3 border text-sm transition-all ${
                         formData.metalPreference === option.value
-                          ? "border-crimson bg-crimson/10 text-bone"
+                          ? "border-body bg-body/10 text-bone"
                           : "border-charcoal text-silver hover:border-slate"
                       }`}
                     >
@@ -387,7 +386,7 @@ export default function ConsultationForm() {
                     href="https://www.bluenile.com/ring-sizer"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-crimson hover:text-ember mt-1 inline-block"
+                    className="text-xs text-body hover:text-ember mt-1 inline-block"
                   >
                     Need help sizing?
                   </a>
@@ -420,7 +419,7 @@ export default function ConsultationForm() {
                     onClick={() => updateField("stoneType", "black-spinel")}
                     className={`p-3 border text-sm transition-all ${
                       formData.stoneType === "black-spinel"
-                        ? "border-crimson bg-crimson/10 text-bone"
+                        ? "border-body bg-body/10 text-bone"
                         : "border-charcoal text-silver hover:border-slate"
                     }`}
                   >
@@ -431,7 +430,7 @@ export default function ConsultationForm() {
                     onClick={() => updateField("stoneType", "other")}
                     className={`p-3 border text-sm transition-all ${
                       formData.stoneType === "other"
-                        ? "border-crimson bg-crimson/10 text-bone"
+                        ? "border-body bg-body/10 text-bone"
                         : "border-charcoal text-silver hover:border-slate"
                     }`}
                   >

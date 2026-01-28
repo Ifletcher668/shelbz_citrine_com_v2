@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Enable static export for Netlify deployment
-  output: "export",
+  // Enable static export only for production builds
+  ...(process.env.NODE_ENV === "production" && { output: "export" }),
   // Disable image optimization for static export (use next/image with unoptimized)
   images: {
     unoptimized: true,

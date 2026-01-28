@@ -49,6 +49,7 @@ export default function Header() {
 
   const navLinks = [
     { href: "/about", label: "About" },
+    { href: "/process", label: "Process" },
     { href: "/blog", label: "Blog" },
   ];
 
@@ -70,19 +71,20 @@ export default function Header() {
             {/* Logo - Ornamental */}
             <Link
               href="/"
-              className="group font-garamond text-xl md:text-2xl tracking-wider text-silver-white hover:text-pale-gold transition-colors duration-500 no-underline"
+              className="group text-xl md:text-2xl tracking-wider hover:text-pale-gold transition-colors duration-500 no-underline"
             >
               HERITAGE
               <SimpleDivider className="mt-2" />
             </Link>
 
             {/* Desktop Navigation */}
+
             <div className="hidden md:flex items-center gap-12">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="group font-mono text-sm text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 no-underline"
+                  className="group font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 no-underline"
                 >
                   {link.label}
 
@@ -94,7 +96,7 @@ export default function Header() {
             {/* Desktop CTA */}
             <div className="hidden md:block">
               <Link href="/consultation" className="btn-primary">
-                Book Consultation
+                Book a Consultation
               </Link>
             </div>
 
@@ -152,15 +154,13 @@ export default function Header() {
                 duration: 0.6,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-parchment border-l-2 border-pale-gold/30 z-50 md:hidden"
+              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-stone-dark border-l-2 border-pale-gold/30 z-50 md:hidden"
               aria-label="Mobile navigation"
             >
               <div className="flex flex-col h-full p-12">
                 {/* Close button with ornament */}
                 <div className="flex justify-between items-start mb-16">
-                  <span className="font-garamond text-lg text-silver-white tracking-wider">
-                    Menu
-                  </span>
+                  <span className="text-lg tracking-wider">Menu</span>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-2 text-stone-grey hover:text-silver-white transition-colors border border-fog/20 hover:border-pale-gold"
@@ -218,7 +218,7 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="btn-primary w-full text-center"
                   >
-                    Book Consultation
+                    Book a Consultation
                   </Link>
                 </motion.div>
 

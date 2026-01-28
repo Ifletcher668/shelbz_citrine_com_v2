@@ -14,7 +14,7 @@ export default function Footer() {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/blog", label: "Blog" },
-    { href: "/consultation", label: "Book Consultation" },
+    { href: "/consultation", label: "Book a Consultation" },
   ];
 
   return (
@@ -28,13 +28,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
           {/* Column 1: Brand & Tagline */}
           <div>
-            <h3 className="font-garamond text-2xl text-silver-white mb-6 tracking-wider">
-              HERITAGE
-            </h3>
-            <p className="font-garamond text-base text-stone-grey leading-relaxed mb-3">
-              Ethical craft. Heirloom quality.
-            </p>
-            <p className="font-garamond text-sm text-fog italic leading-relaxed">
+            <h3 className="text-2xl mb-6 tracking-wider">HERITAGE</h3>
+            <p className="text-md mb-3">Ethical craft. Heirloom quality.</p>
+            <p className="text-sm text-fog italic">
               Bridging Indian artisanship with modern design, one bespoke piece
               at a time.
             </p>
@@ -42,7 +38,7 @@ export default function Footer() {
 
           {/* Column 2: Quick Links */}
           <div>
-            <h4 className="font-mono text-sm uppercase tracking-wider text-fog mb-6">
+            <h4 className="font-mono text-sm uppercase tracking-wider mb-6">
               Navigation
             </h4>
             <ul className="space-y-3">
@@ -67,7 +63,7 @@ export default function Footer() {
             <h4 className="font-mono text-sm uppercase tracking-wider text-fog mb-6">
               Contact
             </h4>
-            <div className="space-y-3 font-garamond text-sm text-stone-grey">
+            <div className="space-y-3 text-sm text-stone-grey">
               <p className="flex items-start gap-2">
                 <Mail className="w-4 h-4 text-pale-gold mt-0.5 flex-shrink-0" />
                 <a
@@ -78,7 +74,7 @@ export default function Footer() {
                 </a>
               </p>
               <p className="text-fog">Based in Olympia, WA</p>
-              <p className="text-xs text-fog/70 italic">
+              <p className="text-xs text-fog/90 italic">
                 Serving the Pacific Northwest & nationwide via Zoom
               </p>
             </div>
@@ -90,12 +86,12 @@ export default function Footer() {
 
         {/* Bottom Row */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="font-mono text-xs text-fog/70 tracking-wide">
+          <p className="font-mono text-xs text-fog/90 tracking-wide">
             &copy; {currentYear} Heritage Jewelry Enterprise. All rights
             reserved.
           </p>
 
-          <p className="font-garamond text-xs text-fog italic">
+          <p className="text-xs text-fog italic">
             Crafted in partnership with{" "}
             <a
               href="https://royalkarkhana.com"

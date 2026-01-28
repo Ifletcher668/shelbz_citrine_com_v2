@@ -6,6 +6,8 @@ This design system creates a **brutal, minimalist, gallery-like aesthetic** insp
 - Metropolitan Museum (sophisticated, spacious, high-art)
 - Behemoth / Imperial Triumphant (dark, artistic, dissonant)
 
+**Current Status:** Lead-gen site. E-commerce functionality planned for future.
+
 ---
 
 ## Color Palette
@@ -13,61 +15,138 @@ This design system creates a **brutal, minimalist, gallery-like aesthetic** insp
 ### Active Colors (Use These)
 ```javascript
 // Backgrounds
-'void': '#000000'           // Pure black
-'stone-dark': '#0a0a0a'     // Almost void
-'stone-deeper': '#141414'   // Slight lift
+'void': '#000000'           // Pure black - main background
+'stone-dark': '#0a0a0a'     // Almost void - cards, elevated surfaces
+'stone-deeper': '#141414'   // Slight lift - form backgrounds
 
 // Neutral Greys
-'fog': '#3c3c3c'            // Dark fog
-'stone-grey': '#8c8273'     // Desaturated stone
-'silver-white': '#e5e0d8'   // Cold silver-white
+'fog': '#5a5a5a'            // Medium-dark fog - body text, metadata
+'stone-grey': '#8c8273'     // Desaturated stone - secondary text
+'silver-white': '#e5e0d8'   // Cold silver-white - headings, high contrast text
 
 // Accents
-'pale-gold': '#b4aa96'      // Muted gold
-'cold-bronze': '#7a6f5d'    // Dark bronze
-'steel-blue': '#424852'     // Cold steel
-'frost-blue': '#b8c5d6'     // Icy blue (rare)
-'deep-crimson': '#4a1a1a'   // Very dark blood
-'moss-green': '#2d3a2e'     // Dark moss
+'pale-gold': '#b4aa96'      // Muted gold - CTAs, highlights, required field markers
+'cold-bronze': '#291d0466'  // Dark bronze with opacity - subtle backgrounds
+'steel-blue': '#424852'     // Cold steel - secondary buttons
+'frost-blue': '#b8c5d6'     // Icy blue (rare highlights)
+'deep-crimson': '#4a1a1a'   // Very dark blood (destructive actions)
+'moss-green': '#2d3a2e'     // Dark moss (success states)
 ```
 
-### Deprecated Colors (Don't Use)
+### shadcn/ui Semantic Colors (For UI Components)
+These map your brand colors to shadcn/ui component expectations:
+```javascript
+'border': 'rgba(60, 60, 60, 0.2)'
+'input': '#0a0a0a'
+'ring': '#b4aa96'
+'background': '#000000'
+'foreground': '#e5e0d8'
+'primary': '#b4aa96'
+'secondary': '#424852'
+'destructive': '#4a1a1a'
+'muted': '#141414'
+'accent': '#b4aa96'
+'popover': '#0a0a0a'
+'card': '#0a0a0a'
 ```
-❌ ink-black, parchment-dark, vellum
-❌ aged-gold, amber-glow, verdigris
-❌ bone-white, ash-grey, charcoal-mist, sepia-shadow
-❌ blood-ruby, obsidian, emerald-deep
+
+### Deprecated Colors (REMOVED - Don't Use)
+```
+❌ ink-black → use 'void'
+❌ parchment, parchment-dark, vellum → use 'stone-dark' or 'stone-deeper'
+❌ aged-gold, amber-glow → use 'pale-gold'
+❌ bone-white → use 'silver-white'
+❌ ash-grey, charcoal-mist, sepia-shadow → use 'fog' or 'stone-grey'
+❌ verdigris, blood-ruby, obsidian, emerald-deep → not in use
 ```
 
 ---
 
 ## Typography
 
-### Active Fonts
+### Active Fonts (Current Implementation)
 ```javascript
-'font-garamond'   // EB Garamond - Main serif for headings & body
-'font-baskerville' // Libre Baskerville - Alternative serif
-'font-mono'       // IBM Plex Mono - UI labels, captions, buttons
+'font-display'  // Cinzel - Display headings, UI labels
+'font-body'     // Crimson Text - Body text, readable content
+'font-ui'       // Cinzel - UI elements, buttons
+'font-mono'     // IBM Plex Mono - Code, technical, form labels
 ```
+
+**Note:** Earlier docs referenced Garamond/Baskerville, but the actual implementation uses Cinzel and Crimson Text.
 
 ### Font Usage
 ```jsx
-// Headings (ultra-light, gallery style)
-<h1 className="font-garamond text-6xl text-silver-white font-light">
+// Headings (sharp, game-like)
+<h1 className="font-display text-6xl text-silver-white font-light">
 
-// Body text
-<p className="font-garamond text-lg text-stone-grey">
+// Body text (highly legible serif)
+<p className="font-body text-lg text-stone-grey">
 
-// UI Labels, buttons, captions
-<span className="font-mono text-[10px] tracking-[0.2em] uppercase text-fog/70">
+// UI Labels, buttons, form labels
+<label className="font-mono text-[10px] tracking-[0.2em] uppercase text-fog">
 ```
 
-### Deprecated Fonts
+### Fluid Typography Scale
+All type scales use `clamp()` for responsive sizing:
+```javascript
+'text-6xl': 'clamp(3.5rem, 8vw, 5.5rem)'     // Hero headlines
+'text-5xl': 'clamp(3rem, 6vw, 4.5rem)'       
+'text-4xl': 'clamp(2.25rem, 5vw, 3.5rem)'    
+'text-3xl': 'clamp(1.75rem, 4vw, 2.5rem)'    
+'text-2xl': 'clamp(1.5rem, 3vw, 2rem)'       
+'text-xl': 'clamp(1.4rem, 2.8vw, 1.8rem)'    
+'text-lg': 'clamp(1.375rem, 2.5vw, 1.5rem)'  // Body paragraphs (22-24px)
+'text-base': '1.25rem' (20px)                 // Bold choice for luxury
+'text-sm': '1.125rem' (18px)
+'text-xs': '1rem' (16px)
 ```
-❌ font-cinzel (too ornate)
-❌ font-crimson (too warm)
-❌ font-spectral (wrong aesthetic)
+
+---
+
+## Spacing System
+
+### Golden Ratio Fluid Spacing
+Uses `clamp()` for viewport-responsive gaps:
+```javascript
+'space-1': 'clamp(0.25rem, 0.5vw, 0.375rem)'      // 4-6px - micro
+'space-2': 'clamp(0.5rem, 1vw, 0.75rem)'          // 8-12px
+'space-3': 'clamp(0.75rem, 1.5vw, 1rem)'          // 12-16px
+'space-4': 'clamp(1.25rem, 2vw + 0.5rem, 1.618rem)' // 20-26px (φ)
+'space-5': 'clamp(2rem, 3vw + 0.75rem, 2.618rem)'   // 32-42px (φ²)
+'space-6': 'clamp(3rem, 4vw + 1rem, 4.236rem)'      // 48-68px (φ³)
+'space-8': 'clamp(4.5rem, 6vw + 1.5rem, 6.854rem)'  // 72-110px (φ⁴)
+'space-10': 'clamp(6rem, 8vw + 2rem, 11.09rem)'     // 96-178px (φ⁵)
+'space-12': 'clamp(7rem, 10vw + 2.5rem, 14rem)'     // 112-224px (φ⁶)
 ```
+
+### Usage Best Practices
+- **Use `gap` on flex/grid containers** instead of margins on children
+- Prefer `gap-space-*` utilities for consistent spacing
+- Use `p-space-*` and `py-space-*` for internal padding
+
+---
+
+## Layout System
+
+### Container Widths
+```javascript
+'container-narrow': '56rem'    // Blog posts, forms
+'container-reading': '65ch'    // Optimal reading width
+'container-wide': '90rem'      // Full-width sections
+```
+
+### Section Pattern
+```jsx
+<Section className="py-space-6">
+  <Container size="wide">
+    {/* Content */}
+  </Container>
+</Section>
+```
+
+### Components Available
+- `<Section>` - Vertical spacing wrapper
+- `<Container>` - Horizontal max-width wrapper with props: `size="narrow|reading|wide"`
 
 ---
 
@@ -75,221 +154,230 @@ This design system creates a **brutal, minimalist, gallery-like aesthetic** insp
 
 ### Buttons
 ```jsx
-// Primary - Glassmorphism with glow
+// Primary - Bronze with rune pattern overlay
 <button className="btn-primary">
-  Book Consultation
+  Book a Consultation
 </button>
 
-// Secondary - Ghost variant
+// Secondary - Ghost variant (transparent, outline)
 <button className="btn-secondary">
   Learn More
 </button>
 ```
 
+Both buttons include:
+- Rune pattern overlay (`::before`)
+- Shimmer animation on hover (`::after`)
+- 44px minimum touch target
+- Proper focus states
+
 ### Cards
 ```jsx
 <div className="card">
-  {/* Glassmorphism with minimal borders */}
+  {/* Glassmorphic with subtle glow on hover */}
 </div>
 ```
 
+Features:
+- `backdrop-filter: blur(20px)`
+- Gradient overlay on hover
+- Border transitions
+
 ### Forms
 ```jsx
-<label className="form-label">Email</label>
-<input className="form-input" placeholder="your@email.com" />
-<textarea className="form-textarea"></textarea>
+<label className="form-label">Full Name</label>
+<input className="form-input" type="text" />
+
+<textarea className="form-textarea" />
+
+<select className="form-select">
+  <option>Choose...</option>
+</select>
 ```
+
+All form inputs:
+- Minimal bottom border (not full border)
+- Focus state with pale-gold accent
+- 44px minimum height (accessibility)
+- Glassmorphic background
 
 ---
 
-## SVG Background Textures
-
-### Component Usage
-```jsx
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
-
-<section className="relative">
-  <BackgroundTexture variant="metal" opacity={0.3} />
-  {/* Your content */}
-</section>
-```
-
-### Texture Variants
-- **`metal`** - Scratched steel (best for hero/primary sections)
-- **`stone`** - Weathered stone cracks (organic feel)
-- **`rune`** - Elden Ring circular patterns (mystical)
-- **`gallery`** - Horizontal bands (museum walls)
-
-### Recommended Usage
-```jsx
-// Hero Section - minimal or no texture (performance)
-<HeroSection /> // No texture for smooth scroll
-
-// Gallery Section - museum bands
-<BackgroundTexture variant="gallery" opacity={0.4} />
-
-// Process Section - metal scratches
-<BackgroundTexture variant="metal" opacity={0.3} />
-
-// CTA Section - rune pattern
-<BackgroundTexture variant="rune" opacity={0.2} />
-```
-
----
-
-## Utility Classes
-
-### Active Utilities
-```css
-/* Backgrounds */
-.bg-fog-gradient        /* Vertical fog vignette */
-.bg-steel-texture       /* Subtle metal scratches */
-
-/* Borders */
-.border-souls           /* Minimal border with heavy shadow */
-.metallic-border        /* Cold metallic edge */
-.tension-border         /* Asymmetric dissonant borders */
-
-/* Text */
-.text-metallic-cold     /* Cold metallic gradient */
-
-/* Effects */
-.glass                  /* Glassmorphism overlay */
-.heavy-shadow           /* Deep black shadows */
-.steel-edge             /* Subtle steel border */
-.divider-souls          /* Minimalist horizontal divider */
-.fog-overlay            /* Radial fog effect */
-```
-
-### Deprecated Utilities
-```
-❌ .bg-parchment
-❌ .bg-vignette
-❌ .border-aged
-❌ .text-metallic-gold
-❌ .divider-ornamental
-```
-
----
-
-## Spacing
-
-Use standard Tailwind spacing (4px base):
-```jsx
-gap-6      // 24px
-mb-12      // 48px
-p-8        // 32px
-```
-
-Avoid custom spacing like:
-```
-❌ space-1, space-2, space-3 (golden ratio spacing - too ornate)
-```
-
----
-
-## Animation
+## Animations
 
 ### Timing Functions
-```css
-transition-souls  /* cubic-bezier(0.25, 0.1, 0.25, 1) */
-transition-sharp  /* cubic-bezier(0.4, 0, 0.6, 1) */
-transition-smooth /* cubic-bezier(0.4, 0, 0.2, 1) */
+```javascript
+'souls': 'cubic-bezier(0.25, 0.1, 0.25, 1)'  // Precise, linear
+'sharp': 'cubic-bezier(0.4, 0, 0.6, 1)'      // Quick snap
+'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)'     // Gentle ease
 ```
 
-### Durations
-- Fast interactions: `duration-200` (200ms)
-- Standard transitions: `duration-300` (300ms)
-- Page elements: `duration-500` to `duration-800`
+### Keyframe Animations
+```javascript
+'fade-in': '1.2s cubic-bezier(0.16, 1, 0.3, 1)'
+'slide-up': '0.9s cubic-bezier(0.16, 1, 0.3, 1)'
+'accordion-down/up': '0.5s ease-out'
+'shimmer': '2s infinite'
+```
 
-Keep animations **snappy and precise**, not slow/mystical.
-
----
-
-## Performance Guidelines
-
-### DO ✓
-- Use single SVG grain background
-- Apply fog vignette as fixed pseudo-element
-- Keep textures at low opacity (0.2-0.4)
-- Use `will-change` sparingly
-- Minimize backdrop-blur usage
-
-### DON'T ✗
-- Use `background-attachment: fixed` (causes scroll jank)
-- Layer 4+ backgrounds
-- Use high octave fractal noise (>3 octaves)
-- Apply blur effects in hero sections
-- Stack multiple glassmorphism effects
-
----
-
-## Migration Checklist
-
-When updating existing components:
-
-1. **Replace old colors:**
-   ```bash
-   ink-black → void
-   bone-white → silver-white
-   aged-gold → pale-gold
-   ```
-
-2. **Replace old fonts:**
-   ```bash
-   font-cinzel → font-garamond
-   font-crimson → font-garamond
-   font-spectral → font-mono (for UI)
-   ```
-
-3. **Add SVG texture:**
-   ```jsx
-   import BackgroundTexture from "@/Components/shared/BackgroundTexture";
-   <BackgroundTexture variant="metal" opacity={0.3} />
-   ```
-
-4. **Update spacing:**
-   ```bash
-   space-6 → 12
-   space-4 → 6
-   gap-space-4 → gap-6
-   ```
-
-5. **Simplify animations:**
-   - Reduce duration
-   - Use `transition-souls` easing
-   - Remove overly slow delays
-
----
-
-## Examples
-
-### Before (Warm/Ornate)
+### Usage with Framer Motion
 ```jsx
-<h1 className="font-cinzel text-bone-white text-metallic-gold">
-  Custom Rings
-</h1>
-<p className="font-crimson text-ash-grey italic">
-  Handcrafted excellence
-</p>
-```
-
-### After (Cold/Minimal)
-```jsx
-<h1 className="font-garamond text-silver-white text-metallic-cold font-light">
-  Custom Rings
-</h1>
-<p className="font-garamond text-stone-grey">
-  Handcrafted excellence
-</p>
+<motion.div
+  initial={{ opacity: 0, y: 60 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ 
+    duration: 0.9, 
+    ease: [0.16, 1, 0.3, 1] 
+  }}
+>
 ```
 
 ---
 
-## Questions?
+## Border Radius
 
-Check these files for reference:
-- `styles/globals.css` - All utility classes
-- `tailwind.config.js` - Color/font definitions
-- `Components/shared/BackgroundTexture.jsx` - SVG patterns
-- `Components/sections/HeroSection.jsx` - Example usage
+**Brutalist approach:** Sharp edges everywhere
+```javascript
+'rounded-lg': '0'
+'rounded-md': '0'
+'rounded-sm': '0'
+```
+
+---
+
+## Textures & Backgrounds
+
+### Grain Texture
+Applied to `<body>` via inline SVG data URL:
+- Fractal noise with `baseFrequency='0.9'` and `numOctaves='3'`
+- Opacity: `0.05` (subtle, not overwhelming)
+- Optimized for performance (not `background-attachment: fixed`)
+
+### Fog Vignette
+Applied as fixed `::before` pseudo-element on `<body>`:
+- Gradient from top/bottom: `rgba(0,0,0,0.6)` → transparent
+- Fixed positioning, pointer-events: none
+- Z-index: 1 (content above at z-index: 2)
+
+### Background Classes
+```javascript
+'bg-grain-heavy'   // Heavy texture overlay
+'bg-fog-vignette'  // Gradient vignette
+```
+
+---
+
+## Accessibility
+
+### Minimum Sizes
+- **Touch targets:** 44px minimum (buttons, inputs)
+- **Text:** 20px base (1.25rem) for luxury readability
+
+### Focus States
+- All interactive elements have custom focus ring
+- `box-shadow: 0 0 0 1px rgba(180, 170, 150, 0.4)`
+
+### Color Contrast
+⚠️ **Known Issue:** `fog` (#5a5a5a) on `void` (#000000) may not meet WCAG AA.
+- Use `stone-grey` or `silver-white` for critical text
+- Reserve `fog` for metadata, timestamps, less critical content
+
+---
+
+## File Structure
+
+```
+Components/
+├── forms/              # Form-specific components
+├── layout/             # Header, Footer, Section, Container
+├── ornaments/          # CornerFlourish, decorative elements
+├── pages/home/         # Homepage sections (Hero, CTA, Gallery, etc.)
+├── shared/             # ProductCard, CartDrawer, TooltipHelp
+└── ui/                 # Radix UI primitives (49 components)
+
+Pages/
+├── index.jsx           # Homepage
+├── about.jsx
+├── consultation.jsx
+├── blog/
+│   ├── index.jsx
+│   └── [slug].jsx
+└── _app.js, _document.js
+
+styles/
+└── globals.css         # Tailwind v4 theme + custom CSS
+
+context/
+└── CartContext.jsx     # Cart state (for future e-commerce)
+
+data/
+├── products.js         # Product catalog (15 items)
+└── blog.js             # Blog posts (3 placeholder)
+```
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 15.5.10 (Pages Router, static export)
+- **Styling:** Tailwind CSS 4.1.18 (CSS-first config in `globals.css`)
+- **Animation:** Framer Motion 12.29.2
+- **UI Primitives:** Radix UI (accordion, dialog, dropdown, etc.)
+- **Forms:** React Hook Form + Zod validation
+- **Icons:** Lucide React
+
+---
+
+## Design Principles
+
+1. **Brutal Minimalism:** Sharp edges, no rounded corners, no gradients (except subtle accents)
+2. **Gallery Spacing:** Generous whitespace, golden ratio proportions
+3. **Cold Palette:** Desaturated, muted tones - no warmth
+4. **Precision Over Friendliness:** Video game UI aesthetic, not friendly SaaS
+5. **Performance First:** Lightweight textures, optimized animations
+6. **Accessibility Aware:** 44px touch targets, semantic HTML, focus states
+7. **Mobile-First:** Fluid typography and spacing scale with viewport
+
+---
+
+## Future Considerations
+
+- **E-commerce:** Product pages, collections, checkout flow (data exists, UI doesn't)
+- **Blog CMS:** Contentful integration (currently placeholder posts)
+- **Image Optimization:** Next.js Image (currently disabled for static export)
+- **React 19:** Blocked by Radix UI compatibility
+- **Error Boundaries:** None exist - should add for production
+- **Analytics/Monitoring:** No error logging service integrated
+
+---
+
+## Quick Reference
+
+### Most Common Classes
+```jsx
+// Text
+text-silver-white    // Headings
+text-stone-grey      // Body paragraphs
+text-fog             // Metadata
+text-pale-gold       // Accents, CTAs
+
+// Backgrounds
+bg-void              // Page background
+bg-stone-dark        // Cards, mobile menu
+bg-stone-deeper      // Forms, elevated surfaces
+
+// Spacing
+gap-space-4          // Standard component gaps
+py-space-6           // Section padding
+p-space-8            // Card padding
+
+// Fonts
+font-display         // Headings, UI
+font-body            // Paragraphs
+font-mono            // Labels, buttons
+```
+
+---
+
+**Last Updated:** 2026-01-27 (Post Tailwind v4 migration, deprecated color cleanup)
