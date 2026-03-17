@@ -1,0 +1,11 @@
+{
+  "name": "shelbz-citrine-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Strapi CMS — localhost only, never deployed",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build"
+  }
+}
