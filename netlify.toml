@@ -1,0 +1,9 @@
+[build]
+  base = "frontend"
+  publish = "out"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # NEXT_PUBLIC_STRAPI_URL must be set in Netlify dashboard for CMS pages to build
+  # If unset, CMS pages are skipped (build still succeeds)

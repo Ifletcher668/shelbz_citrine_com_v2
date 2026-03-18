@@ -4,13 +4,15 @@
  * Standardized section wrapper for consistent spacing and layout patterns.
  * Uses the design system's .section CSS class for vertical spacing.
  */
-export const Section = ({
+import { forwardRef } from "react";
+
+export const Section = forwardRef(({
   children,
   className = "",
   variant = "default",
   background = "void",
   ...props
-}) => {
+}, ref) => {
   const variantClasses = {
     default: "section",
     hero: "section section-hero",
@@ -24,13 +26,14 @@ export const Section = ({
 
   return (
     <section
+      ref={ref}
       className={`${variantClasses[variant]} ${bgClasses[background]} ${className}`}
       {...props}
     >
       {children}
     </section>
   );
-};
+});
 
 /**
  * Container Layout Component

@@ -1,8 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
+import PageLayout from "@/Components/layout/PageLayout";
 import { Section, Container } from "@/Components/layout/Section";
 import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
 import {
@@ -86,10 +85,7 @@ export default function About() {
         <link rel="canonical" href="https://heritagejewelry.com/about" />
       </Head>
 
-      <div className="min-h-screen bg-void">
-        <Header />
-
-        <main>
+      <PageLayout>
           {/* Hero - The Mission */}
           <Section background="stone-dark" className="relative" variant="hero">
             <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-transparent to-void/60 opacity-70" />
@@ -438,10 +434,7 @@ export default function About() {
               </motion.div>
             </Container>
           </Section>
-        </main>
-
-        <Footer />
-      </div>
+      </PageLayout>
     </>
   );
 }

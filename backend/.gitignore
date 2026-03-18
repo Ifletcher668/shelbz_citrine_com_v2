@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Strapi DB and temp files
+.tmp/
+build/
+dist/
+
+# Secrets
+.env
+
+# Uploads
+public/uploads/*
+!public/uploads/.gitkeep

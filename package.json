@@ -2,17 +2,26 @@
   "name": "shelbz-citrine-monorepo",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend",
-    "launcher/ui"
-  ],
+  "workspaces": {
+    "packages": [
+      "frontend",
+      "backend"
+    ],
+    "nohoist": [
+      "**/sharp",
+      "**/@img/**",
+      "**/sharp-libvips-*"
+    ]
+  },
   "scripts": {
-    "frontend": "npm run dev --workspace=frontend",
-    "backend": "npm run develop --workspace=backend",
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+    "frontend": "yarn workspace dark-lux-storefront dev",
+    "backend": "yarn workspace shelbz-citrine-backend develop",
+    "dev": "concurrently \"yarn frontend\" \"yarn backend\""
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
+  },
+  "resolutions": {
+    "@radix-ui/react-slot": "^1.2.3"
   }
 }

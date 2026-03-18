@@ -1,6 +1,5 @@
 import Head from "next/head";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
+import PageLayout from "@/Components/layout/PageLayout";
 import HeroSection from "@/Components/pages/home/HeroSection";
 import ProblemSolutionSection from "@/Components/pages/home/ProblemSolutionSection";
 import ProcessSection from "@/Components/pages/home/ProcessSection";
@@ -53,19 +52,14 @@ export default function Home() {
         <link rel="canonical" href="https://heritagejewelry.com" />
       </Head>
 
-      <div className="min-h-screen bg-void">
-        <Header />
-        <main>
-          <HeroSection />
-          <ProblemSolutionSection />
-          <ProcessSection />
-          <GallerySection />
-          <FAQSection />
-          <CTASection />
-        </main>
-
-        <Footer />
-      </div>
+      <PageLayout>
+        <HeroSection />
+        <ProblemSolutionSection />
+        <ProcessSection />
+        <GallerySection />
+        <FAQSection />
+        <CTASection />
+      </PageLayout>
     </>
   );
 }

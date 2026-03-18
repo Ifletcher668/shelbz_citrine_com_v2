@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_text_blocks",
+  "info": {
+    "displayName": "Text Block",
+    "icon": "file-text",
+    "description": "Heading + rich text body with alignment control"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string"
+    },
+    "body": {
+      "type": "richtext"
+    },
+    "alignment": {
+      "type": "enumeration",
+      "enum": ["left", "center", "right"],
+      "default": "left"
+    }
+  }
+}

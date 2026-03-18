@@ -1,8 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
+import PageLayout from "@/Components/layout/PageLayout";
 import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
 import { Section, Container } from "@/Components/layout/Section";
 import {
@@ -130,10 +129,7 @@ export default function Process() {
         <link rel="canonical" href="https://heritagejewelry.com/process" />
       </Head>
 
-      <div className="min-h-screen bg-void">
-        <Header />
-
-        <main>
+      <PageLayout>
           {/* Hero */}
           <Section variant="hero" className="relative">
             <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-transparent to-void/60 opacity-70" />
@@ -145,7 +141,7 @@ export default function Process() {
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="flex flex-col items-center gap-6">
-                  <h1 className="text-5xl md:text-6xl font-light">
+                  <h1>
                     Vision to Heirloom{" "}
                     <span className="text-metallic-cold">in Five Steps</span>
                   </h1>
@@ -266,10 +262,7 @@ export default function Process() {
               </motion.div>
             </Container>
           </Section>
-        </main>
-
-        <Footer />
-      </div>
+      </PageLayout>
     </>
   );
 }
