@@ -8,7 +8,7 @@ export default function HeroCms({ data }) {
 
   return (
     <Section variant="hero" className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-void/60 to-void" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-void/60 to-void" />
       <Container className="relative z-10 text-center">
         <div className="flex flex-col items-center gap-12">
           {headline && (

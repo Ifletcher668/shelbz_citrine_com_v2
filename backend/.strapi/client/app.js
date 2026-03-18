@@ -3,10 +3,12 @@
  * Any modifications made will be discarded.
  */
 import usersPermissions from "@strapi/plugin-users-permissions/strapi-admin";
+import wysiwygEditor from "../../src/plugins/wysiwyg-editor/strapi-admin";
 import { renderAdmin } from "@strapi/strapi/admin";
 
 renderAdmin(document.getElementById("strapi"), {
   plugins: {
     "users-permissions": usersPermissions,
+    "wysiwyg-editor": wysiwygEditor,
   },
 });

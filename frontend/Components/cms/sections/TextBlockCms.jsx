@@ -1,35 +1,65 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { marked } from "marked";
+"use client";
+import { heritageMarked } from "@/lib/marked-extensions";
+import Reveal from "@/Components/layout/Motion";
 import { Section, Container } from "@/Components/layout/Section";
-
-const alignmentClasses = {
-  left: "text-left",
-  center: "text-center mx-auto",
-  right: "text-right ml-auto",
-};
+import InnerSection from "@/Components/layout/InnerSection";
+import { cn } from "@/lib/utils";
 
 export default function TextBlockCms({ data }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const { heading, body, alignment = "center" } = data;
+  const {
+    body,
+    container_size = "reading",
+    background = "void",
+    overlay = "none",
+    texture = null,
+    texture_opacity = 3,
+    corners = "none",
+    animation = "fade-up",
+    vertical_spacing = "normal",
+    anchor_id,
+    enable_prose = true,
+  } = data ?? {};
+
+  const textureProps =
+    texture && texture !== "none"
+      ? { variant: texture, opacity: texture_opacity / 100 }
+      : false;
+
+  const cornersProps = corners && corners !== "none" ? corners : false;
+
+  const parsed = body ? heritageMarked.parse(body) : null;
+
+  const bodyEl = parsed ? (
+    <div
+      className={cn(enable_prose && "prose-heritage")}
+      dangerouslySetInnerHTML={{ __html: parsed }}
+    />
+  ) : null;
 
   return (
-    <Section ref={ref}>
-      <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className={`flex flex-col gap-space-12 ${alignmentClasses[alignment]}`}
-        >
-          {heading && (
-            <h2 className="text-4xl md:text-5xl font-display">{heading}</h2>
-          )}
-          {body && (
-            <div dangerouslySetInnerHTML={{ __html: marked.parse(body) }} />
-          )}
-        </motion.div>
+    <Section
+      background={background}
+      overlay={overlay}
+      texture={textureProps}
+      corners={cornersProps}
+      id={anchor_id}
+    >
+      <Container size={container_size}>
+        {bodyEl && animation !== "none" ? (
+          <Reveal effect={animation}>
+            <InnerSection
+              gap={vertical_spacing}
+              className={cn(enable_prose && "prose-heritage")}
+              dangerouslySetInnerHTML={{ __html: parsed }}
+            />
+          </Reveal>
+        ) : (
+          <InnerSection
+            gap={vertical_spacing}
+            className={cn(enable_prose && "prose-heritage")}
+            dangerouslySetInnerHTML={{ __html: parsed }}
+          />
+        )}
       </Container>
     </Section>
   );

@@ -87,7 +87,8 @@ export const SPACING = {
  */
 export const ANIMATIONS = {
   // Timing functions (cubic-bezier values)
-  SOULS_TIMING: [0.25, 0.1, 0.25, 1],
+  EASE_DEFAULT: [0.25, 0.1, 0.25, 1],  // browser default
+  SOULS_TIMING: [0.16, 1, 0.3, 1],     // site identity easing
   SHARP_TIMING: [0.4, 0, 0.6, 1],
   SMOOTH_TIMING: [0.4, 0, 0.2, 1],
 

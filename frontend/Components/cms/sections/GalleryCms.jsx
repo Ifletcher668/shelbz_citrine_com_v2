@@ -1,13 +1,13 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import Image from 'next/image';
-import { Section, Container } from '@/Components/layout/Section';
-import OrnamentalDivider from '@/Components/ornaments/OrnamentalDivider';
-import { getStrapiMediaUrl } from '@/lib/strapi';
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import Image from "next/image";
+import { Section, Container } from "@/Components/layout/Section";
+import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import { getStrapiMediaUrl } from "@/lib/strapi";
 
 export default function GalleryCms({ data }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { title, images } = data;
 
   if (!images || images.length === 0) return null;
@@ -42,7 +42,7 @@ export default function GalleryCms({ data }) {
               >
                 <Image
                   src={getStrapiMediaUrl(image.url)}
-                  alt={image.alternativeText || image.name || ''}
+                  alt={image.alternativeText || image.name || ""}
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
                   unoptimized

@@ -51,15 +51,21 @@ npm run dev
 - [ ] Build seed script: iCloud → Strapi (restore or bootstrap from backup)
 - [ ] Implement caching for seeds (avoid re-seeding unchanged content)
 - [ ] Enable Next.js preview mode for Strapi content types (draft previews before publish)
-
+- [ ] Add option to change color theme. Wire this to the frontend using css variables. Follow Obsidian's structure for clear variable naming and theming
+- [ ] Whitelabel Strapi to look prettier
 ### Developer Experience
 - [ ] Add telemetry with detailed log files (structured logs pasteable into Claude for debugging)
 - [ ] Build out Storybook for each Strapi component type
+- [ ] Build out Storybook for each Layout/Page composition component
+- [ ] Build out Storybook for style tokens/theming/documentation on customization
 
 ### Launcher (`/launcher`)
+- [ ] Add first time launch that clones the repos. Subsequent launches check for git diff and pulls/rebuilds if necessary.
 - [ ] Launch frontend and backend concurrently from the menu bar app
 - [ ] Add a **Publish** button: saves new Strapi data to iCloud + triggers a Netlify deploy
 - [ ] Option to launch Storybook from the launcher
+- [ ] Option to view the log files for debugging
+- [ ] Stretch goal: Add image optimization tool based on conventions set for Strapi uploads
 
 ### Components & Content Types
 - [ ] **Add Header single type** in Strapi
@@ -79,6 +85,7 @@ npm run dev
 - [ ] Build out every Strapi component type
   - Audit current hard-coded pages for all component patterns
   - Build each component, add tests, add Storybook stories
+- [ ] Add option for spans with arbitrary colors/borders/underlines in the .md text editor
 - [ ] Build out Blog content type (posts, categories, tags, RSS feed)
 - [ ] Build out Store (e-commerce — likely Stripe for payments)
 

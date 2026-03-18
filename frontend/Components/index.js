@@ -38,7 +38,6 @@ export { default as GlobalSVGDefs } from "./shared/GlobalSVGDefs";
 
 export {
   FourCornerFlourish,
-  TwoCornerFlourish,
   GothicCorner,
 } from "./ornaments/CornerFlourish";
 

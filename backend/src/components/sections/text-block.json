@@ -3,20 +3,70 @@
   "info": {
     "displayName": "Text Block",
     "icon": "file-text",
-    "description": "Heading + rich text body with alignment control"
+    "description": "Rich text body for all the basic page content"
   },
   "options": {},
   "attributes": {
-    "heading": {
-      "type": "string"
-    },
     "body": {
-      "type": "richtext"
+      "type": "richtext",
+      "customField": "plugin::wysiwyg-editor.wysiwyg-editor"
     },
-    "alignment": {
+    "container_size": {
       "type": "enumeration",
-      "enum": ["left", "center", "right"],
-      "default": "left"
+      "enum": ["narrow", "reading", "wide"],
+      "default": "reading"
+    },
+    "background": {
+      "type": "enumeration",
+      "enum": ["void", "stone-dark", "stone-deeper", "transparent"],
+      "default": "void"
+    },
+    "overlay": {
+      "type": "enumeration",
+      "enum": ["none", "vignette", "fog"],
+      "default": "none"
+    },
+    "texture": {
+      "type": "enumeration",
+      "enum": ["none", "metal", "stone", "rune", "gallery"],
+      "default": "none"
+    },
+    "texture_opacity": {
+      "type": "integer",
+      "min": 1,
+      "max": 100,
+      "default": 3
+    },
+    "corners": {
+      "type": "enumeration",
+      "enum": ["none", "accent", "flourish"],
+      "default": "none"
+    },
+    "animation": {
+      "type": "enumeration",
+      "enum": [
+        "fade-up",
+        "fade-down",
+        "fade-left",
+        "fade-right",
+        "fade-in",
+        "scale-in",
+        "none"
+      ],
+      "default": "fade-up"
+    },
+    "vertical_spacing": {
+      "type": "enumeration",
+      "enum": ["tight", "normal", "loose"],
+      "default": "normal"
+    },
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "enable_prose": {
+      "type": "boolean",
+      "default": true
     }
   }
 }

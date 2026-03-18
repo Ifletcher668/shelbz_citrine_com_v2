@@ -1,3 +1,6 @@
 module.exports = ({ env }) => ({
-  // No additional plugins required for this setup
+  "wysiwyg-editor": {
+    enabled: true,
+    resolve: "./src/plugins/wysiwyg-editor",
+  },
 });

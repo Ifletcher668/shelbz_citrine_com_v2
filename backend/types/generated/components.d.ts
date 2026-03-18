@@ -71,15 +71,59 @@ export interface SectionsHero extends Struct.ComponentSchema {
 export interface SectionsTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_sections_text_blocks';
   info: {
-    description: 'Heading + rich text body with alignment control';
+    description: 'Rich text body for all the basic page content';
     displayName: 'Text Block';
     icon: 'file-text';
   };
   attributes: {
-    alignment: Schema.Attribute.Enumeration<['left', 'center', 'right']> &
-      Schema.Attribute.DefaultTo<'left'>;
-    body: Schema.Attribute.RichText;
-    heading: Schema.Attribute.String;
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    animation: Schema.Attribute.Enumeration<
+      [
+        'fade-up',
+        'fade-down',
+        'fade-left',
+        'fade-right',
+        'fade-in',
+        'scale-in',
+        'none',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'fade-up'>;
+    background: Schema.Attribute.Enumeration<
+      ['void', 'stone-dark', 'stone-deeper', 'transparent']
+    > &
+      Schema.Attribute.DefaultTo<'void'>;
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
+    container_size: Schema.Attribute.Enumeration<
+      ['narrow', 'reading', 'wide']
+    > &
+      Schema.Attribute.DefaultTo<'reading'>;
+    corners: Schema.Attribute.Enumeration<['none', 'accent', 'flourish']> &
+      Schema.Attribute.DefaultTo<'none'>;
+    enable_prose: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    overlay: Schema.Attribute.Enumeration<['none', 'vignette', 'fog']> &
+      Schema.Attribute.DefaultTo<'none'>;
+    texture: Schema.Attribute.Enumeration<
+      ['none', 'metal', 'stone', 'rune', 'gallery']
+    > &
+      Schema.Attribute.DefaultTo<'none'>;
+    texture_opacity: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<3>;
+    vertical_spacing: Schema.Attribute.Enumeration<
+      ['tight', 'normal', 'loose']
+    > &
+      Schema.Attribute.DefaultTo<'normal'>;
   };
 }
 

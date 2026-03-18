@@ -5,7 +5,8 @@
   "workspaces": {
     "packages": [
       "frontend",
-      "backend"
+      "backend",
+      "backend/src/plugins/wysiwyg-editor"
     ],
     "nohoist": [
       "**/sharp",
@@ -19,7 +20,11 @@
     "dev": "concurrently \"yarn frontend\" \"yarn backend\""
   },
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "@testing-library/jest-dom": "^6.9.1",
+    "babel-jest": "^30.3.0",
+    "concurrently": "^9.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0"
   },
   "resolutions": {
     "@radix-ui/react-slot": "^1.2.3"

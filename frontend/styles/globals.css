@@ -750,6 +750,77 @@
         padding-right: var(--spacing-4);
     }
 
+    /* ============================================
+     Utility Classes - Referenced in JSX
+     ============================================ */
+
+    /* Deep multi-layer shadow — used on elevated cards and featured elements */
+    .heavy-shadow {
+        box-shadow:
+            0 4px 6px rgba(0, 0, 0, 0.5),
+            0 10px 15px rgba(0, 0, 0, 0.6),
+            0 20px 40px rgba(0, 0, 0, 0.7),
+            0 40px 80px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(180, 170, 150, 0.04);
+    }
+
+    /* Subtle fog border with hover transition — used on interactive containers */
+    .tension-border {
+        border: 1px solid rgba(90, 90, 90, 0.3);
+        transition: border-color 300ms;
+    }
+
+    .tension-border:hover {
+        border-color: rgba(180, 170, 150, 0.2);
+    }
+
+    /* Blog article prose styling */
+    .prose-heritage {
+        font-family: var(--font-body);
+        color: var(--color-stone-grey);
+        line-height: 1.8;
+        font-size: var(--text-lg);
+    }
+
+    .prose-heritage h2,
+    .prose-heritage h3,
+    .prose-heritage h4 {
+        color: var(--color-silver-white);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .prose-heritage p {
+        margin-bottom: 1.5rem;
+    }
+
+    .prose-heritage a {
+        color: var(--color-pale-gold);
+    }
+
+    .prose-heritage blockquote {
+        border-left: 2px solid rgba(180, 170, 150, 0.3);
+        padding-left: 1.5rem;
+        font-style: italic;
+        color: var(--color-fog);
+        margin-bottom: 1.5rem;
+    }
+
+    .prose-heritage ul,
+    .prose-heritage ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .prose-heritage li {
+        margin-bottom: 0.5rem;
+    }
+
+    .prose-heritage strong {
+        color: var(--color-silver-white);
+        font-weight: 600;
+    }
+
     /* Drop Cap for Blog Posts - Souls style */
     .drop-cap::first-letter {
         font-family: var(--font-display);
@@ -760,6 +831,181 @@
         margin-top: 0.25rem;
         color: var(--color-pale-gold);
         line-height: 0.75;
+    }
+
+    /* ============================================
+       Markdown Rich Content Extensions
+       ============================================ */
+
+    /* Highlight */
+    .md-highlight {
+        background: linear-gradient(
+            90deg,
+            rgba(180, 170, 150, 0.18) 0%,
+            rgba(180, 170, 150, 0.08) 100%
+        );
+        color: var(--color-silver-white);
+        border-bottom: 1px solid var(--color-pale-gold);
+        padding: 0 0.2em;
+    }
+
+    /* Containers */
+    .md-container {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .md-center {
+        text-align: center;
+    }
+
+    .md-right {
+        text-align: right;
+    }
+
+    /* Callouts */
+    .md-callout {
+        border-left: 2px solid rgba(180, 170, 150, 0.4);
+        background-color: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(4px);
+        padding: 1.25rem 1.5rem;
+    }
+
+    .md-callout-warning {
+        border-left-color: var(--color-deep-crimson);
+    }
+
+    .md-callout-info {
+        border-left-color: var(--color-frost-blue);
+    }
+
+    /* Columns */
+    .md-columns {
+        display: grid;
+        gap: var(--spacing-6);
+    }
+
+    .md-columns-2 {
+        grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+        .md-columns-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .md-columns-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    .md-columns-3 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Dividers */
+    .md-divider {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: var(--spacing-6) 0;
+        color: var(--color-pale-gold);
+        opacity: 0.6;
+    }
+
+    /* Spacers */
+    .md-spacer {
+        height: var(--spacing-8);
+    }
+
+    .md-spacer-sm {
+        height: var(--spacing-4);
+    }
+
+    .md-spacer-lg {
+        height: var(--spacing-12);
+    }
+
+    /* Figures (attributed images) */
+    .md-figure {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .md-figure.float-left {
+        float: left;
+        margin-right: var(--spacing-6);
+    }
+
+    .md-figure.float-right {
+        float: right;
+        margin-left: var(--spacing-6);
+    }
+
+    .md-figure img {
+        display: block;
+        max-width: 100%;
+    }
+
+    /* Clearfix for float containers */
+    .prose-heritage::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    /* Button sizes */
+    .btn-sm {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        font-size: 9px;
+        min-height: 36px;
+    }
+
+    .btn-lg {
+        padding-left: 4rem;
+        padding-right: 4rem;
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+        font-size: 12px;
+        min-height: 52px;
+    }
+
+    /* Button icon layout */
+    .md-btn-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .md-btn-icon svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
+    /* Figure width helpers */
+    .md-figure.w-1\/3 {
+        width: 33.333%;
+    }
+
+    .md-figure.w-1\/2 {
+        width: 50%;
+    }
+
+    .md-figure.w-2\/3 {
+        width: 66.667%;
+    }
+
+    .md-figure.w-full {
+        width: 100%;
+    }
+
+    .md-figure.mx-auto {
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
