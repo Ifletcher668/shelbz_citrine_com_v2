@@ -8,7 +8,7 @@ import { getStrapiMediaUrl } from "@/lib/strapi";
 export default function GalleryCms({ data }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const { title, images } = data;
+  const { title, images } = data ?? {};
 
   if (!images || images.length === 0) return null;
 
