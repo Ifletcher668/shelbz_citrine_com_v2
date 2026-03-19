@@ -29,6 +29,9 @@ module.exports = {
     const hasFindOne = existing.some(
       (p) => p.action === 'api::page.page.findOne'
     );
+    const hasHeaderFind = existing.some(
+      (p) => p.action === 'api::header.header.find'
+    );
 
     const toCreate = [];
     if (!hasFind)
@@ -36,6 +39,11 @@ module.exports = {
     if (!hasFindOne)
       toCreate.push({
         action: 'api::page.page.findOne',
+        role: publicRole.id,
+      });
+    if (!hasHeaderFind)
+      toCreate.push({
+        action: 'api::header.header.find',
         role: publicRole.id,
       });
 

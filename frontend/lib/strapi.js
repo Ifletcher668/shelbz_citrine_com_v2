@@ -47,6 +47,19 @@ export async function getPageBySlug(slug) {
 }
 
 /**
+ * Fetch the published Header single type with primary (logo) and nav_links populated.
+ */
+export async function getHeader() {
+  const qs =
+    '?populate[primary][populate]=*' +
+    '&populate[nav_links][populate][page][fields][0]=slug' +
+    '&populate[nav_links][populate][page][fields][1]=title';
+
+  const { data } = await strapiGet(`/header${qs}`);
+  return data ?? null;
+}
+
+/**
  * Resolve a Strapi media URL to a full URL.
  * Strapi stores relative paths like /uploads/image.jpg
  */
