@@ -12,7 +12,7 @@ import OrnamentalDivider from '@/Components/ornaments/OrnamentalDivider';
 export default function FaqCms({ data }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const { items } = data;
+  const { items } = data ?? {};
 
   if (!items || items.length === 0) return null;
 

@@ -4,7 +4,7 @@ import { Section, Container } from "@/Components/layout/Section";
 import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
 
 export default function HeroCms({ data }) {
-  const { headline, subheadline, cta_text, cta_link } = data;
+  const { headline, subheadline, cta_text, cta_link } = data ?? {};
 
   return (
     <Section variant="hero" className="relative overflow-hidden">

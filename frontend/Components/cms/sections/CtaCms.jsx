@@ -8,7 +8,7 @@ import BackgroundTexture from '@/Components/shared/BackgroundTexture';
 export default function CtaCms({ data }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const { headline, body, button_text, button_link } = data;
+  const { headline, body, button_text, button_link } = data ?? {};
 
   return (
     <Section background="stone-dark" className="relative overflow-hidden" ref={ref}>
