@@ -8,7 +8,7 @@ export function CartProvider({ children }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem("darkLuxCart");
+    const savedCart = localStorage.getItem("shelbzCitrineCart");
     if (savedCart) {
       try {
         setItems(JSON.parse(savedCart));
@@ -21,7 +21,7 @@ export function CartProvider({ children }) {
 
   // Save cart to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem("darkLuxCart", JSON.stringify(items));
+    localStorage.setItem("shelbzCitrineCart", JSON.stringify(items));
   }, [items]);
 
   const addItem = (

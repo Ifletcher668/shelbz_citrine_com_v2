@@ -1,5 +1,5 @@
 /**
- * Global Constants for Dark Lux Storefront
+ * Global Constants for Shelbz Citrine
  *
  * Central location for all magic strings, numbers, and configuration values.
  * Import from this file instead of hardcoding values throughout the app.
@@ -87,8 +87,8 @@ export const SPACING = {
  */
 export const ANIMATIONS = {
   // Timing functions (cubic-bezier values)
-  EASE_DEFAULT: [0.25, 0.1, 0.25, 1],  // browser default
-  SOULS_TIMING: [0.16, 1, 0.3, 1],     // site identity easing
+  EASE_DEFAULT: [0.25, 0.1, 0.25, 1], // browser default
+  SOULS_TIMING: [0.16, 1, 0.3, 1], // site identity easing
   SHARP_TIMING: [0.4, 0, 0.6, 1],
   SMOOTH_TIMING: [0.4, 0, 0.2, 1],
 
@@ -310,7 +310,7 @@ export const BLOG = {
 // ============================================
 
 export const CART = {
-  LOCAL_STORAGE_KEY: "darkLuxCart",
+  LOCAL_STORAGE_KEY: "shelbzCitrineCart",
   MAX_QUANTITY: 99,
   CURRENCY: "USD",
   CURRENCY_SYMBOL: "$",
