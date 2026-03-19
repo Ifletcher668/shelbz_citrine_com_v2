@@ -13,8 +13,6 @@ shelbz_citrine_com_v2/
 └── package.json       # Workspace root
 ```
 
-testing
-
 ## Packages
 
 | Package    | Description              | Deploy target    |
