@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_navigation_logo_texts",
+  "info": {
+    "displayName": "Logo Text",
+    "icon": "bold"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string",
+      "default": "/"
+    }
+  }
+}

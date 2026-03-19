@@ -13,6 +13,43 @@ export interface FaqItemFaqItem extends Struct.ComponentSchema {
   };
 }
 
+export interface NavigationLogoImage extends Struct.ComponentSchema {
+  collectionName: 'components_navigation_logo_images';
+  info: {
+    displayName: 'Logo Image';
+    icon: 'picture';
+  };
+  attributes: {
+    image: Schema.Attribute.Media<'images'>;
+    link: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/'>;
+  };
+}
+
+export interface NavigationLogoText extends Struct.ComponentSchema {
+  collectionName: 'components_navigation_logo_texts';
+  info: {
+    displayName: 'Logo Text';
+    icon: 'bold';
+  };
+  attributes: {
+    link: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/'>;
+    text: Schema.Attribute.String;
+  };
+}
+
+export interface NavigationNavLink extends Struct.ComponentSchema {
+  collectionName: 'components_navigation_nav_links';
+  info: {
+    displayName: 'Nav Link';
+    icon: 'link';
+  };
+  attributes: {
+    label: Schema.Attribute.String;
+    page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
+    url: Schema.Attribute.String;
+  };
+}
+
 export interface SectionsCta extends Struct.ComponentSchema {
   collectionName: 'components_sections_ctas';
   info: {
@@ -131,6 +168,9 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'faq-item.faq-item': FaqItemFaqItem;
+      'navigation.logo-image': NavigationLogoImage;
+      'navigation.logo-text': NavigationLogoText;
+      'navigation.nav-link': NavigationNavLink;
       'sections.cta': SectionsCta;
       'sections.faq': SectionsFaq;
       'sections.gallery': SectionsGallery;

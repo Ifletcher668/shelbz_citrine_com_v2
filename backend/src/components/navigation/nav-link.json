@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_navigation_nav_links",
+  "info": {
+    "displayName": "Nav Link",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "metadatas": {
+        "description": "Leave blank to use the linked page's title"
+      }
+    },
+    "url": {
+      "type": "string"
+    },
+    "page": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::page.page"
+    }
+  }
+}

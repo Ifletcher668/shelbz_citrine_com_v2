@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import BackgroundTexture from "@/Components/shared/BackgroundTexture";
 import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
+import { getHeader, getStrapiMediaUrl } from "@/lib/strapi";
 
 /**
  * Header Component - "Grimoire Navigation"
@@ -12,9 +14,13 @@ import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
  * - Serif fonts throughout
  * - Slow, deliberate animations
  */
+
+const FALLBACK_PRIMARY = { type: "text", text: "Shelbz Citrine", link: "/" };
+
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [cmsData, setCmsData] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +41,12 @@ export default function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    getHeader()
+      .then(setCmsData)
+      .catch(() => {});
+  }, []);
+
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -47,11 +59,18 @@ export default function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  const navLinks = [
-    { href: "/about", label: "About" },
-    { href: "/process", label: "Process" },
-    { href: "/blog", label: "Blog" },
-  ];
+  const navLinks = cmsData?.nav_links?.length
+    ? cmsData.nav_links.map((link) => ({
+        href: link.page ? `/${link.page.slug}` : link.url,
+        label: link.label || link.page?.title || "",
+      }))
+    : []; //TODO: Add telemetry
+
+  const primaryItem = cmsData?.primary?.[0] ?? null;
+  const logoLink = primaryItem?.link || FALLBACK_PRIMARY.link;
+  const ctaText = cmsData?.cta_text || null;
+  const ctaLink = cmsData?.cta_link || null;
+  // TODO: add telemetry
 
   return (
     <>
@@ -70,11 +89,26 @@ export default function Header() {
           <nav className="flex items-center justify-between py-5">
             {/* Logo - Ornamental */}
             <Link
-              href="/"
+              href={logoLink}
               className="group text-xl md:text-2xl tracking-wider hover:text-pale-gold transition-colors duration-500 no-underline"
             >
-              HERITAGE
-              <SimpleDivider className="mt-1" />
+              {primaryItem?.__component === "navigation.logo-image" &&
+              primaryItem.image ? (
+                <Image
+                  src={getStrapiMediaUrl(primaryItem.image.url)}
+                  alt={primaryItem.image.alternativeText || "Logo"}
+                  width={primaryItem.image.width || 120}
+                  height={primaryItem.image.height || 40}
+                  className="object-contain"
+                />
+              ) : (
+                <>
+                  {primaryItem?.__component === "navigation.logo-text"
+                    ? primaryItem.text
+                    : FALLBACK_PRIMARY.text}
+                  <SimpleDivider className="mt-1" />
+                </>
+              )}
             </Link>
 
             {/* Desktop Navigation */}
@@ -94,11 +128,14 @@ export default function Header() {
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden md:block">
-              <Link href="/consultation" className="btn-primary">
-                Book a Consultation
-              </Link>
-            </div>
+            {ctaText !== null ||
+              (ctaLink !== null && (
+                <div className="hidden md:block">
+                  <Link href={ctaLink} className="btn-primary">
+                    {ctaText}
+                  </Link>
+                </div>
+              ))}
 
             {/* Mobile Menu Button */}
             <button
@@ -214,11 +251,11 @@ export default function Header() {
                   }}
                 >
                   <Link
-                    href="/consultation"
+                    href={ctaLink}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="btn-primary w-full text-center"
                   >
-                    Book a Consultation
+                    {ctaText}
                   </Link>
                 </motion.div>
 
