@@ -14,14 +14,8 @@ import { getHeader, getStrapiMediaUrl } from "@/lib/strapi";
  * - Serif fonts throughout
  * - Slow, deliberate animations
  */
-const FALLBACK_NAV_LINKS = [
-  { href: "/about", label: "About" },
-  { href: "/process", label: "Process" },
-  { href: "/blog", label: "Blog" },
-];
 
-const FALLBACK_PRIMARY = { type: "text", text: "HERITAGE", link: "/" };
-const FALLBACK_CTA = { text: "Book a Consultation", link: "/consultation" };
+const FALLBACK_PRIMARY = { type: "text", text: "Shelbz Citrine", link: "/" };
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,7 +42,9 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    getHeader().then(setCmsData).catch(() => {});
+    getHeader()
+      .then(setCmsData)
+      .catch(() => {});
   }, []);
 
   // Prevent body scroll when mobile menu is open
@@ -68,12 +64,13 @@ export default function Header() {
         href: link.page ? `/${link.page.slug}` : link.url,
         label: link.label || link.page?.title || "",
       }))
-    : FALLBACK_NAV_LINKS;
+    : []; //TODO: Add telemetry
 
   const primaryItem = cmsData?.primary?.[0] ?? null;
   const logoLink = primaryItem?.link || FALLBACK_PRIMARY.link;
-  const ctaText = cmsData?.cta_text || FALLBACK_CTA.text;
-  const ctaLink = cmsData?.cta_link || FALLBACK_CTA.link;
+  const ctaText = cmsData?.cta_text || null;
+  const ctaLink = cmsData?.cta_link || null;
+  // TODO: add telemetry
 
   return (
     <>
@@ -95,7 +92,8 @@ export default function Header() {
               href={logoLink}
               className="group text-xl md:text-2xl tracking-wider hover:text-pale-gold transition-colors duration-500 no-underline"
             >
-              {primaryItem?.__component === "navigation.logo-image" && primaryItem.image ? (
+              {primaryItem?.__component === "navigation.logo-image" &&
+              primaryItem.image ? (
                 <Image
                   src={getStrapiMediaUrl(primaryItem.image.url)}
                   alt={primaryItem.image.alternativeText || "Logo"}
@@ -130,11 +128,14 @@ export default function Header() {
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden md:block">
-              <Link href={ctaLink} className="btn-primary">
-                {ctaText}
-              </Link>
-            </div>
+            {ctaText !== null ||
+              (ctaLink !== null && (
+                <div className="hidden md:block">
+                  <Link href={ctaLink} className="btn-primary">
+                    {ctaText}
+                  </Link>
+                </div>
+              ))}
 
             {/* Mobile Menu Button */}
             <button
