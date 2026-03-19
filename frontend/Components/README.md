@@ -1,6 +1,6 @@
 # Components Directory
 
-This directory contains all reusable React components for the Dark Lux Storefront.
+This directory contains all reusable React components for shelbz-citrine.com
 
 ## Organization
 
@@ -21,11 +21,11 @@ Components/
 
 ```javascript
 // ✅ Good - Clean imports from barrel
-import { Section, Container, Header } from '@/Components';
+import { Section, Container, Header } from "@/Components";
 
 // ❌ Avoid - Direct imports (harder to refactor)
-import { Section } from '@/Components/layout/Section';
-import Header from '@/Components/layout/Header';
+import { Section } from "@/Components/layout/Section";
+import Header from "@/Components/layout/Header";
 ```
 
 ## Core Components
@@ -33,6 +33,7 @@ import Header from '@/Components/layout/Header';
 ### Layout
 
 #### Section
+
 Standardized section wrapper with consistent vertical spacing.
 
 ```jsx
@@ -42,24 +43,26 @@ Standardized section wrapper with consistent vertical spacing.
 ```
 
 **Props:**
+
 - `variant`: `"default"` | `"hero"` (adds extra top padding for hero sections)
 - `background`: `"void"` | `"stone-dark"` | `"transparent"`
 - `className`: Additional CSS classes
 
 #### Container
+
 Standardized container for max-width and horizontal padding.
 
 ```jsx
-<Container size="reading">
-  {children}
-</Container>
+<Container size="reading">{children}</Container>
 ```
 
 **Props:**
+
 - `size`: `"narrow"` (56rem) | `"reading"` (65ch) | `"wide"` (90rem)
 - `className`: Additional CSS classes
 
 **Common Pattern:**
+
 ```jsx
 <Section variant="hero">
   <Container size="wide">
@@ -71,6 +74,7 @@ Standardized container for max-width and horizontal padding.
 ### Shared
 
 #### BackgroundTexture
+
 SVG texture overlay for sections.
 
 ```jsx
@@ -78,12 +82,14 @@ SVG texture overlay for sections.
 ```
 
 **Props:**
+
 - `variant`: `"grain"` | `"rune"` | `"fog"` (default: `"grain"`)
 - `opacity`: Number between 0-1 (default: 0.05)
 
 **Note:** Keep opacity low (0.02-0.05) to avoid performance issues.
 
 #### TooltipHelp
+
 Inline help tooltip using Radix UI.
 
 ```jsx
@@ -93,10 +99,12 @@ Inline help tooltip using Radix UI.
 ```
 
 **Props:**
+
 - `tooltip`: String - Help text to display
 - `children`: React node - Trigger element
 
 #### CartDrawer
+
 Slide-in cart drawer (for future e-commerce).
 
 ```jsx
@@ -108,6 +116,7 @@ Automatically manages its own open/close state via CartContext.
 ### Forms
 
 #### ConsultationForm
+
 Multi-step consultation booking form with Netlify Forms integration.
 
 ```jsx
@@ -115,17 +124,19 @@ Multi-step consultation booking form with Netlify Forms integration.
 ```
 
 **Features:**
+
 - 3-step wizard (Contact → Ring Details → Vision/Photos)
 - Zod validation
 - File upload (up to 5 images, 5MB each)
 - Progress bar
 - Netlify Forms submission
 
-**Note:** Uses constants from `lib/constants.js` (FORMS.*)
+**Note:** Uses constants from `lib/constants.js` (FORMS.\*)
 
 ### Ornaments
 
 #### FourCornerFlourish
+
 Decorative corner accents (top-left, top-right, bottom-left, bottom-right).
 
 ```jsx
@@ -135,6 +146,7 @@ Decorative corner accents (top-left, top-right, bottom-left, bottom-right).
 Absolute positioned, so parent needs `relative`.
 
 #### SimpleDivider
+
 Horizontal ornamental divider.
 
 ```jsx
@@ -153,6 +165,7 @@ All homepage sections are self-contained (no props):
 - `CTASection` - Final call-to-action
 
 **Usage:**
+
 ```jsx
 // Pages/index.jsx
 import {
@@ -162,7 +175,7 @@ import {
   GallerySection,
   FAQSection,
   CTASection,
-} from '@/Components';
+} from "@/Components";
 
 export default function Home() {
   return (
@@ -183,6 +196,7 @@ export default function Home() {
 The `ui/` directory contains 49 Radix UI primitives styled with shadcn patterns.
 
 **Common ones:**
+
 - `Button` - Primary/secondary button variants
 - `Input`, `Textarea`, `Label` - Form inputs
 - `Dialog` - Modal dialogs
@@ -190,8 +204,9 @@ The `ui/` directory contains 49 Radix UI primitives styled with shadcn patterns.
 - `Card` - Card container
 
 **Usage:**
+
 ```jsx
-import { Button, Dialog, DialogTrigger, DialogContent } from '@/Components';
+import { Button, Dialog, DialogTrigger, DialogContent } from "@/Components";
 
 <Dialog>
   <DialogTrigger asChild>
@@ -203,7 +218,7 @@ import { Button, Dialog, DialogTrigger, DialogContent } from '@/Components';
     </DialogHeader>
     {content}
   </DialogContent>
-</Dialog>
+</Dialog>;
 ```
 
 **Note:** Most UI components support `variant` prop with shadcn standard variants.
@@ -211,34 +226,40 @@ import { Button, Dialog, DialogTrigger, DialogContent } from '@/Components';
 ## Design System Integration
 
 All components use design system tokens from:
+
 - `lib/constants.js` - Colors, spacing, animations, form config
 - `lib/animations.js` - Framer Motion animation presets
 - `lib/validation.js` - Form validation utilities
 
 ### Colors
-Use semantic color constants:
-```jsx
-import { COLORS } from '@/lib/constants';
 
-<div className={COLORS.BG_PRIMARY}>  {/* bg-void */}
-  <h1 className={COLORS.TEXT_PRIMARY}>Heading</h1>  {/* text-silver-white */}
-  <p className={COLORS.TEXT_SECONDARY}>Body text</p>  {/* text-stone-grey */}
-</div>
+Use semantic color constants:
+
+```jsx
+import { COLORS } from "@/lib/constants";
+
+<div className={COLORS.BG_PRIMARY}>
+  {" "}
+  {/* bg-void */}
+  <h1 className={COLORS.TEXT_PRIMARY}>Heading</h1> {/* text-silver-white */}
+  <p className={COLORS.TEXT_SECONDARY}>Body text</p> {/* text-stone-grey */}
+</div>;
 ```
 
 ### Animations
-Use animation presets:
-```jsx
-import { fadeInUp } from '@/lib/animations';
 
-<motion.div {...fadeInUp(0.2)}>
-  Content
-</motion.div>
+Use animation presets:
+
+```jsx
+import { fadeInUp } from "@/lib/animations";
+
+<motion.div {...fadeInUp(0.2)}>Content</motion.div>;
 ```
 
 ## Component Guidelines
 
 ### DO ✓
+
 - Use PropTypes for all components
 - Add JSDoc comments with examples
 - Import from barrel (`@/Components`)
@@ -248,6 +269,7 @@ import { fadeInUp } from '@/lib/animations';
 - Keep component files focused (single responsibility)
 
 ### DON'T ✗
+
 - Hardcode colors (use design tokens)
 - Hardcode animation timings (use presets)
 - Create slow animations (>800ms)
@@ -264,27 +286,24 @@ import { fadeInUp } from '@/lib/animations';
 5. **Use constants** from `lib/constants.js` instead of magic values
 
 **Example template:**
+
 ```jsx
-import PropTypes from 'prop-types';
-import { COLORS, SPACING } from '@/lib/constants';
+import PropTypes from "prop-types";
+import { COLORS, SPACING } from "@/lib/constants";
 
 /**
  * Component description
- * 
+ *
  * @component
  * @example
  * <MyComponent variant="primary">Content</MyComponent>
- * 
+ *
  * @param {Object} props
  * @param {React.ReactNode} props.children - Description
  * @param {"primary"|"secondary"} props.variant - Description
  */
 export default function MyComponent({ children, variant = "primary" }) {
-  return (
-    <div className={`component ${variant}`}>
-      {children}
-    </div>
-  );
+  return <div className={`component ${variant}`}>{children}</div>;
 }
 
 MyComponent.propTypes = {
