@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_sections_images",
+  "info": {
+    "displayName": "Image",
+    "icon": "picture",
+    "description": "Standalone image section"
+  },
+  "options": {},
+  "attributes": {
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "alt_text": {
+      "type": "string"
+    },
+    "anchor_id": {
+      "type": "string"
+    }
+  }
+}

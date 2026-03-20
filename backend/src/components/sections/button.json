@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_sections_buttons",
+  "info": {
+    "displayName": "Button",
+    "icon": "cursor",
+    "description": "Standalone button section"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "link": {
+      "type": "string",
+      "required": true
+    },
+    "variant": {
+      "type": "enumeration",
+      "enum": ["primary", "secondary"],
+      "default": "primary"
+    },
+    "alignment": {
+      "type": "enumeration",
+      "enum": ["left", "center", "right"],
+      "default": "center"
+    },
+    "anchor_id": {
+      "type": "string"
+    }
+  }
+}
