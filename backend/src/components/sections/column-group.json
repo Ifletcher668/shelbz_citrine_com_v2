@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_sections_column_groups",
+  "info": {
+    "displayName": "Column Group",
+    "icon": "grid",
+    "description": "A flexible grid of WYSIWYG columns (up to 4). Column count is implicit from the number of items added."
+  },
+  "options": {},
+  "attributes": {
+    "colum_name": {
+      "type": "string",
+      "private": true
+    },
+    "section_id": {
+      "type": "string",
+      "unique": true,
+      "regex": "^[a-z]+(-[a-z]+)*$"
+    },
+    "columns": {
+      "type": "component",
+      "component": "column.column",
+      "repeatable": true
+    }
+  }
+}

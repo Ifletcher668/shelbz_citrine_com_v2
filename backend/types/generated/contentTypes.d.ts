@@ -430,6 +430,43 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBulletListBulletList extends Struct.CollectionTypeSchema {
+  collectionName: 'bullet_lists';
+  info: {
+    description: 'A reusable list of icon-prefixed bullet items with optional descriptions, embeddable in WYSIWYG content via [ref:bullet-list:id]';
+    displayName: 'Bullet List';
+    pluralName: 'bullet-lists';
+    singularName: 'bullet-list';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    items: Schema.Attribute.Component<'bullet-list.bullet-item', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::bullet-list.bullet-list'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
   collectionName: 'headers';
   info: {
@@ -1024,6 +1061,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::bullet-list.bullet-list': ApiBulletListBulletList;
       'api::header.header': ApiHeaderHeader;
       'api::page.page': ApiPagePage;
       'plugin::content-releases.release': PluginContentReleasesRelease;

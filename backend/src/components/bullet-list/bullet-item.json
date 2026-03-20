@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_bullet_list_bullet_items",
+  "info": {
+    "displayName": "Bullet Item",
+    "icon": "check"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["check", "x"],
+      "required": true,
+      "default": "check"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

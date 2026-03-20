@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_step_steps",
+  "info": {
+    "displayName": "Step",
+    "icon": "arrow-right",
+    "description": "A single process step with an icon name (Lucide), title, and WYSIWYG description"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext",
+      "customField": "plugin::wysiwyg-editor.wysiwyg-editor"
+    }
+  }
+}

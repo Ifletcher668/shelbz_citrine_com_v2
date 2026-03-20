@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_column_columns",
+  "info": {
+    "displayName": "Column",
+    "icon": "layout",
+    "description": "A single column with WYSIWYG body content"
+  },
+  "options": {},
+  "attributes": {
+    "column_name": {
+      "type": "string",
+      "private": true
+    },
+    "body": {
+      "type": "customField",
+      "customField": "plugin::wysiwyg-editor.wysiwyg-editor"
+    }
+  }
+}
