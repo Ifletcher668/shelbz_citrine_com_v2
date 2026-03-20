@@ -527,11 +527,10 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     sections: Schema.Attribute.DynamicZone<
       [
-        'sections.hero',
-        'sections.text-block',
         'sections.gallery',
         'sections.faq',
         'sections.cta',
+        'sections.column-group',
       ]
     >;
     seo_description: Schema.Attribute.Text &

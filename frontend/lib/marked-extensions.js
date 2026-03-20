@@ -21,6 +21,8 @@
  *                First paragraph gets large golden first letter.
  *                :::
  *
+ * TOOLTIP:       ^[visible text](Tooltip content here)
+ *
  * CALLOUTS:      :::callout           :::callout-warning     :::callout-info
  *                Note text            Warning text            Info text
  *                :::                  :::                     :::
@@ -33,10 +35,26 @@
  *                :::                  Col 3
  *                                     :::
  *
+ * CONTAINERS:    :::container-narrow  :::container-reading  :::container-wide  :::container-full
+ *                content              content               content            content
+ *                :::                  :::                   :::                :::
+ *
+ * CARDS:         :::card-dark         :::card-gold          :::card-steel
+ *                content              content               content
+ *                :::                  :::                   :::
+ *
  * DIVIDERS:      :::divider           (ornamental SVG divider)
  *                ---                  (simple gradient line — standard HR)
  *
  * SPACERS:       :::spacer            :::spacer-sm            :::spacer-lg
+ *
+ * BULLETS:       [-] X / cross bullet point
+ *                [+] checkmark bullet point
+ *
+ * EMBEDS:        [ref:bullet-list:42]
+ *                Embeds a relation by type and id. Resolved at build time via
+ *                parseWithRelations(body, relations). Use extractRelationRefs()
+ *                to collect refs for prefetching.
  */
 import { Marked } from "marked";
 
@@ -52,7 +70,12 @@ const ALLOWED_COLORS = new Set([
   "stone-grey",
 ]);
 
-const ALLOWED_BUTTON_CLASSES = new Set(["btn-primary", "btn-secondary", "sm", "lg"]);
+const ALLOWED_BUTTON_CLASSES = new Set([
+  "btn-primary",
+  "btn-secondary",
+  "sm",
+  "lg",
+]);
 
 const ALLOWED_FIGURE_POSITIONAL_CLASSES = new Set([
   "float-left",
@@ -64,7 +87,11 @@ const ALLOWED_FIGURE_POSITIONAL_CLASSES = new Set([
   "mx-auto",
 ]);
 
-const ALLOWED_FIGURE_DECORATION_CLASSES = new Set(["border", "rounded", "shadow"]);
+const ALLOWED_FIGURE_DECORATION_CLASSES = new Set([
+  "border",
+  "rounded",
+  "shadow",
+]);
 
 const ALLOWED_DIRECTIVES = new Set([
   "center",
@@ -75,20 +102,38 @@ const ALLOWED_DIRECTIVES = new Set([
   "callout-info",
   "columns-2",
   "columns-3",
+  "container-narrow",
+  "container-reading",
+  "container-wide",
+  "container-full",
   "divider",
   "spacer",
   "spacer-sm",
   "spacer-lg",
   "prose",
+  "card-dark",
+  "card-gold",
+  "card-steel",
 ]);
 
-const SELF_CLOSING_DIRECTIVES = new Set(["divider", "spacer", "spacer-sm", "spacer-lg"]);
+const SELF_CLOSING_DIRECTIVES = new Set([
+  "divider",
+  "spacer",
+  "spacer-sm",
+  "spacer-lg",
+]);
 
 // ─── Inline SVGs ──────────────────────────────────────────────────────────────
 
 const ORNAMENTAL_DIVIDER_SVG = `<svg width="200" height="40" viewBox="0 0 200 40" class="text-pale-gold opacity-60" aria-hidden="true"><line x1="10" y1="20" x2="80" y2="20" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="120" y1="20" x2="190" y2="20" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="100" cy="20" r="4" fill="currentColor"/><circle cx="100" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="1"/><path d="M 88 20 L 90 18 L 92 20 L 90 22 Z" fill="currentColor"/><path d="M 108 20 L 110 18 L 112 20 L 110 22 Z" fill="currentColor"/></svg>`;
 
+const ICON_HELP_CIRCLE = `<svg width="0.85em" height="0.85em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.05em;flex-shrink:0" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
 const ICON_ARROW_RIGHT = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+
+const ICON_X = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+
+const ICON_CHECK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 18 4 13"/></svg>`;
 
 const ICON_EXTERNAL_LINK = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
 
@@ -119,6 +164,17 @@ function parseAttrs(str) {
 }
 
 /**
+ * Escape characters that are unsafe inside HTML attribute values.
+ */
+function escapeAttr(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/**
  * Strip dangerous protocols from URLs.
  */
 function sanitizeUrl(url) {
@@ -140,17 +196,36 @@ const containerDirectiveExtension = {
     return idx === -1 ? undefined : idx;
   },
   tokenizer(src) {
-    // \n? before closing ::: allows empty-body (self-closing) directives
-    const match = /^:::([\w][\w-]*)[^\n]*\n([\s\S]*?)\n?:::/.exec(src);
-    if (!match) return;
+    const openMatch = /^:::([\w][\w-]*)[^\n]*\n/.exec(src);
+    if (!openMatch) return;
 
-    const name = match[1];
+    const name = openMatch[1];
     if (!ALLOWED_DIRECTIVES.has(name)) return;
 
-    const body = match[2];
+    // Depth-counting scan so nested directives are supported.
+    // A closing ::: is one that isn't immediately followed by a word character.
+    const rest = src.slice(openMatch[0].length);
+    let depth = 1;
+    let i = 0;
+    while (i < rest.length && depth > 0) {
+      if (rest.slice(i).startsWith(":::")) {
+        if (/^:::\s*(?:\n|$)/.test(rest.slice(i))) {
+          if (--depth === 0) break;
+        } else {
+          depth++;
+        }
+        i += 3;
+      } else {
+        i++;
+      }
+    }
+    if (depth !== 0) return; // unbalanced — not a valid directive
+
+    const body = rest.slice(0, i).replace(/\n$/, "");
+    const rawEnd = openMatch[0].length + i + 3 + (rest[i + 3] === "\n" ? 1 : 0);
     const token = {
       type: "containerDirective",
-      raw: match[0],
+      raw: src.slice(0, rawEnd),
       name,
       body,
     };
@@ -179,16 +254,24 @@ const containerDirectiveExtension = {
     if (name === "divider") {
       return `<div class="md-divider" aria-hidden="true">${ORNAMENTAL_DIVIDER_SVG}</div>\n`;
     }
-    if (name === "spacer") return `<div class="md-spacer" aria-hidden="true"></div>\n`;
-    if (name === "spacer-sm") return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
-    if (name === "spacer-lg") return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
+    if (name === "spacer")
+      return `<div class="md-spacer" aria-hidden="true"></div>\n`;
+    if (name === "spacer-sm")
+      return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
+    if (name === "spacer-lg")
+      return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
 
     // Column layout
     if (name.startsWith("columns-")) {
       const colClass =
-        name === "columns-3" ? "md-columns md-columns-3" : "md-columns md-columns-2";
+        name === "columns-3"
+          ? "md-columns md-columns-3"
+          : "md-columns md-columns-2";
       const colsHtml = (token.colTokens || [])
-        .map((colToks) => `<div class="md-column">${this.parser.parse(colToks)}</div>`)
+        .map(
+          (colToks) =>
+            `<div class="md-column">${this.parser.parse(colToks)}</div>`,
+        )
         .join("");
       return `<div class="${colClass}">${colsHtml}</div>\n`;
     }
@@ -204,12 +287,26 @@ const containerDirectiveExtension = {
         return `<div class="md-container drop-cap">${inner}</div>\n`;
       case "prose":
         return `<div class="md-container prose-heritage">${inner}</div>\n`;
+      case "container-narrow":
+        return `<div class="md-container md-constrain-narrow">${inner}</div>\n`;
+      case "container-reading":
+        return `<div class="md-container md-constrain-reading">${inner}</div>\n`;
+      case "container-wide":
+        return `<div class="md-container md-constrain-wide">${inner}</div>\n`;
+      case "container-full":
+        return `<div class="md-container md-constrain-full">${inner}</div>\n`;
       case "callout":
         return `<aside class="md-container md-callout">${inner}</aside>\n`;
       case "callout-warning":
         return `<aside class="md-container md-callout md-callout-warning">${inner}</aside>\n`;
       case "callout-info":
         return `<aside class="md-container md-callout md-callout-info">${inner}</aside>\n`;
+      case "card-dark":
+        return `<div class="md-card md-card-dark">${inner}</div>\n`;
+      case "card-gold":
+        return `<div class="md-card md-card-gold">${inner}</div>\n`;
+      case "card-steel":
+        return `<div class="md-card md-card-steel">${inner}</div>\n`;
       default:
         return `<div class="md-container">${inner}</div>\n`;
     }
@@ -274,7 +371,9 @@ const buttonLinkExtension = {
     const match = /^\[([^\]]+)\]\(([^)]+)\)\{([^}]+)\}/.exec(src);
     if (!match) return;
     const { classes, attrs } = parseAttrs(match[3]);
-    const btnClass = classes.find((c) => c === "btn-primary" || c === "btn-secondary");
+    const btnClass = classes.find(
+      (c) => c === "btn-primary" || c === "btn-secondary",
+    );
     if (!btnClass) return;
     return {
       type: "buttonLink",
@@ -296,13 +395,18 @@ const buttonLinkExtension = {
         ? "btn-sm"
         : "";
     const iconName = attrs.icon;
-    const iconHtml = iconName && BUTTON_ICONS[iconName] ? BUTTON_ICONS[iconName] : "";
+    const iconHtml =
+      iconName && BUTTON_ICONS[iconName] ? BUTTON_ICONS[iconName] : "";
     const iconClass = iconHtml ? "md-btn-icon" : "";
 
     const isExternal = attrs.target === "_blank";
-    const targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
+    const targetAttr = isExternal
+      ? ' target="_blank" rel="noopener noreferrer"'
+      : "";
 
-    const classAttr = [token.btnClass, sizeClass, iconClass].filter(Boolean).join(" ");
+    const classAttr = [token.btnClass, sizeClass, iconClass]
+      .filter(Boolean)
+      .join(" ");
     return `<a href="${url}" class="${classAttr}"${targetAttr}>${token.label}${iconHtml}</a>`;
   },
 };
@@ -322,8 +426,12 @@ const attributedImageExtension = {
     const match = /^!\[([^\]]*)\]\(([^)]+)\)\{([^}]+)\}/.exec(src);
     if (!match) return;
     const { classes } = parseAttrs(match[3]);
-    const positional = classes.filter((c) => ALLOWED_FIGURE_POSITIONAL_CLASSES.has(c));
-    const decoration = classes.filter((c) => ALLOWED_FIGURE_DECORATION_CLASSES.has(c));
+    const positional = classes.filter((c) =>
+      ALLOWED_FIGURE_POSITIONAL_CLASSES.has(c),
+    );
+    const decoration = classes.filter((c) =>
+      ALLOWED_FIGURE_DECORATION_CLASSES.has(c),
+    );
     return {
       type: "attributedImage",
       raw: match[0],
@@ -337,24 +445,144 @@ const attributedImageExtension = {
     const url = sanitizeUrl(token.src);
     const figureClass = ["md-figure", ...token.positional].join(" ");
     const imgClassAttr =
-      token.decoration.length > 0 ? ` class="${token.decoration.join(" ")}"` : "";
+      token.decoration.length > 0
+        ? ` class="${token.decoration.join(" ")}"`
+        : "";
     return `<figure class="${figureClass}"><img src="${url}" alt="${token.alt}"${imgClassAttr} /></figure>`;
+  },
+};
+
+/**
+ * Bullet point: [-] cross/X  or  [+] checkmark
+ * Block-level. Renders an icon-prefixed item with bordered icon box.
+ *   [-] Text here   → X / cross bullet
+ *   [+] Text here   → checkmark bullet
+ */
+const bulletPointExtension = {
+  name: "bulletPoint",
+  level: "block",
+  start(src) {
+    const m = src.search(/^\[-\] |^\[\+\] /m);
+    return m === -1 ? undefined : m;
+  },
+  tokenizer(src) {
+    const match = /^\[(-|\+)\] ([^\n]+)(?:\n|$)/.exec(src);
+    if (!match) return;
+    return {
+      type: "bulletPoint",
+      raw: match[0],
+      icon: match[1] === "+" ? "check" : "x",
+      text: match[2],
+    };
+  },
+  renderer(token) {
+    const iconSvg = token.icon === "check" ? ICON_CHECK : ICON_X;
+    return `<div class="md-bullet md-bullet-${token.icon}"><span class="md-bullet-icon">${iconSvg}</span><span class="md-bullet-text">${token.text}</span></div>\n`;
+  },
+};
+
+/**
+ * Relation embed: [ref:type:id]
+ * Block-level. Outputs a placeholder div with data attributes; replaced with
+ * pre-rendered HTML by parseWithRelations() after the marked pass.
+ */
+const relationEmbedExtension = {
+  name: "relationEmbed",
+  level: "block",
+  start(src) {
+    const m = src.search(/^\[ref:[\w-]+:\d+\]/m);
+    return m === -1 ? undefined : m;
+  },
+  tokenizer(src) {
+    const match = /^\[ref:([\w-]+):(\d+)\][ \t]*(?:\n|$)/.exec(src);
+    if (!match) return;
+    return {
+      type: "relationEmbed",
+      raw: match[0],
+      relType: match[1],
+      relId: match[2],
+    };
+  },
+  renderer(token) {
+    return `<div data-md-rel="${token.relType}" data-md-rel-id="${token.relId}"></div>\n`;
+  },
+};
+
+/**
+ * Tooltip: ^[visible text](tooltip content here)
+ * Renders an inline help tooltip with a HelpCircle icon.
+ */
+const tooltipExtension = {
+  name: "tooltip",
+  level: "inline",
+  start(src) {
+    const idx = src.indexOf("^[");
+    return idx === -1 ? undefined : idx;
+  },
+  tokenizer(src) {
+    const match = /^\^\[([^\]]+)\]\(([^)]+)\)/.exec(src);
+    if (!match) return;
+    return { type: "tooltip", raw: match[0], text: match[1], tip: match[2] };
+  },
+  renderer(token) {
+    const tip = escapeAttr(token.tip.trim());
+    return `<span class="md-tooltip" data-tooltip="${tip}">${token.text} ${ICON_HELP_CIRCLE}</span>`;
   },
 };
 
 // ─── Configured Instance ──────────────────────────────────────────────────────
 
-export const heritageMarked = new Marked();
-heritageMarked.use({
+// ─── Relation helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Extract all [ref:type:id] references from a markdown string (deduplicated).
+ */
+export function extractRelationRefs(markdown) {
+  const refs = [];
+  const seen = new Set();
+  const re = /\[ref:([\w-]+):(\d+)\]/g;
+  let m;
+  while ((m = re.exec(markdown)) !== null) {
+    const key = `${m[1]}:${m[2]}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      refs.push({ type: m[1], id: parseInt(m[2], 10) });
+    }
+  }
+  return refs;
+}
+
+/**
+ * Parse markdown to HTML, then replace relation embed placeholders with
+ * pre-rendered HTML strings from the relations map.
+ *
+ * @param {string} body - Markdown source
+ * @param {Record<string, string>} relations - Map of "type:id" → HTML string
+ */
+export function parseWithRelations(body, relations = {}) {
+  const html = wysiwygMarked.parse(body);
+  return html.replace(
+    /<div data-md-rel="([\w-]+)" data-md-rel-id="(\d+)"><\/div>/g,
+    (_, type, id) => relations[`${type}:${id}`] ?? "",
+  );
+}
+
+// ─── Configured Instance ──────────────────────────────────────────────────────
+
+export const wysiwygMarked = new Marked();
+wysiwygMarked.use({
   gfm: true,
   breaks: false,
   extensions: [
     // Block first
     containerDirectiveExtension,
+    bulletPointExtension,
+    relationEmbedExtension,
     // Inline — button/image BEFORE default link/image tokenizers
     buttonLinkExtension,
     attributedImageExtension,
     highlightExtension,
     coloredTextExtension,
+    tooltipExtension,
   ],
 });

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { styled } from 'styled-components';
-import { heritageMarked } from '../../utils/marked-extensions';
+import React, { useState, useEffect, useRef } from "react";
+import { styled } from "styled-components";
+import { heritageMarked } from "../../utils/marked-extensions";
 
 const PreviewContainer = styled.div`
   flex: 1;
@@ -8,20 +8,33 @@ const PreviewContainer = styled.div`
   padding: ${({ theme }) => `${theme.spaces[6]} ${theme.spaces[8]}`};
   background: ${({ theme }) => theme.colors.neutral0};
   color: ${({ theme }) => theme.colors.neutral800};
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
-    'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 1.4rem;
   line-height: 1.65;
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: ${({ theme }) => theme.colors.neutral900};
     font-weight: 600;
     margin: ${({ theme }) => `${theme.spaces[4]} 0 ${theme.spaces[2]}`};
   }
-  h1 { font-size: 2.4rem; }
-  h2 { font-size: 2rem; }
-  h3 { font-size: 1.7rem; }
-  h4 { font-size: 1.5rem; }
+  h1 {
+    font-size: 2.4rem;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  h3 {
+    font-size: 1.7rem;
+  }
+  h4 {
+    font-size: 1.5rem;
+  }
 
   p {
     margin-bottom: ${({ theme }) => theme.spaces[3]};
@@ -37,13 +50,18 @@ const PreviewContainer = styled.div`
     font-weight: 600;
   }
 
-  em { font-style: italic; }
+  em {
+    font-style: italic;
+  }
 
-  ul, ol {
+  ul,
+  ol {
     padding-left: ${({ theme }) => theme.spaces[6]};
     margin-bottom: ${({ theme }) => theme.spaces[3]};
   }
-  li { margin-bottom: ${({ theme }) => theme.spaces[1]}; }
+  li {
+    margin-bottom: ${({ theme }) => theme.spaces[1]};
+  }
 
   blockquote {
     border-left: 2px solid ${({ theme }) => theme.colors.neutral200};
@@ -55,7 +73,7 @@ const PreviewContainer = styled.div`
   }
 
   code {
-    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-family: "IBM Plex Mono", "Courier New", monospace;
     background: ${({ theme }) => theme.colors.neutral100};
     color: ${({ theme }) => theme.colors.neutral700};
     padding: ${({ theme }) => `${theme.spaces[1]} ${theme.spaces[2]}`};
@@ -97,7 +115,8 @@ const PreviewContainer = styled.div`
     margin-bottom: ${({ theme }) => theme.spaces[3]};
     font-size: 1.4rem;
   }
-  th, td {
+  th,
+  td {
     border: 1px solid ${({ theme }) => theme.colors.neutral200};
     padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[3]}`};
     text-align: left;
@@ -110,17 +129,22 @@ const PreviewContainer = styled.div`
 `;
 
 export default function Preview({ value }) {
-  const [html, setHtml] = useState('');
+  const [html, setHtml] = useState("");
   const timerRef = useRef(null);
 
   useEffect(() => {
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
-      if (!value) { setHtml(''); return; }
+      if (!value) {
+        setHtml("");
+        return;
+      }
       try {
         setHtml(heritageMarked.parse(value));
       } catch (e) {
-        setHtml(`<p style="color:#ee5e52;font-family:monospace">Parse error: ${e.message}</p>`);
+        setHtml(
+          `<p style="color:#ee5e52;font-family:monospace">Parse error: ${e.message}</p>`,
+        );
       }
     }, 300);
     return () => clearTimeout(timerRef.current);

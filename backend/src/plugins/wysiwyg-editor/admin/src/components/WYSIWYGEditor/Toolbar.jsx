@@ -29,6 +29,12 @@ import {
   HeadingSix,
 } from "@strapi/icons";
 import { HERITAGE_GROUPS } from "./toolbar-config";
+import { RELATION_TYPES } from "./relation-config";
+import RelationPickerGroup from "./RelationPickerGroup";
+
+const BUTTON_BY_ID = Object.fromEntries(
+  HERITAGE_GROUPS.flatMap((g) => g.buttons.map((b) => [b.id, b])),
+);
 import {
   markdownHandler,
   listHandler,
@@ -82,6 +88,16 @@ export default function Toolbar({
 
   const handleHeading = guard((value) => titleHandler(editorRef, value));
 
+  const handleContainer = guard((value) => {
+    const templates = {
+      narrow: ":::container-narrow\n${selection}\n:::",
+      reading: ":::container-reading\n${selection}\n:::",
+      wide: ":::container-wide\n${selection}\n:::",
+      full: ":::container-full\n${selection}\n:::",
+    };
+    heritageBlock(editorRef, templates[value]);
+  });
+
   const handleStd = guard((type) => {
     switch (type) {
       case "Bold":
@@ -121,8 +137,6 @@ export default function Toolbar({
         gap={2}
         justifyContent="space-between"
         alignItems="center"
-        borderBottom="1px solid"
-        borderColor="neutral200"
         style={{ borderRadius: "4px 4px 0 0" }}
       >
         <Flex gap={2} alignItems="center">
@@ -135,62 +149,120 @@ export default function Toolbar({
               onChange={handleHeading}
               size="S"
             >
-              <SingleSelectOption value="h1" startIcon={<HeadingOne fill="neutral500" />}>
+              <SingleSelectOption
+                value="h1"
+                startIcon={<HeadingOne fill="neutral500" />}
+              >
                 Heading 1
               </SingleSelectOption>
-              <SingleSelectOption value="h2" startIcon={<HeadingTwo fill="neutral500" />}>
+              <SingleSelectOption
+                value="h2"
+                startIcon={<HeadingTwo fill="neutral500" />}
+              >
                 Heading 2
               </SingleSelectOption>
-              <SingleSelectOption value="h3" startIcon={<HeadingThree fill="neutral500" />}>
+              <SingleSelectOption
+                value="h3"
+                startIcon={<HeadingThree fill="neutral500" />}
+              >
                 Heading 3
               </SingleSelectOption>
-              <SingleSelectOption value="h4" startIcon={<HeadingFour fill="neutral500" />}>
+              <SingleSelectOption
+                value="h4"
+                startIcon={<HeadingFour fill="neutral500" />}
+              >
                 Heading 4
               </SingleSelectOption>
-              <SingleSelectOption value="h5" startIcon={<HeadingFive fill="neutral500" />}>
+              <SingleSelectOption
+                value="h5"
+                startIcon={<HeadingFive fill="neutral500" />}
+              >
                 Heading 5
               </SingleSelectOption>
-              <SingleSelectOption value="h6" startIcon={<HeadingSix fill="neutral500" />}>
+              <SingleSelectOption
+                value="h6"
+                startIcon={<HeadingSix fill="neutral500" />}
+              >
                 Heading 6
               </SingleSelectOption>
             </SingleSelect>
           </Field.Root>
 
           <IconButtonGroup>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Bold")} label="Bold">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Bold")}
+              label="Bold"
+            >
               <Bold />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Italic")} label="Italic">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Italic")}
+              label="Italic"
+            >
               <Italic />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Underline")} label="Underline">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Underline")}
+              label="Underline"
+            >
               <Underline />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Strikethrough")} label="Strikethrough">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Strikethrough")}
+              label="Strikethrough"
+            >
               <StrikeThrough />
             </IconButton>
           </IconButtonGroup>
 
           <IconButtonGroup>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("BulletList")} label="Bulleted list">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("BulletList")}
+              label="Bulleted list"
+            >
               <BulletList />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("NumberList")} label="Numbered list">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("NumberList")}
+              label="Numbered list"
+            >
               <NumberList />
             </IconButton>
           </IconButtonGroup>
 
           <IconButtonGroup>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Code")} label="Code">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Code")}
+              label="Code"
+            >
               <Code />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Image")} label="Image">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Image")}
+              label="Image"
+            >
               <Image />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Link")} label="Link">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Link")}
+              label="Link"
+            >
               <Link />
             </IconButton>
-            <IconButton disabled={isDisabled} onClick={() => handleStd("Quote")} label="Quote">
+            <IconButton
+              disabled={isDisabled}
+              onClick={() => handleStd("Quote")}
+              label="Quote"
+            >
               <Quotes />
             </IconButton>
           </IconButtonGroup>
@@ -210,13 +282,48 @@ export default function Toolbar({
       {/* ── Row 2: Heritage-specific toolbar ── */}
       <Flex
         padding={2}
-        background="neutral0"
+        background="neutral100"
         gap={2}
+        justifyContent="space-between"
         alignItems="center"
-        borderBottom="1px solid"
-        borderColor="neutral200"
-        style={{ flexWrap: "wrap" }}
+        style={{ borderRadius: "4px 4px 0 0", flexWrap: "wrap" }}
       >
+        {/* Container width dropdown */}
+        <Field.Root>
+          <SingleSelect
+            disabled={isDisabled}
+            placeholder="Container"
+            aria-label="Container width"
+            onChange={handleContainer}
+            size="S"
+          >
+            <SingleSelectOption value="narrow">Narrow</SingleSelectOption>
+            <SingleSelectOption value="reading">Reading</SingleSelectOption>
+            <SingleSelectOption value="wide">Wide</SingleSelectOption>
+            <SingleSelectOption value="full">Full</SingleSelectOption>
+          </SingleSelect>
+        </Field.Root>
+
+        <Box
+          style={{ width: "1px", height: "20px", flexShrink: 0 }}
+          background="neutral200"
+        />
+
+        {/* Embed relation pickers */}
+        {RELATION_TYPES.map((config) => (
+          <React.Fragment key={config.type}>
+            <Box
+              style={{ width: "1px", height: "20px", flexShrink: 0 }}
+              background="neutral200"
+            />
+            <RelationPickerGroup
+              editorRef={editorRef}
+              disabled={isDisabled}
+              config={config}
+            />
+          </React.Fragment>
+        ))}
+
         {HERITAGE_GROUPS.map((group, gi) => (
           <React.Fragment key={group.label}>
             {gi > 0 && (
@@ -225,33 +332,53 @@ export default function Toolbar({
                 background="neutral200"
               />
             )}
-            <Flex gap={1} alignItems="center" style={{ flexWrap: "wrap" }}>
-              {group.buttons.map((btn) =>
-                btn.color ? (
-                  <Swatch
-                    key={btn.id}
-                    type="button"
-                    $color={btn.color}
-                    title={btn.title}
-                    disabled={isDisabled}
-                    onClick={() => handleHeritage(btn)}
-                    aria-label={btn.title}
-                  />
-                ) : (
-                  <Button
-                    key={btn.id}
-                    type="button"
-                    title={btn.title}
-                    disabled={isDisabled}
-                    onClick={() => handleHeritage(btn)}
-                    variant="tertiary"
-                    size="S"
-                  >
-                    {btn.label}
-                  </Button>
-                )
-              )}
-            </Flex>
+            {group.dropdown ? (
+              <Field.Root>
+                <SingleSelect
+                  disabled={isDisabled}
+                  placeholder={group.label}
+                  aria-label={group.label}
+                  onChange={(value) => handleHeritage(BUTTON_BY_ID[value])}
+                  size="S"
+                >
+                  {group.buttons.map((btn) => (
+                    <SingleSelectOption key={btn.id} value={btn.id}>
+                      {btn.label}
+                    </SingleSelectOption>
+                  ))}
+                </SingleSelect>
+              </Field.Root>
+            ) : (
+              <Flex gap={1} alignItems="center" style={{ flexWrap: "wrap" }}>
+                <IconButtonGroup>
+                  {group.buttons.map((btn) =>
+                    btn.color ? (
+                      <Swatch
+                        key={btn.id}
+                        type="button"
+                        $color={btn.color}
+                        title={btn.title}
+                        disabled={isDisabled}
+                        onClick={() => handleHeritage(btn)}
+                        aria-label={btn.title}
+                      />
+                    ) : (
+                      <Button
+                        key={btn.id}
+                        type="button"
+                        title={btn.title}
+                        disabled={isDisabled}
+                        onClick={() => handleHeritage(btn)}
+                        variant="tertiary"
+                        size="S"
+                      >
+                        {btn.label}
+                      </Button>
+                    ),
+                  )}
+                </IconButtonGroup>
+              </Flex>
+            )}
           </React.Fragment>
         ))}
       </Flex>
