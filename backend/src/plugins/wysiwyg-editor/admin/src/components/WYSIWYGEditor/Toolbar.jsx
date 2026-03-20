@@ -28,20 +28,20 @@ import {
   HeadingFive,
   HeadingSix,
 } from "@strapi/icons";
-import { HERITAGE_GROUPS } from "./toolbar-config";
+import { WYSIWYG_GROUPS } from "./toolbar-config";
 import { RELATION_TYPES } from "./relation-config";
 import RelationPickerGroup from "./RelationPickerGroup";
 
 const BUTTON_BY_ID = Object.fromEntries(
-  HERITAGE_GROUPS.flatMap((g) => g.buttons.map((b) => [b.id, b])),
+  WYSIWYG_GROUPS.flatMap((g) => g.buttons.map((b) => [b.id, b])),
 );
 import {
   markdownHandler,
   listHandler,
   titleHandler,
   quoteAndCodeHandler,
-  heritageWrap,
-  heritageBlock,
+  wysiwygWrap,
+  wysiwygBlock,
 } from "./editor-handlers";
 
 // Only custom styled component — no DS equivalent for circular color swatches
@@ -95,7 +95,7 @@ export default function Toolbar({
       wide: ":::container-wide\n${selection}\n:::",
       full: ":::container-full\n${selection}\n:::",
     };
-    heritageBlock(editorRef, templates[value]);
+    wysiwygBlock(editorRef, templates[value]);
   });
 
   const handleStd = guard((type) => {
@@ -123,9 +123,9 @@ export default function Toolbar({
     }
   });
 
-  const handleHeritage = guard((btn) => {
-    if (btn.action === "wrap") heritageWrap(editorRef, btn.before, btn.after);
-    else if (btn.action === "block") heritageBlock(editorRef, btn.template);
+  const handleWysiwyg = guard((btn) => {
+    if (btn.action === "wrap") wysiwygWrap(editorRef, btn.before, btn.after);
+    else if (btn.action === "block") wysiwygBlock(editorRef, btn.template);
   });
 
   return (
@@ -279,7 +279,7 @@ export default function Toolbar({
         </Button>
       </Flex>
 
-      {/* ── Row 2: Heritage-specific toolbar ── */}
+      {/* ── Row 2: wysiwyg-specific toolbar ── */}
       <Flex
         padding={2}
         background="neutral100"
@@ -324,7 +324,7 @@ export default function Toolbar({
           </React.Fragment>
         ))}
 
-        {HERITAGE_GROUPS.map((group, gi) => (
+        {WYSIWYG_GROUPS.map((group, gi) => (
           <React.Fragment key={group.label}>
             {gi > 0 && (
               <Box
@@ -338,7 +338,7 @@ export default function Toolbar({
                   disabled={isDisabled}
                   placeholder={group.label}
                   aria-label={group.label}
-                  onChange={(value) => handleHeritage(BUTTON_BY_ID[value])}
+                  onChange={(value) => handleWysiwyg(BUTTON_BY_ID[value])}
                   size="S"
                 >
                   {group.buttons.map((btn) => (
@@ -359,7 +359,7 @@ export default function Toolbar({
                         $color={btn.color}
                         title={btn.title}
                         disabled={isDisabled}
-                        onClick={() => handleHeritage(btn)}
+                        onClick={() => handleWysiwyg(btn)}
                         aria-label={btn.title}
                       />
                     ) : (
@@ -368,7 +368,7 @@ export default function Toolbar({
                         type="button"
                         title={btn.title}
                         disabled={isDisabled}
-                        onClick={() => handleHeritage(btn)}
+                        onClick={() => handleWysiwyg(btn)}
                         variant="tertiary"
                         size="S"
                       >

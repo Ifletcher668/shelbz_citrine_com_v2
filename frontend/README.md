@@ -1,4 +1,4 @@
-# Heritage Jewelry Enterprise
+# Shelbz Citrine
 
 **A digital manuscript for bespoke jewelry consultation** — combining dark academia aesthetics, fantasy game UI, and multigenerational Indian craftsmanship.
 
@@ -7,11 +7,13 @@
 ## 🎨 Design Philosophy
 
 **What This Is:**
+
 - A digital grimoire / illuminated tome
 - Dark academia meets fantasy RPG (Guild Wars 2, Elden Ring, Elder Scrolls)
 - Artisan portfolio aesthetic (slow, deliberate, craft-focused)
 
 **What This Is NOT:**
+
 - Corporate SaaS landing page
 - Sterile minimalism
 - Fast-paced, "modern" e-commerce
@@ -77,48 +79,48 @@ heritage-jewelry/
 
 ```css
 /* Backgrounds */
---ink-black: #0d0a07;          /* Main (warm black, not pure #000) */
---parchment-dark: #1a1612;     /* Cards */
---vellum: #2b2520;             /* Elevated surfaces */
+--ink-black: #0d0a07; /* Main (warm black, not pure #000) */
+--parchment-dark: #1a1612; /* Cards */
+--vellum: #2b2520; /* Elevated surfaces */
 
 /* Accents */
---aged-gold: #d4af37;          /* Primary (tarnished gold) */
---blood-ruby: #6b1e1e;         /* CTAs (deep garnet) */
---verdigris: #3d5a4c;          /* Secondary (oxidized copper) */
---amber-glow: #ff9b42;         /* Hover states (candlelight) */
+--aged-gold: #d4af37; /* Primary (tarnished gold) */
+--blood-ruby: #6b1e1e; /* CTAs (deep garnet) */
+--verdigris: #3d5a4c; /* Secondary (oxidized copper) */
+--amber-glow: #ff9b42; /* Hover states (candlelight) */
 
 /* Text */
---bone-white: #f4ede4;         /* Headings */
---ash-grey: #c9bdb1;           /* Body */
---charcoal-mist: #8a7f73;      /* Secondary text */
+--bone-white: #f4ede4; /* Headings */
+--ash-grey: #c9bdb1; /* Body */
+--charcoal-mist: #8a7f73; /* Secondary text */
 ```
 
 ### Typography - "Illuminated Manuscript"
 
 ```css
 /* Display - Headings, Quotes */
-font-family: 'Cinzel', serif;  /* Renaissance serif */
+font-family: "Cinzel", serif; /* Renaissance serif */
 
 /* Body - Reading */
-font-family: 'Crimson Pro', serif; /* Old-style serif */
+font-family: "Crimson Pro", serif; /* Old-style serif */
 
 /* UI - Buttons, Labels */
-font-family: 'Spectral', serif; /* Yes, serif buttons! */
+font-family: "Spectral", serif; /* Yes, serif buttons! */
 
 /* Monospace - Technical */
-font-family: 'Courier Prime', monospace;
+font-family: "Courier Prime", monospace;
 ```
 
 ### Spacing - Golden Ratio (φ = 1.618)
 
 ```css
---space-1: 0.25rem;   /* 4px */
---space-2: 0.618rem;  /* ~10px */
---space-3: 1rem;      /* 16px */
---space-4: 1.618rem;  /* ~26px */
---space-5: 2.618rem;  /* ~42px */
---space-6: 4.236rem;  /* ~68px */
---space-8: 6.854rem;  /* ~110px */
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.618rem; /* ~10px */
+--space-3: 1rem; /* 16px */
+--space-4: 1.618rem; /* ~26px */
+--space-5: 2.618rem; /* ~42px */
+--space-6: 4.236rem; /* ~68px */
+--space-8: 6.854rem; /* ~110px */
 --space-10: 11.09rem; /* ~177px */
 ```
 
@@ -130,8 +132,8 @@ font-family: 'Courier Prime', monospace;
 
 ```css
 /* Custom Timing Functions */
---ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);    /* Slow start, smooth end */
---ease-exit: cubic-bezier(0.7, 0, 0.84, 0);        /* Smooth start, abrupt end */
+--ease-entrance: cubic-bezier(0.16, 1, 0.3, 1); /* Slow start, smooth end */
+--ease-exit: cubic-bezier(0.7, 0, 0.84, 0); /* Smooth start, abrupt end */
 --ease-mystical: cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Slight overshoot */
 ```
 
@@ -224,8 +226,8 @@ Study these sites for aesthetic direction:
 1. Create in `Pages/` directory
 2. Use layout components:
    ```jsx
-   import Header from '@/Components/layout/Header';
-   import Footer from '@/Components/layout/Footer';
+   import Header from "@/Components/layout/Header";
+   import Footer from "@/Components/layout/Footer";
    ```
 3. Add SEO meta tags in `<Head>`
 
@@ -255,11 +257,13 @@ import CornerFlourish from '@/Components/ornaments/CornerFlourish';
 ## 📈 Success Metrics (First 6 Months)
 
 **Traffic:**
+
 - Month 1: 500 visitors
 - Month 6: 5,000 visitors
 - 40% organic search by Month 6
 
 **Conversions:**
+
 - 10 → 30 consultation bookings/month
 - 200+ email subscribers
 

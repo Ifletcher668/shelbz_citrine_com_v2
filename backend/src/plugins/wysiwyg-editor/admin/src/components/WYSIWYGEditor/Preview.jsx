@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { styled } from "styled-components";
-import { heritageMarked } from "../../utils/marked-extensions";
+import { wysiwygMarked } from "../../utils/marked-extensions";
 
 const PreviewContainer = styled.div`
   flex: 1;
@@ -140,7 +140,7 @@ export default function Preview({ value }) {
         return;
       }
       try {
-        setHtml(heritageMarked.parse(value));
+        setHtml(wysiwygMarked.parse(value));
       } catch (e) {
         setHtml(
           `<p style="color:#ee5e52;font-family:monospace">Parse error: ${e.message}</p>`,

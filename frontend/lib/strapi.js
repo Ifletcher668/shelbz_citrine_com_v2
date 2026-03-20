@@ -1,5 +1,5 @@
 const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
 /**
  * Base fetch wrapper for the Strapi v5 REST API.
@@ -10,7 +10,7 @@ async function strapiGet(path) {
   const res = await fetch(`${STRAPI_URL}/api${path}`);
   if (!res.ok) {
     throw new Error(
-      `Strapi fetch failed: ${res.status} ${res.statusText} — /api${path}`
+      `Strapi fetch failed: ${res.status} ${res.statusText} — /api${path}`,
     );
   }
   return res.json();
@@ -22,10 +22,10 @@ async function strapiGet(path) {
  */
 export async function getPages() {
   const qs =
-    '?filters[publishedAt][$notNull]=true' +
-    '&fields[0]=slug' +
-    '&fields[1]=title' +
-    '&pagination[pageSize]=100';
+    "?filters[publishedAt][$notNull]=true" +
+    "&fields[0]=slug" +
+    "&fields[1]=title" +
+    "&pagination[pageSize]=100";
 
   const { data } = await strapiGet(`/pages${qs}`);
   return data ?? [];
@@ -39,7 +39,12 @@ export async function getPageBySlug(slug) {
   const qs =
     `?filters[slug][$eq]=${encodeURIComponent(slug)}` +
     `&filters[publishedAt][$notNull]=true` +
-    `&populate[sections][populate]=*`;
+    `&populate[sections][on][sections.gallery][populate]=*` +
+    `&populate[sections][on][sections.faq][populate][items]=*` +
+    `&populate[sections][on][sections.column-group][populate][columns]=*` +
+    `&populate[sections][on][sections.step-group][populate][steps]=*` +
+    `&populate[sections][on][sections.image][populate]=*` +
+    `&populate[sections][on][sections.button][populate]=*`;
 
   const { data } = await strapiGet(`/pages${qs}`);
   if (!data || data.length === 0) return null;
@@ -51,11 +56,21 @@ export async function getPageBySlug(slug) {
  */
 export async function getHeader() {
   const qs =
-    '?populate[primary][populate]=*' +
-    '&populate[nav_links][populate][page][fields][0]=slug' +
-    '&populate[nav_links][populate][page][fields][1]=title';
+    "?populate[primary][populate]=*" +
+    "&populate[nav_links][populate][page][fields][0]=slug" +
+    "&populate[nav_links][populate][page][fields][1]=title";
 
   const { data } = await strapiGet(`/header${qs}`);
+  return data ?? null;
+}
+
+/**
+ * Fetch the Footer single type with all columns populated.
+ */
+export async function getFooter() {
+  const qs = "?populate[columns][populate]=*";
+
+  const { data } = await strapiGet(`/footer${qs}`);
   return data ?? null;
 }
 
@@ -65,6 +80,71 @@ export async function getHeader() {
  */
 export function getStrapiMediaUrl(url) {
   if (!url) return null;
-  if (url.startsWith('http')) return url;
+  if (url.startsWith("http")) return url;
   return `${STRAPI_URL}${url}`;
+}
+
+// ─── Relation embed helpers ────────────────────────────────────────────────────
+
+/**
+ * Map from relation type (as used in [ref:type:id]) to Strapi plural API path.
+ * Add an entry here whenever a new embeddable content type is created.
+ */
+const RELATION_API_PATHS = {
+  "bullet-list": "bullet-lists",
+};
+
+/**
+ * Recursively walk any page-data object and collect all [ref:type:id] tokens
+ * found in string values. Returns a deduplicated array of { type, id } objects.
+ */
+export function extractAllRefs(obj) {
+  const refs = [];
+  const seen = new Set();
+
+  function walk(val) {
+    if (typeof val === "string") {
+      const re = /\[ref:([\w-]+):(\d+)\]/g;
+      let m;
+      while ((m = re.exec(val)) !== null) {
+        const key = `${m[1]}:${m[2]}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          refs.push({ type: m[1], id: parseInt(m[2], 10) });
+        }
+      }
+    } else if (Array.isArray(val)) {
+      val.forEach(walk);
+    } else if (val && typeof val === "object") {
+      Object.values(val).forEach(walk);
+    }
+  }
+
+  walk(obj);
+  return refs;
+}
+
+/**
+ * Fetch raw Strapi data for each { type, id } ref.
+ * Returns a map of "type:id" → Strapi flat-response data object.
+ * Silently skips unknown types or failed fetches.
+ */
+export async function fetchRelationData(refs) {
+  if (!refs.length) return {};
+  const results = {};
+
+  await Promise.all(
+    refs.map(async ({ type, id }) => {
+      const path = RELATION_API_PATHS[type];
+      if (!path) return;
+      try {
+        const { data } = await strapiGet(`/${path}/${id}?populate=*`);
+        if (data) results[`${type}:${id}`] = data;
+      } catch {
+        // silent — the embed placeholder will render as empty
+      }
+    }),
+  );
+
+  return results;
 }

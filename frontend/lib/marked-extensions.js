@@ -1,5 +1,5 @@
 /**
- * Heritage Marked — Custom marked extensions for rich content.
+ * Wysiwyg Marked — Custom marked extensions for rich content.
  *
  * BUTTONS:       [Label](/url){.btn-primary}
  *                [Label](/url){.btn-secondary .lg icon=arrow-right target=_blank}

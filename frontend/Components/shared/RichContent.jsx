@@ -6,7 +6,5 @@ export default function RichContent({ body, className, as: Tag = "div" }) {
   if (!body) return null;
   const html = parseWithRelations(body, relations);
   const classes = ["md-content", className].filter(Boolean).join(" ");
-  return (
-    <Tag className={classes} dangerouslySetInnerHTML={{ __html: html }} />
-  );
+  return <Tag className={classes} dangerouslySetInnerHTML={{ __html: html }} />;
 }

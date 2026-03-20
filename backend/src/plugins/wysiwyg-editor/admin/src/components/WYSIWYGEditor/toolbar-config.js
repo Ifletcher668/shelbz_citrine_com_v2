@@ -1,8 +1,8 @@
 /**
- * Heritage-only toolbar groups.
+ * wysiwyg-only toolbar groups.
  * Standard markdown buttons (Bold, Italic, Headings, etc.) live directly in Toolbar.jsx.
  */
-export const HERITAGE_GROUPS = [
+export const WYSIWYG_GROUPS = [
   {
     label: "Formatting",
     buttons: [

@@ -56,7 +56,7 @@ export const URL_REGEX = /^https?:\/\/.+\..+/;
  * @returns {boolean} True if valid email format
  */
 export const isValidEmail = (email) => {
-  if (!email || typeof email !== 'string') return false;
+  if (!email || typeof email !== "string") return false;
   return EMAIL_REGEX.test(email.trim());
 };
 
@@ -66,7 +66,7 @@ export const isValidEmail = (email) => {
  * @returns {{isValid: boolean, normalized: string}} Validation result and normalized email
  */
 export const validateEmail = (email) => {
-  const trimmed = email?.trim().toLowerCase() || '';
+  const trimmed = email?.trim().toLowerCase() || "";
   return {
     isValid: EMAIL_REGEX.test(trimmed),
     normalized: trimmed,
@@ -83,8 +83,8 @@ export const validateEmail = (email) => {
  * @returns {boolean} True if valid phone format
  */
 export const isValidPhone = (phone) => {
-  if (!phone || typeof phone !== 'string') return false;
-  const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  if (!phone || typeof phone !== "string") return false;
+  const cleaned = phone.replace(/[\s\-\(\)]/g, "");
   return cleaned.length >= 10 && PHONE_REGEX.test(phone);
 };
 
@@ -94,8 +94,8 @@ export const isValidPhone = (phone) => {
  * @returns {string} Formatted phone (XXX) XXX-XXXX
  */
 export const formatPhone = (phone) => {
-  if (!phone) return '';
-  const cleaned = phone.replace(/\D/g, '');
+  if (!phone) return "";
+  const cleaned = phone.replace(/\D/g, "");
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
   if (match) {
     return `(${match[1]}) ${match[2]}-${match[3]}`;
@@ -113,7 +113,7 @@ export const formatPhone = (phone) => {
  * @returns {boolean} True if valid name
  */
 export const isValidName = (name) => {
-  if (!name || typeof name !== 'string') return false;
+  if (!name || typeof name !== "string") return false;
   const trimmed = name.trim();
   return trimmed.length >= 2 && NAME_REGEX.test(trimmed);
 };
@@ -124,10 +124,10 @@ export const isValidName = (name) => {
  * @returns {boolean} True if appears to be full name
  */
 export const isValidFullName = (fullName) => {
-  if (!fullName || typeof fullName !== 'string') return false;
+  if (!fullName || typeof fullName !== "string") return false;
   const trimmed = fullName.trim();
   // Must have at least one space (first + last name)
-  return trimmed.includes(' ') && isValidName(trimmed);
+  return trimmed.includes(" ") && isValidName(trimmed);
 };
 
 // ============================================
@@ -140,7 +140,10 @@ export const isValidFullName = (fullName) => {
  * @param {string[]} acceptedTypes - Array of accepted MIME types
  * @returns {boolean} True if file type is accepted
  */
-export const isValidFileType = (file, acceptedTypes = ['image/jpeg', 'image/png', 'image/webp']) => {
+export const isValidFileType = (
+  file,
+  acceptedTypes = ["image/jpeg", "image/png", "image/webp"],
+) => {
   if (!file || !file.type) return false;
   return acceptedTypes.includes(file.type);
 };
@@ -164,11 +167,11 @@ export const isValidFileSize = (file, maxSizeBytes = 5 * 1024 * 1024) => {
  */
 export const validateImageFile = (file, maxSizeBytes = 5 * 1024 * 1024) => {
   if (!file) {
-    return { isValid: false, error: 'No file provided' };
+    return { isValid: false, error: "No file provided" };
   }
 
-  if (!isValidFileType(file, ['image/jpeg', 'image/png', 'image/webp'])) {
-    return { isValid: false, error: 'File must be JPEG, PNG, or WebP' };
+  if (!isValidFileType(file, ["image/jpeg", "image/png", "image/webp"])) {
+    return { isValid: false, error: "File must be JPEG, PNG, or WebP" };
   }
 
   if (!isValidFileSize(file, maxSizeBytes)) {
@@ -190,8 +193,12 @@ export const validateImageFile = (file, maxSizeBytes = 5 * 1024 * 1024) => {
  * @param {number} maxLength - Maximum length
  * @returns {boolean} True if within length constraints
  */
-export const isValidTextLength = (text, minLength = 0, maxLength = Infinity) => {
-  if (!text || typeof text !== 'string') return minLength === 0;
+export const isValidTextLength = (
+  text,
+  minLength = 0,
+  maxLength = Infinity,
+) => {
+  if (!text || typeof text !== "string") return minLength === 0;
   const trimmed = text.trim();
   return trimmed.length >= minLength && trimmed.length <= maxLength;
 };
@@ -203,7 +210,7 @@ export const isValidTextLength = (text, minLength = 0, maxLength = Infinity) => 
  */
 export const isRequired = (value) => {
   if (value === null || value === undefined) return false;
-  if (typeof value === 'string') return value.trim().length > 0;
+  if (typeof value === "string") return value.trim().length > 0;
   if (Array.isArray(value)) return value.length > 0;
   return true;
 };
@@ -214,7 +221,7 @@ export const isRequired = (value) => {
  * @returns {boolean} True if valid URL
  */
 export const isValidURL = (url) => {
-  if (!url || typeof url !== 'string') return false;
+  if (!url || typeof url !== "string") return false;
   return URL_REGEX.test(url.trim());
 };
 
@@ -255,7 +262,7 @@ export const isPositiveNumber = (value) => {
  * @returns {boolean} True if valid budget range
  */
 export const isValidBudgetRange = (budgetRange) => {
-  const validRanges = ['2k-4k', '4k-7k', '7k-10k', '10k+', 'flexible'];
+  const validRanges = ["2k-4k", "4k-7k", "7k-10k", "10k+", "flexible"];
   return validRanges.includes(budgetRange);
 };
 
@@ -265,7 +272,7 @@ export const isValidBudgetRange = (budgetRange) => {
  * @returns {boolean} True if valid consultation type
  */
 export const isValidConsultationType = (consultationType) => {
-  return ['zoom', 'in-person'].includes(consultationType);
+  return ["zoom", "in-person"].includes(consultationType);
 };
 
 /**
@@ -289,11 +296,11 @@ export const isValidRingSize = (size) => {
  * @returns {string} Sanitized text
  */
 export const sanitizeText = (text) => {
-  if (!text || typeof text !== 'string') return '';
+  if (!text || typeof text !== "string") return "";
   return text
     .trim()
-    .replace(/[<>]/g, '') // Remove angle brackets (basic XSS prevention)
-    .replace(/\s+/g, ' '); // Normalize whitespace
+    .replace(/[<>]/g, "") // Remove angle brackets (basic XSS prevention)
+    .replace(/\s+/g, " "); // Normalize whitespace
 };
 
 /**
@@ -302,11 +309,11 @@ export const sanitizeText = (text) => {
  * @returns {string} Sanitized filename
  */
 export const sanitizeFilename = (filename) => {
-  if (!filename || typeof filename !== 'string') return '';
+  if (!filename || typeof filename !== "string") return "";
   return filename
     .trim()
-    .replace(/[^a-zA-Z0-9_\-\.]/g, '_') // Replace special chars with underscore
-    .replace(/_{2,}/g, '_') // Remove multiple underscores
+    .replace(/[^a-zA-Z0-9_\-\.]/g, "_") // Replace special chars with underscore
+    .replace(/_{2,}/g, "_") // Remove multiple underscores
     .toLowerCase();
 };
 
@@ -321,17 +328,17 @@ export const sanitizeFilename = (filename) => {
  */
 export const getErrorMessage = (type) => {
   const messages = {
-    required: 'This field is required',
-    email: 'Please enter a valid email address',
-    phone: 'Please enter a valid phone number',
-    name: 'Please enter a valid name',
-    fullName: 'Please enter your full name (first and last)',
-    url: 'Please enter a valid URL',
-    fileType: 'Please upload a valid image file (JPEG, PNG, or WebP)',
-    fileSize: 'File size must be less than 5MB',
-    textLength: 'Text must be within the allowed length',
-    range: 'Value must be within the valid range',
+    required: "This field is required",
+    email: "Please enter a valid email address",
+    phone: "Please enter a valid phone number",
+    name: "Please enter a valid name",
+    fullName: "Please enter your full name (first and last)",
+    url: "Please enter a valid URL",
+    fileType: "Please upload a valid image file (JPEG, PNG, or WebP)",
+    fileSize: "File size must be less than 5MB",
+    textLength: "Text must be within the allowed length",
+    range: "Value must be within the valid range",
   };
 
-  return messages[type] || 'Invalid input';
+  return messages[type] || "Invalid input";
 };

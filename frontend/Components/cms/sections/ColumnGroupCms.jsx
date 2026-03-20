@@ -16,7 +16,6 @@ export default function ColumnGroupCms({ data, sectionVariant = "default" }) {
   const { columns = [] } = data ?? {};
 
   if (!columns || columns.length === 0) return null;
-
   const colCount = Math.min(columns.length, 4);
   const gridClass = COL_CLASSES[colCount] ?? COL_CLASSES[2];
 

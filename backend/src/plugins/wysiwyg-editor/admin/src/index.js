@@ -6,12 +6,11 @@ export default {
       type: "richtext",
       intlLabel: {
         id: "wysiwyg-editor.label",
-        defaultMessage: "Heritage Editor",
+        defaultMessage: "WYSIWYG Editor",
       },
       intlDescription: {
         id: "wysiwyg-editor.description",
-        defaultMessage:
-          "Heritage markdown editor with toolbar and live preview",
+        defaultMessage: " markdown editor with toolbar and live preview",
       },
       components: {
         Input: async () => import("./components/WYSIWYGEditor"),

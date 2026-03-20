@@ -68,8 +68,9 @@ export default function Header() {
 
   const primaryItem = cmsData?.primary?.[0] ?? null;
   const logoLink = primaryItem?.link || FALLBACK_PRIMARY.link;
-  const ctaText = cmsData?.cta_text || null;
-  const ctaLink = cmsData?.cta_link || null;
+  const ctaText = cmsData?.cta_text || "";
+  const ctaLink = cmsData?.cta_link || "";
+  const shouldShowCTA = ctaText !== "" && ctaLink !== "";
   // TODO: add telemetry
 
   return (
@@ -128,14 +129,13 @@ export default function Header() {
             </div>
 
             {/* Desktop CTA */}
-            {ctaText !== null ||
-              (ctaLink !== null && (
-                <div className="hidden md:block">
-                  <Link href={ctaLink} className="btn-primary">
-                    {ctaText}
-                  </Link>
-                </div>
-              ))}
+            {shouldShowCTA && (
+              <div className="hidden md:block">
+                <Link href={ctaLink} className="btn-primary">
+                  {ctaText}
+                </Link>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button

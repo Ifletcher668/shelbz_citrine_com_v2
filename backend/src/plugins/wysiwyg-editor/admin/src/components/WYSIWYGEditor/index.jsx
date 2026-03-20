@@ -149,7 +149,7 @@ const WYSIWYGEditor = React.forwardRef(
         extraKeys: { Tab: false, "Shift-Tab": false },
         readOnly: false,
         smartIndent: false,
-        placeholder: "Write heritage markdown\u2026",
+        placeholder: "Write wysiwyg markdown\u2026",
         spellcheck: true,
         inputStyle: "contenteditable",
       });
