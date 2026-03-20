@@ -1,7 +1,14 @@
 import Head from "next/head";
 import PageLayout from "@/Components/layout/PageLayout";
 import DynamicZone from "@/Components/cms/DynamicZone";
-import { getPages, getPageBySlug } from "@/lib/strapi";
+import { RelationsContext } from "@/lib/RelationsContext";
+import {
+  getPages,
+  getPageBySlug,
+  extractAllRefs,
+  fetchRelationData,
+} from "@/lib/strapi";
+import { renderRelations } from "@/lib/relation-renderers";
 
 /**
  * CMS-Driven Page
@@ -13,7 +20,7 @@ import { getPages, getPageBySlug } from "@/lib/strapi";
  * Next.js resolves explicit page files (about.jsx, process.jsx, etc.)
  * before this catch-all, so existing pages are unaffected.
  */
-export default function CmsPage({ page }) {
+export default function CmsPage({ page, relations = {} }) {
   if (!page) return null;
 
   return (
@@ -37,9 +44,11 @@ export default function CmsPage({ page }) {
         />
       </Head>
 
-      <PageLayout>
-        <DynamicZone sections={page.sections} />
-      </PageLayout>
+      <RelationsContext.Provider value={relations}>
+        <PageLayout>
+          <DynamicZone sections={page.sections} />
+        </PageLayout>
+      </RelationsContext.Provider>
     </>
   );
 }
@@ -70,7 +79,11 @@ export async function getStaticProps({ params }) {
       return { notFound: true };
     }
 
-    return { props: { page } };
+    const refs = extractAllRefs(page);
+    const rawRelations = await fetchRelationData(refs);
+    const relations = renderRelations(rawRelations);
+
+    return { props: { page, relations } };
   } catch (err) {
     console.error(
       `[getStaticProps] Could not fetch page "${params.slug}":`,

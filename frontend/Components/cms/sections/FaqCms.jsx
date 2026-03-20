@@ -1,26 +1,36 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/Components/ui/accordion';
-import { Section, Container } from '@/Components/layout/Section';
-import OrnamentalDivider from '@/Components/ornaments/OrnamentalDivider';
+} from "@/Components/ui/accordion";
+import { Section, Container } from "@/Components/layout/Section";
+import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import RichContent from "@/Components/shared/RichContent";
 
 export default function FaqCms({ data }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const { items } = data ?? {};
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { items, section_heading } = data ?? {};
 
   if (!items || items.length === 0) return null;
 
   return (
     <Section ref={ref}>
       <Container>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{
+            duration: 0.9,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        >
+          <RichContent body={section_heading} />
+        </motion.div>
         <div className="flex flex-col gap-12">
-          <OrnamentalDivider />
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -38,8 +48,8 @@ export default function FaqCms({ data }) {
                     <AccordionTrigger className="text-left font-mono text-xs uppercase tracking-widest hover:text-pale-gold transition-colors duration-500 py-6">
                       {item.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-base text-stone-grey pb-6 leading-relaxed">
-                      {item.answer}
+                    <AccordionContent className="text-base text-stone-grey pb-6 leading-relaxed prose-heritage">
+                      <RichContent body={item.answer} />
                     </AccordionContent>
                   </AccordionItem>
                 ))}

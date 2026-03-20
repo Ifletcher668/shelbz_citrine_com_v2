@@ -15,7 +15,7 @@
     ]
   },
   "scripts": {
-    "frontend": "yarn workspace dark-lux-storefront dev",
+    "frontend": "yarn workspace shelbz-citrine-frontend dev",
     "backend": "yarn workspace shelbz-citrine-backend develop",
     "dev": "concurrently \"yarn frontend\" \"yarn backend\""
   },
