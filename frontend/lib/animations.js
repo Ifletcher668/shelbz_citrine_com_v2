@@ -10,7 +10,7 @@
  * <motion.div {...fadeInUp(0.2)}>Content</motion.div>
  */
 
-import { ANIMATIONS } from './constants';
+import { ANIMATIONS } from "./constants";
 
 // ============================================
 // Timing Functions
@@ -131,7 +131,7 @@ export const slideInRight = (delay = 0, duration = 0.6) => ({
     type: "tween",
     duration,
     delay,
-    ease: SOULS_TIMING
+    ease: SOULS_TIMING,
   },
 });
 
@@ -142,7 +142,10 @@ export const slideInRight = (delay = 0, duration = 0.6) => ({
  * @param {number} initialDelay - Delay before first child (seconds)
  * @returns {object} Framer Motion stagger config
  */
-export const staggerContainer = (staggerDelay = ANIMATIONS.STAGGER_DELAY, initialDelay = 0) => ({
+export const staggerContainer = (
+  staggerDelay = ANIMATIONS.STAGGER_DELAY,
+  initialDelay = 0,
+) => ({
   animate: {
     transition: {
       staggerChildren: staggerDelay,
@@ -204,7 +207,7 @@ export const scaleInViewport = (delay = 0, once = true) => ({
 export const hoverScale = (scale = 1.02) => ({
   whileHover: {
     scale,
-    transition: { duration: 0.2, ease: SHARP_TIMING }
+    transition: { duration: 0.2, ease: SHARP_TIMING },
   },
 });
 
@@ -216,7 +219,7 @@ export const hoverScale = (scale = 1.02) => ({
 export const hoverLift = (distance = -4) => ({
   whileHover: {
     y: distance,
-    transition: { duration: 0.2, ease: SHARP_TIMING }
+    transition: { duration: 0.2, ease: SHARP_TIMING },
   },
 });
 
@@ -227,7 +230,7 @@ export const hoverLift = (distance = -4) => ({
 export const tapScale = () => ({
   whileTap: {
     scale: 0.98,
-    transition: { duration: 0.1 }
+    transition: { duration: 0.1 },
   },
 });
 
@@ -280,7 +283,7 @@ export const pageSlide = (direction = "right") => {
 export const customTransition = (
   duration = 0.6,
   delay = 0,
-  ease = SOULS_TIMING
+  ease = SOULS_TIMING,
 ) => ({
   duration,
   delay,

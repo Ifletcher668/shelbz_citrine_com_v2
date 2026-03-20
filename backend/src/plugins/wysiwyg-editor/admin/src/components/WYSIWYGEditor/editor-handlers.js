@@ -1,7 +1,7 @@
 /**
  * CodeMirror editor handlers for WYSIWYGEditor.
  * Standard markdown handlers ported from @strapi/content-manager Wysiwyg utils.
- * Heritage-specific handlers added below.
+ * wysiwyg-specific handlers added below.
  */
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -226,10 +226,10 @@ export const insertFile = (editorRef, files) => {
   setTimeout(() => ed.focus(), 0);
 };
 
-// ─── Heritage-specific handlers ───────────────────────────────────────────────
+// ─── wysiwyg-specific handlers ───────────────────────────────────────────────
 
 /** Wraps selection (or placeholder) with before/after syntax. */
-export const heritageWrap = (editorRef, before, after) => {
+export const wysiwygWrap = (editorRef, before, after) => {
   const ed = editorRef.current;
   const selected = ed.getSelection();
   ed.replaceSelection(before + (selected || "text") + after);
@@ -244,7 +244,7 @@ export const heritageWrap = (editorRef, before, after) => {
 };
 
 /** Inserts a block template, replacing ${selection} with any selected text. */
-export const heritageBlock = (editorRef, template) => {
+export const wysiwygBlock = (editorRef, template) => {
   const ed = editorRef.current;
   const selected = ed.getSelection();
   const insert = template.replace("${selection}", selected || "content");

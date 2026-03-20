@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_footer_brand_columns",
+  "info": {
+    "displayName": "Brand Column",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

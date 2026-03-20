@@ -1,7 +1,7 @@
-import { heritageMarked } from "../marked-extensions";
+import { wysiwygMarked } from "../marked-extensions";
 
 // Trim trailing newline that marked always appends to block output
-const parse = (md) => heritageMarked.parse(md).trim();
+const parse = (md) => wysiwygMarked.parse(md).trim();
 
 // ─── highlightExtension ───────────────────────────────────────────────────────
 

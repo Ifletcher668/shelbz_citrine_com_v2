@@ -26,22 +26,16 @@ export default function CmsPage({ page, relations = {} }) {
   return (
     <>
       <Head>
-        <title>{page.title} | Heritage Jewelry</title>
+        <title>{page.title} | Shelbz Citrine</title>
         {page.seo_description && (
           <meta name="description" content={page.seo_description} />
         )}
-        <meta
-          property="og:title"
-          content={`${page.title} | Heritage Jewelry`}
-        />
+        <meta property="og:title" content={`${page.title} | Shelbz Citrine`} />
         {page.seo_description && (
           <meta property="og:description" content={page.seo_description} />
         )}
         <meta property="og:type" content="website" />
-        <link
-          rel="canonical"
-          href={`https://heritagejewelry.com/${page.slug}`}
-        />
+        <link rel="canonical" href={`https://shelbzcitrine.com/${page.slug}`} />
       </Head>
 
       <RelationsContext.Provider value={relations}>

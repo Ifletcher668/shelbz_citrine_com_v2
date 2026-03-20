@@ -29,10 +29,12 @@
     "sections": {
       "type": "dynamiczone",
       "components": [
+        "sections.column-group",
+        "sections.step-group",
         "sections.gallery",
         "sections.faq",
-        "sections.cta",
-        "sections.column-group"
+        "sections.image",
+        "sections.button"
       ]
     }
   }

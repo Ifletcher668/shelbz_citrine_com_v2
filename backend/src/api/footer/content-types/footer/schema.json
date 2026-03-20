@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "footers",
+  "info": {
+    "singularName": "footer",
+    "pluralName": "footers",
+    "displayName": "Footer"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "columns": {
+      "type": "dynamiczone",
+      "components": [
+        "footer.brand-column",
+        "footer.links-column",
+        "footer.contact-column",
+        "footer.richtext-column"
+      ]
+    },
+    "copyright_entity": {
+      "type": "string"
+    },
+    "partner_name": {
+      "type": "string"
+    },
+    "partner_url": {
+      "type": "string"
+    }
+  }
+}

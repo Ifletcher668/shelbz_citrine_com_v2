@@ -1,15 +1,15 @@
 {
   "name": "wysiwyg-editor",
   "version": "1.0.0",
-  "description": "Custom heritage markdown editor for Strapi",
+  "description": "Custom markdown editor for Strapi",
   "scripts": {
     "test": "jest --no-coverage --forceExit",
     "test:watch": "jest --watch"
   },
   "strapi": {
     "name": "wysiwyg-editor",
-    "displayName": "Heritage Editor",
-    "description": "Custom rich text editor with toolbar for Heritage markdown syntax",
+    "displayName": "WYSIWYG Editor",
+    "description": "Custom rich text editor with toolbar for  markdown syntax",
     "kind": "plugin"
   },
   "dependencies": {

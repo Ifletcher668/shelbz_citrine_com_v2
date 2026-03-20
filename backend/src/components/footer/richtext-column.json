@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_footer_richtext_columns",
+  "info": {
+    "displayName": "Rich Text Column",
+    "icon": "pencil"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string"
+    },
+    "body": {
+      "type": "customField",
+      "customField": "plugin::wysiwyg-editor.wysiwyg-editor"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 "use client";
-import { heritageMarked } from "@/lib/marked-extensions";
+import { wysiwygMarked } from "@/lib/marked-extensions";
 import Reveal from "@/Components/layout/Motion";
 import { Section, Container } from "@/Components/layout/Section";
 import InnerSection from "@/Components/layout/InnerSection";
@@ -27,7 +27,7 @@ export default function TextBlockCms({ data }) {
 
   const cornersProps = corners && corners !== "none" ? corners : false;
 
-  const parsed = body ? heritageMarked.parse(body) : null;
+  const parsed = body ? wysiwygMarked.parse(body) : null;
 
   const bodyEl = parsed ? (
     <div

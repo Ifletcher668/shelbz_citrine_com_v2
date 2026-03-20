@@ -42,6 +42,70 @@ export interface FaqItemFaqItem extends Struct.ComponentSchema {
   };
 }
 
+export interface FooterBrandColumn extends Struct.ComponentSchema {
+  collectionName: 'components_footer_brand_columns';
+  info: {
+    displayName: 'Brand Column';
+    icon: 'star';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    tagline: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface FooterContactColumn extends Struct.ComponentSchema {
+  collectionName: 'components_footer_contact_columns';
+  info: {
+    displayName: 'Contact Column';
+    icon: 'envelop';
+  };
+  attributes: {
+    email: Schema.Attribute.Email;
+    heading: Schema.Attribute.String;
+    location: Schema.Attribute.String;
+    note: Schema.Attribute.String;
+  };
+}
+
+export interface FooterLinkItem extends Struct.ComponentSchema {
+  collectionName: 'components_footer_link_items';
+  info: {
+    displayName: 'Link Item';
+    icon: 'link';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface FooterLinksColumn extends Struct.ComponentSchema {
+  collectionName: 'components_footer_links_columns';
+  info: {
+    displayName: 'Links Column';
+    icon: 'bulletList';
+  };
+  attributes: {
+    heading: Schema.Attribute.String;
+    links: Schema.Attribute.Component<'footer.link-item', true>;
+  };
+}
+
+export interface FooterRichtextColumn extends Struct.ComponentSchema {
+  collectionName: 'components_footer_richtext_columns';
+  info: {
+    displayName: 'Rich Text Column';
+    icon: 'pencil';
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
+    heading: Schema.Attribute.String;
+  };
+}
+
 export interface NavigationLogoImage extends Struct.ComponentSchema {
   collectionName: 'components_navigation_logo_images';
   info: {
@@ -279,6 +343,11 @@ declare module '@strapi/strapi' {
       'bullet-list.bullet-item': BulletListBulletItem;
       'column.column': ColumnColumn;
       'faq-item.faq-item': FaqItemFaqItem;
+      'footer.brand-column': FooterBrandColumn;
+      'footer.contact-column': FooterContactColumn;
+      'footer.link-item': FooterLinkItem;
+      'footer.links-column': FooterLinksColumn;
+      'footer.richtext-column': FooterRichtextColumn;
       'navigation.logo-image': NavigationLogoImage;
       'navigation.logo-text': NavigationLogoText;
       'navigation.nav-link': NavigationNavLink;

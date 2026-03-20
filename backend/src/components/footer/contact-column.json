@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_footer_contact_columns",
+  "info": {
+    "displayName": "Contact Column",
+    "icon": "envelop"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "location": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}
