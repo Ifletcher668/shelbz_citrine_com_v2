@@ -1,5 +1,34 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface BulletListBulletItem extends Struct.ComponentSchema {
+  collectionName: 'components_bullet_list_bullet_items';
+  info: {
+    displayName: 'Bullet Item';
+    icon: 'check';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<['check', 'x']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'check'>;
+  };
+}
+
+export interface ColumnColumn extends Struct.ComponentSchema {
+  collectionName: 'components_column_columns';
+  info: {
+    description: 'A single column with WYSIWYG body content';
+    displayName: 'Column';
+    icon: 'layout';
+  };
+  attributes: {
+    body: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
+    column_name: Schema.Attribute.String & Schema.Attribute.Private;
+  };
+}
+
 export interface FaqItemFaqItem extends Struct.ComponentSchema {
   collectionName: 'components_faq_item_faq_items';
   info: {
@@ -47,6 +76,38 @@ export interface NavigationNavLink extends Struct.ComponentSchema {
     label: Schema.Attribute.String;
     page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
     url: Schema.Attribute.String;
+  };
+}
+
+export interface SectionsButton extends Struct.ComponentSchema {
+  collectionName: 'components_sections_buttons';
+  info: {
+    description: 'Standalone button section';
+    displayName: 'Button';
+    icon: 'cursor';
+  };
+  attributes: {
+    alignment: Schema.Attribute.Enumeration<['left', 'center', 'right']> &
+      Schema.Attribute.DefaultTo<'center'>;
+    anchor_id: Schema.Attribute.String;
+    link: Schema.Attribute.String & Schema.Attribute.Required;
+    text: Schema.Attribute.String & Schema.Attribute.Required;
+    variant: Schema.Attribute.Enumeration<['primary', 'secondary']> &
+      Schema.Attribute.DefaultTo<'primary'>;
+  };
+}
+
+export interface SectionsColumnGroup extends Struct.ComponentSchema {
+  collectionName: 'components_sections_column_groups';
+  info: {
+    description: 'A flexible grid of WYSIWYG columns (up to 4). Column count is implicit from the number of items added.';
+    displayName: 'Column Group';
+    icon: 'grid';
+  };
+  attributes: {
+    colum_name: Schema.Attribute.String & Schema.Attribute.Private;
+    columns: Schema.Attribute.Component<'column.column', true>;
+    section_id: Schema.Attribute.String & Schema.Attribute.Unique;
   };
 }
 
@@ -102,6 +163,36 @@ export interface SectionsHero extends Struct.ComponentSchema {
     cta_text: Schema.Attribute.String;
     headline: Schema.Attribute.String;
     subheadline: Schema.Attribute.Text;
+  };
+}
+
+export interface SectionsImage extends Struct.ComponentSchema {
+  collectionName: 'components_sections_images';
+  info: {
+    description: 'Standalone image section';
+    displayName: 'Image';
+    icon: 'picture';
+  };
+  attributes: {
+    alt_text: Schema.Attribute.String;
+    anchor_id: Schema.Attribute.String;
+    media: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+  };
+}
+
+export interface SectionsStepGroup extends Struct.ComponentSchema {
+  collectionName: 'components_sections_step_groups';
+  info: {
+    description: 'An ordered sequence of Steps with configurable column count (2\u20135). Includes optional CTA button.';
+    displayName: 'Step Group';
+    icon: 'arrow-right';
+  };
+  attributes: {
+    columns: Schema.Attribute.Enumeration<['2', '3', '4', '5']> &
+      Schema.Attribute.DefaultTo<'5'>;
+    cta_link: Schema.Attribute.String;
+    cta_text: Schema.Attribute.String;
+    steps: Schema.Attribute.Component<'step.step', true>;
   };
 }
 
@@ -164,18 +255,43 @@ export interface SectionsTextBlock extends Struct.ComponentSchema {
   };
 }
 
+export interface StepStep extends Struct.ComponentSchema {
+  collectionName: 'components_step_steps';
+  info: {
+    description: 'A single process step with an icon name (Lucide), title, and WYSIWYG description';
+    displayName: 'Step';
+    icon: 'arrow-right';
+  };
+  attributes: {
+    description: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
+    icon: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'bullet-list.bullet-item': BulletListBulletItem;
+      'column.column': ColumnColumn;
       'faq-item.faq-item': FaqItemFaqItem;
       'navigation.logo-image': NavigationLogoImage;
       'navigation.logo-text': NavigationLogoText;
       'navigation.nav-link': NavigationNavLink;
+      'sections.button': SectionsButton;
+      'sections.column-group': SectionsColumnGroup;
       'sections.cta': SectionsCta;
       'sections.faq': SectionsFaq;
       'sections.gallery': SectionsGallery;
       'sections.hero': SectionsHero;
+      'sections.image': SectionsImage;
+      'sections.step-group': SectionsStepGroup;
       'sections.text-block': SectionsTextBlock;
+      'step.step': StepStep;
     }
   }
 }
