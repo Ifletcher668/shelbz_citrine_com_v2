@@ -1,0 +1,71 @@
+{
+  "collectionName": "components_theme_semantic_colors",
+  "info": {
+    "displayName": "Colors",
+    "icon": "paint-brush",
+    "description": "12 color slots named by their role in the app. Each slot drives multiple CSS variables so changing one value cascades through the whole UI."
+  },
+  "options": {},
+  "attributes": {
+    "bg_base": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#000000"
+    },
+    "bg_raised": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#0a0a0a"
+    },
+    "bg_inset": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#141414"
+    },
+    "text_muted": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#5a5a5a"
+    },
+    "text_body": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#8c8273"
+    },
+    "text_heading": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#e5e0d8"
+    },
+    "accent": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#b4aa96"
+    },
+    "interactive": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#291d0466"
+    },
+    "neutral": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#424852"
+    },
+    "info": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#b8c5d6"
+    },
+    "danger": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#4a1a1a"
+    },
+    "success": {
+      "type": "customField",
+      "customField": "plugin::color-picker.color-picker",
+      "default": "#2d3a2e"
+    }
+  }
+}

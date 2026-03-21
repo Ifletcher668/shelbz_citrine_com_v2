@@ -89,10 +89,7 @@ describe("TextBlockCms", () => {
     expect(container.querySelector("section")).toBeInTheDocument();
   });
 
-  it("renders HTML via InnerSection dangerouslySetInnerHTML even though bodyEl is dead code", () => {
-    // bodyEl is computed (lines 32-37 of TextBlockCms) but never inserted into
-    // the JSX — the component renders via InnerSection's ...props spread instead.
-    // This test confirms the rendered output is correct despite the dead variable.
+  it("renders HTML via InnerSection dangerouslySetInnerHTML", () => {
     render(<TextBlockCms data={makeTextBlock()} />);
     expect(screen.getByText("Parsed body")).toBeInTheDocument();
   });

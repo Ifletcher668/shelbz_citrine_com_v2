@@ -102,6 +102,8 @@ const ALLOWED_DIRECTIVES = new Set([
   "callout-info",
   "columns-2",
   "columns-3",
+  "columns-4",
+  "columns-5",
   "container-narrow",
   "container-reading",
   "container-wide",
@@ -263,10 +265,7 @@ const containerDirectiveExtension = {
 
     // Column layout
     if (name.startsWith("columns-")) {
-      const colClass =
-        name === "columns-3"
-          ? "md-columns md-columns-3"
-          : "md-columns md-columns-2";
+      const colClass = `md-columns md-${name}`;
       const colsHtml = (token.colTokens || [])
         .map(
           (colToks) =>

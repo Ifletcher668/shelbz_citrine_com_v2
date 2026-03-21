@@ -58,9 +58,7 @@ describe('HeroCms', () => {
     expect(container.querySelector('section')).toBeInTheDocument();
   });
 
-  // Bug exposure: HeroCms destructures data directly without a data ?? {} guard.
-  // This test FAILS until the guard is added — that's intentional.
-  it('BUG: should not crash when data is undefined (missing null guard)', () => {
+  it('does not crash when data is undefined', () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => render(<HeroCms data={undefined} />)).not.toThrow();
     consoleError.mockRestore();

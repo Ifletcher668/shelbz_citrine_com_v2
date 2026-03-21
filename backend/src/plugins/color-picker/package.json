@@ -1,0 +1,11 @@
+{
+  "name": "color-picker",
+  "version": "1.0.0",
+  "description": "Color picker custom field for Strapi — hex input with swatch preview",
+  "strapi": {
+    "name": "color-picker",
+    "displayName": "Color Picker",
+    "description": "Color input with swatch circle preview",
+    "kind": "plugin"
+  }
+}

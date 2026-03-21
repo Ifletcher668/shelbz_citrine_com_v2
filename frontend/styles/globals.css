@@ -13,22 +13,24 @@
 
 @theme {
   /* ============================================
-       Color System - Void & Stone
+       12 Semantic Color Roles
+       Named by purpose, not appearance.
+       Each drives multiple CSS variables via theme.css.
        ============================================ */
-  --color-void: #000000;
-  --color-stone-dark: #0a0a0a;
-  --color-stone-deeper: #141414;
-  --color-fog: #5a5a5a;
-  --color-stone-grey: #8c8273;
-  --color-silver-white: #e5e0d8;
-  --color-pale-gold: #b4aa96;
-  --color-cold-bronze: #291d0466;
-  --color-steel-blue: #424852;
-  --color-frost-blue: #b8c5d6;
-  --color-deep-crimson: #4a1a1a;
-  --color-moss-green: #2d3a2e;
+  --color-bg-base: #000000;       /* page / root background */
+  --color-bg-raised: #0a0a0a;     /* cards, elevated surfaces */
+  --color-bg-inset: #141414;      /* form inputs, code blocks */
+  --color-text-muted: #5a5a5a;    /* disabled, subdued text */
+  --color-text-body: #8c8273;     /* default body text */
+  --color-text-heading: #e5e0d8;  /* headings, bright text */
+  --color-accent: #b4aa96;        /* links, borders, highlights */
+  --color-interactive: #291d0466; /* button face / fill */
+  --color-neutral: #424852;       /* secondary UI elements */
+  --color-info: #b8c5d6;          /* info callouts, cool highlights */
+  --color-danger: #4a1a1a;        /* destructive actions, warnings */
+  --color-success: #2d3a2e;       /* success states */
 
-  /* shadcn/ui compatibility */
+  /* shadcn/ui compatibility aliases */
   --color-border: rgb(60 60 60 / 0.2);
   --color-input: #0a0a0a;
   --color-ring: #b4aa96;
@@ -42,7 +44,6 @@
   --color-destructive-foreground: #e5e0d8;
   --color-muted: #141414;
   --color-muted-foreground: #8c8273;
-  --color-accent: #b4aa96;
   --color-accent-foreground: #000000;
   --color-popover: #0a0a0a;
   --color-popover-foreground: #e5e0d8;
@@ -251,8 +252,8 @@
   }
 
   body {
-    background-color: var(--color-void);
-    color: var(--color-stone-grey);
+    background-color: var(--color-bg-base);
+    color: var(--color-text-body);
     font-family: var(--font-body);
     font-weight: 400;
     line-height: 1.65;
@@ -313,7 +314,7 @@
   h5,
   h6 {
     font-family: var(--font-display);
-    color: var(--color-silver-white);
+    color: var(--color-text-heading);
     line-height: 1.15;
     font-weight: 400;
     letter-spacing: 0.05em;
@@ -354,7 +355,7 @@
     font-size: var(--text-lg);
     line-height: var(--leading-relaxed);
     font-weight: 400;
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     overflow-wrap: break-word;
     text-wrap: pretty;
   }
@@ -370,11 +371,11 @@
   }
 
   a:not(.btn-primary):not(.btn-secondary) {
-    color: var(--color-pale-gold);
+    color: var(--color-accent);
   }
 
   a:not(.btn-primary):not(.btn-secondary):hover {
-    color: var(--color-silver-white);
+    color: var(--color-text-heading);
   }
 
   /* Focus States - Cold steel ring */
@@ -438,10 +439,10 @@
     font-size: 11px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-silver-white);
+    color: var(--color-text-heading);
     transition: all 200ms;
     min-height: 44px;
-    background-color: var(--color-cold-bronze);
+    background-color: var(--color-interactive);
     border: 1px solid rgb(180 170 150 / 0.4);
     color: #f5f0e8;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -502,7 +503,7 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     transition: all 200ms;
     min-height: 44px;
     background-color: transparent;
@@ -616,7 +617,7 @@
     font-size: var(--text-base);
     line-height: var(--leading-relaxed);
     font-weight: 400;
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     transition: border-color 200ms;
     min-height: 44px;
     backdrop-filter: blur(10px);
@@ -639,7 +640,7 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     margin-bottom: 0.5rem;
   }
 
@@ -655,7 +656,7 @@
     font-size: var(--text-base);
     line-height: var(--leading-relaxed);
     font-weight: 400;
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     transition: border-color 200ms;
     min-height: 44px;
     backdrop-filter: blur(10px);
@@ -687,7 +688,7 @@
     font-size: var(--text-base);
     line-height: var(--leading-relaxed);
     font-weight: 400;
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     transition: border-color 200ms;
     min-height: 44px;
     backdrop-filter: blur(10px);
@@ -811,7 +812,7 @@
   /* Blog article prose styling */
   .prose-heritage {
     font-family: var(--font-body);
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     line-height: 1.8;
     font-size: var(--text-lg);
   }
@@ -819,7 +820,7 @@
   .prose-heritage h2,
   .prose-heritage h3,
   .prose-heritage h4 {
-    color: var(--color-silver-white);
+    color: var(--color-text-heading);
     margin-top: 2rem;
     margin-bottom: 1rem;
   }
@@ -829,14 +830,14 @@
   }
 
   .prose-heritage a {
-    color: var(--color-pale-gold);
+    color: var(--color-accent);
   }
 
   .prose-heritage blockquote {
     border-left: 2px solid rgba(180, 170, 150, 0.3);
     padding-left: 1.5rem;
     font-style: italic;
-    color: var(--color-fog);
+    color: var(--color-text-muted);
     margin-bottom: 1.5rem;
   }
 
@@ -851,7 +852,7 @@
   }
 
   .prose-heritage strong {
-    color: var(--color-silver-white);
+    color: var(--color-text-heading);
     font-weight: 600;
   }
 
@@ -863,7 +864,7 @@
     float: left;
     margin-right: 1rem;
     margin-top: 0.25rem;
-    color: var(--color-pale-gold);
+    color: var(--color-accent);
     line-height: 0.75;
   }
 
@@ -878,8 +879,8 @@
       rgba(180, 170, 150, 0.18) 0%,
       rgba(180, 170, 150, 0.08) 100%
     );
-    color: var(--color-silver-white);
-    border-bottom: 1px solid var(--color-pale-gold);
+    color: var(--color-text-heading);
+    border-bottom: 1px solid var(--color-accent);
     padding: 0 0.2em;
   }
 
@@ -906,11 +907,11 @@
   }
 
   .md-callout-warning {
-    border-left-color: var(--color-deep-crimson);
+    border-left-color: var(--color-danger);
   }
 
   .md-callout-info {
-    border-left-color: var(--color-frost-blue);
+    border-left-color: var(--color-info);
   }
 
   /* Columns */
@@ -919,7 +920,10 @@
     gap: var(--spacing-6);
   }
 
-  .md-columns-2 {
+  .md-columns-2,
+  .md-columns-3,
+  .md-columns-4,
+  .md-columns-5 {
     grid-template-columns: 1fr;
   }
 
@@ -931,10 +935,14 @@
     .md-columns-3 {
       grid-template-columns: repeat(3, 1fr);
     }
-  }
 
-  .md-columns-3 {
-    grid-template-columns: 1fr;
+    .md-columns-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .md-columns-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
   }
 
   /* Dividers */
@@ -943,7 +951,7 @@
     justify-content: center;
     align-items: center;
     margin: var(--spacing-6) 0;
-    color: var(--color-pale-gold);
+    color: var(--color-accent);
     opacity: 0.6;
   }
 
@@ -969,7 +977,7 @@
   }
 
   .md-card-dark {
-    background-color: var(--color-stone-deeper);
+    background-color: var(--color-bg-inset);
     border: 1px solid rgba(66, 72, 82, 0.4);
   }
 
@@ -986,7 +994,7 @@
   }
 
   .md-card-gold {
-    background-color: var(--color-stone-dark);
+    background-color: var(--color-bg-raised);
     border: 1px solid rgba(180, 170, 150, 0.2);
   }
 
@@ -1003,7 +1011,7 @@
   }
 
   .md-card-steel {
-    background-color: var(--color-stone-dark);
+    background-color: var(--color-bg-raised);
     border: 1px solid rgba(66, 72, 82, 0.6);
   }
 
@@ -1048,35 +1056,35 @@
 
   .md-bullet-description {
     font-size: var(--text-sm);
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     line-height: 1.5;
     margin: 0;
   }
 
   /* X bullet — fog/steel tones */
   .md-bullet-x .md-bullet-icon {
-    color: var(--color-fog);
-    background-color: var(--color-void);
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-base);
   }
 
   /* Check bullet — gold tones */
   .md-bullet-check .md-bullet-icon {
-    color: var(--color-pale-gold);
+    color: var(--color-accent);
     background-color: transparent;
   }
 
   /* Contextual overrides: bullets inside gold card use gold icon, silver text */
   .md-card-gold .md-bullet-check .md-bullet-icon {
-    border-color: var(--color-pale-gold);
+    border-color: var(--color-accent);
   }
 
   .md-card-gold .md-bullet-check .md-bullet-text {
-    color: var(--color-silver-white);
+    color: var(--color-text-heading);
   }
 
   /* Contextual overrides: bullets inside dark card use steel/fog tones */
   .md-card-dark .md-bullet-x .md-bullet-icon {
-    color: var(--color-stone-grey);
+    color: var(--color-text-body);
     border-color: rgba(66, 72, 82, 0.6);
   }
 
@@ -1137,7 +1145,7 @@
   }
 
   .md-tooltip:hover {
-    color: var(--color-pale-gold);
+    color: var(--color-accent);
   }
 
   .md-tooltip::after {
@@ -1146,8 +1154,8 @@
     bottom: calc(100% + 0.5rem);
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--color-stone-dark);
-    color: var(--color-stone-grey);
+    background-color: var(--color-bg-raised);
+    color: var(--color-text-body);
     border: 1px solid rgb(90 90 90 / 0.3);
     padding: 0.5rem 0.75rem;
     font-size: var(--text-xs);

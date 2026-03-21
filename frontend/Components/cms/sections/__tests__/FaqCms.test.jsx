@@ -36,9 +36,7 @@ describe('FaqCms', () => {
     expect(screen.getByText('We offer a 30-day return policy.')).toBeInTheDocument();
   });
 
-  // Bug exposure: FaqCms destructures data directly without a data ?? {} guard.
-  // This test FAILS until the guard is added — that's intentional.
-  it('BUG: should not crash when data is undefined (missing null guard)', () => {
+  it('does not crash when data is undefined', () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => render(<FaqCms data={undefined} />)).not.toThrow();
     consoleError.mockRestore();

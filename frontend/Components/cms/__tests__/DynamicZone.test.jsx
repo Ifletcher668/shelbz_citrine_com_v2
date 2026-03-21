@@ -1,15 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import DynamicZone from '../DynamicZone';
-import { makeHero, makeTextBlock, makeGallery, makeFaq, makeCta } from './fixtures';
+import { makeColumnGroup, makeStepGroup, makeGallery, makeFaq, makeImage, makeButton } from './fixtures';
 
-jest.mock('../sections/HeroCms', () =>
-  function HeroCms({ data }) {
-    return <div data-testid="hero-cms">{JSON.stringify(data)}</div>;
+jest.mock('../sections/ColumnGroupCms', () =>
+  function ColumnGroupCms({ data, sectionVariant }) {
+    return <div data-testid="column-group-cms" data-variant={sectionVariant}>{JSON.stringify(data)}</div>;
   }
 );
-jest.mock('../sections/TextBlockCms', () =>
-  function TextBlockCms({ data }) {
-    return <div data-testid="text-block-cms">{JSON.stringify(data)}</div>;
+jest.mock('../sections/StepGroupCms', () =>
+  function StepGroupCms({ data }) {
+    return <div data-testid="step-group-cms">{JSON.stringify(data)}</div>;
   }
 );
 jest.mock('../sections/GalleryCms', () =>
@@ -22,9 +22,14 @@ jest.mock('../sections/FaqCms', () =>
     return <div data-testid="faq-cms">{JSON.stringify(data)}</div>;
   }
 );
-jest.mock('../sections/CtaCms', () =>
-  function CtaCms({ data }) {
-    return <div data-testid="cta-cms">{JSON.stringify(data)}</div>;
+jest.mock('../sections/ImageCms', () =>
+  function ImageCms({ data }) {
+    return <div data-testid="image-cms">{JSON.stringify(data)}</div>;
+  }
+);
+jest.mock('../sections/ButtonCms', () =>
+  function ButtonCms({ data }) {
+    return <div data-testid="button-cms">{JSON.stringify(data)}</div>;
   }
 );
 
@@ -44,14 +49,24 @@ describe('DynamicZone', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders HeroCms for sections.hero', () => {
-    render(<DynamicZone sections={[makeHero()]} />);
-    expect(screen.getByTestId('hero-cms')).toBeInTheDocument();
+  it('renders ColumnGroupCms for sections.column-group', () => {
+    render(<DynamicZone sections={[makeColumnGroup()]} />);
+    expect(screen.getByTestId('column-group-cms')).toBeInTheDocument();
   });
 
-  it('renders TextBlockCms for sections.text-block', () => {
-    render(<DynamicZone sections={[makeTextBlock()]} />);
-    expect(screen.getByTestId('text-block-cms')).toBeInTheDocument();
+  it('passes sectionVariant="hero" to first ColumnGroupCms', () => {
+    render(<DynamicZone sections={[makeColumnGroup()]} />);
+    expect(screen.getByTestId('column-group-cms')).toHaveAttribute('data-variant', 'hero');
+  });
+
+  it('passes sectionVariant="default" to non-first ColumnGroupCms', () => {
+    render(<DynamicZone sections={[makeGallery(), makeColumnGroup()]} />);
+    expect(screen.getByTestId('column-group-cms')).toHaveAttribute('data-variant', 'default');
+  });
+
+  it('renders StepGroupCms for sections.step-group', () => {
+    render(<DynamicZone sections={[makeStepGroup()]} />);
+    expect(screen.getByTestId('step-group-cms')).toBeInTheDocument();
   });
 
   it('renders GalleryCms for sections.gallery', () => {
@@ -64,22 +79,28 @@ describe('DynamicZone', () => {
     expect(screen.getByTestId('faq-cms')).toBeInTheDocument();
   });
 
-  it('renders CtaCms for sections.cta', () => {
-    render(<DynamicZone sections={[makeCta()]} />);
-    expect(screen.getByTestId('cta-cms')).toBeInTheDocument();
+  it('renders ImageCms for sections.image', () => {
+    render(<DynamicZone sections={[makeImage()]} />);
+    expect(screen.getByTestId('image-cms')).toBeInTheDocument();
+  });
+
+  it('renders ButtonCms for sections.button', () => {
+    render(<DynamicZone sections={[makeButton()]} />);
+    expect(screen.getByTestId('button-cms')).toBeInTheDocument();
   });
 
   it('renders multiple sections in correct DOM order', () => {
-    const sections = [makeHero(), makeTextBlock(), makeGallery(), makeFaq(), makeCta()];
+    const sections = [makeColumnGroup(), makeStepGroup(), makeGallery(), makeFaq(), makeImage(), makeButton()];
     const { container } = render(<DynamicZone sections={sections} />);
     const rendered = container.querySelectorAll('[data-testid]');
 
-    expect(rendered).toHaveLength(5);
-    expect(rendered[0]).toHaveAttribute('data-testid', 'hero-cms');
-    expect(rendered[1]).toHaveAttribute('data-testid', 'text-block-cms');
+    expect(rendered).toHaveLength(6);
+    expect(rendered[0]).toHaveAttribute('data-testid', 'column-group-cms');
+    expect(rendered[1]).toHaveAttribute('data-testid', 'step-group-cms');
     expect(rendered[2]).toHaveAttribute('data-testid', 'gallery-cms');
     expect(rendered[3]).toHaveAttribute('data-testid', 'faq-cms');
-    expect(rendered[4]).toHaveAttribute('data-testid', 'cta-cms');
+    expect(rendered[4]).toHaveAttribute('data-testid', 'image-cms');
+    expect(rendered[5]).toHaveAttribute('data-testid', 'button-cms');
   });
 
   it('warns in development when __component is unknown', () => {
@@ -112,12 +133,12 @@ describe('DynamicZone', () => {
 
   it('renders known sections and omits unknown ones', () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const sections = [makeHero(), { __component: 'sections.unknown' }, makeCta()];
+    const sections = [makeGallery(), { __component: 'sections.unknown' }, makeFaq()];
 
     render(<DynamicZone sections={sections} />);
 
-    expect(screen.getByTestId('hero-cms')).toBeInTheDocument();
-    expect(screen.getByTestId('cta-cms')).toBeInTheDocument();
+    expect(screen.getByTestId('gallery-cms')).toBeInTheDocument();
+    expect(screen.getByTestId('faq-cms')).toBeInTheDocument();
     expect(screen.queryByTestId('unknown-cms')).not.toBeInTheDocument();
 
     spy.mockRestore();

@@ -6,7 +6,8 @@
     "packages": [
       "frontend",
       "backend",
-      "backend/src/plugins/wysiwyg-editor"
+      "backend/src/plugins/wysiwyg-editor",
+      "backend/src/plugins/color-picker"
     ],
     "nohoist": [
       "**/sharp",

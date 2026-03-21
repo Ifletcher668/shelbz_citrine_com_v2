@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_theme_layout",
+  "info": {
+    "displayName": "Layout",
+    "icon": "layout",
+    "description": "Container widths, border radii, and animation timing functions"
+  },
+  "options": {},
+  "attributes": {
+    "container_narrow": {
+      "type": "string",
+      "default": "41.625rem"
+    },
+    "container_reading": {
+      "type": "string",
+      "default": "62rem"
+    },
+    "container_wide": {
+      "type": "string",
+      "default": "80rem"
+    },
+    "radius_lg": {
+      "type": "string",
+      "default": "0"
+    },
+    "radius_md": {
+      "type": "string",
+      "default": "0"
+    },
+    "radius_sm": {
+      "type": "string",
+      "default": "0"
+    },
+    "timing_souls": {
+      "type": "string",
+      "default": "cubic-bezier(0.25, 0.1, 0.25, 1)"
+    },
+    "timing_sharp": {
+      "type": "string",
+      "default": "cubic-bezier(0.4, 0, 0.6, 1)"
+    },
+    "timing_smooth": {
+      "type": "string",
+      "default": "cubic-bezier(0.4, 0, 0.2, 1)"
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "collectionName": "components_theme_typography",
+  "info": {
+    "displayName": "Typography",
+    "icon": "text",
+    "description": "Font families and fluid type scale. Font stacks as CSS font-family values; sizes as CSS values (clamp() supported)."
+  },
+  "options": {},
+  "attributes": {
+    "google_fonts_url": {
+      "type": "string",
+      "default": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+    },
+    "font_display": {
+      "type": "string",
+      "default": "\"Cinzel\", serif"
+    },
+    "font_body": {
+      "type": "string",
+      "default": "\"Crimson Text\", Georgia, serif"
+    },
+    "font_ui": {
+      "type": "string",
+      "default": "\"Cinzel\", serif"
+    },
+    "font_mono": {
+      "type": "string",
+      "default": "\"IBM Plex Mono\", \"Courier New\", monospace"
+    },
+    "font_serif": {
+      "type": "string",
+      "default": "\"Crimson Text\", Georgia, serif"
+    },
+    "font_sans": {
+      "type": "string",
+      "default": "\"Cinzel\", serif"
+    },
+    "text_6xl": {
+      "type": "string",
+      "default": "clamp(3.5rem, 8vw, 5.5rem)"
+    },
+    "text_5xl": {
+      "type": "string",
+      "default": "clamp(3rem, 6vw, 4.5rem)"
+    },
+    "text_4xl": {
+      "type": "string",
+      "default": "clamp(2.25rem, 5vw, 3.5rem)"
+    },
+    "text_3xl": {
+      "type": "string",
+      "default": "clamp(1.75rem, 4vw, 2.5rem)"
+    },
+    "text_2xl": {
+      "type": "string",
+      "default": "clamp(1.5rem, 3vw, 2rem)"
+    },
+    "text_xl": {
+      "type": "string",
+      "default": "clamp(1.4rem, 2.8vw, 1.8rem)"
+    },
+    "text_lg": {
+      "type": "string",
+      "default": "clamp(1.375rem, 2.5vw, 1.5rem)"
+    },
+    "text_md": {
+      "type": "string",
+      "default": "clamp(1.25rem, 2vw, 1.375rem)"
+    },
+    "text_base": {
+      "type": "string",
+      "default": "1.25rem"
+    },
+    "text_sm": {
+      "type": "string",
+      "default": "1.125rem"
+    },
+    "text_xs": {
+      "type": "string",
+      "default": "1rem"
+    }
+  }
+}

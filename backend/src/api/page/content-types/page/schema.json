@@ -36,6 +36,9 @@
         "sections.image",
         "sections.button"
       ]
+    },
+    "theme_overrides": {
+      "type": "json"
     }
   }
 }

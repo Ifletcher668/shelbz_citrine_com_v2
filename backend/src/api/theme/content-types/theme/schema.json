@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "themes",
+  "info": {
+    "singularName": "theme",
+    "pluralName": "themes",
+    "displayName": "Theme",
+    "description": "Design token theme — stores all CSS variables for colors, typography, spacing, and layout. Only one theme can be active at a time."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 100
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "colors": {
+      "type": "component",
+      "component": "theme.semantic-colors",
+      "required": true
+    },
+    "typography": {
+      "type": "component",
+      "component": "theme.typography",
+      "required": true
+    },
+    "spacing": {
+      "type": "component",
+      "component": "theme.spacing",
+      "required": true
+    },
+    "layout": {
+      "type": "component",
+      "component": "theme.layout",
+      "required": true
+    }
+  }
+}

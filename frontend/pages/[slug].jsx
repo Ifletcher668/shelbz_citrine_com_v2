@@ -23,6 +23,11 @@ import { renderRelations } from "@/lib/relation-renderers";
 export default function CmsPage({ page, relations = {} }) {
   if (!page) return null;
 
+  const overrideEntries =
+    page.theme_overrides && typeof page.theme_overrides === "object"
+      ? Object.entries(page.theme_overrides)
+      : [];
+
   return (
     <>
       <Head>
@@ -36,6 +41,9 @@ export default function CmsPage({ page, relations = {} }) {
         )}
         <meta property="og:type" content="website" />
         <link rel="canonical" href={`https://shelbzcitrine.com/${page.slug}`} />
+        {overrideEntries.length > 0 && (
+          <style>{`:root {\n${overrideEntries.map(([k, v]) => `  ${k}: ${v};`).join("\n")}\n}`}</style>
+        )}
       </Head>
 
       <RelationsContext.Provider value={relations}>
