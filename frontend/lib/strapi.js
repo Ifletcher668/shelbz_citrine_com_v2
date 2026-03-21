@@ -84,6 +84,27 @@ export function getStrapiMediaUrl(url) {
   return `${STRAPI_URL}${url}`;
 }
 
+/**
+ * Fetch the currently active theme with all token groups populated.
+ * Returns null if no active theme exists or Strapi is unavailable.
+ */
+export async function getActiveTheme() {
+  const qs =
+    "?filters[is_active][$eq]=true" +
+    "&populate[colors]=*" +
+    "&populate[typography]=*" +
+    "&populate[spacing]=*" +
+    "&populate[layout]=*";
+
+  try {
+    const { data } = await strapiGet(`/themes${qs}`);
+    if (!data || data.length === 0) return null;
+    return data[0];
+  } catch {
+    return null;
+  }
+}
+
 // ─── Relation embed helpers ────────────────────────────────────────────────────
 
 /**

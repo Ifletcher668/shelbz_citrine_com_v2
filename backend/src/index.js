@@ -32,6 +32,12 @@ module.exports = {
     const hasHeaderFind = existing.some(
       (p) => p.action === 'api::header.header.find'
     );
+    const hasThemeFind = existing.some(
+      (p) => p.action === 'api::theme.theme.find'
+    );
+    const hasThemeFindOne = existing.some(
+      (p) => p.action === 'api::theme.theme.findOne'
+    );
 
     const toCreate = [];
     if (!hasFind)
@@ -44,6 +50,16 @@ module.exports = {
     if (!hasHeaderFind)
       toCreate.push({
         action: 'api::header.header.find',
+        role: publicRole.id,
+      });
+    if (!hasThemeFind)
+      toCreate.push({
+        action: 'api::theme.theme.find',
+        role: publicRole.id,
+      });
+    if (!hasThemeFindOne)
+      toCreate.push({
+        action: 'api::theme.theme.findOne',
         role: publicRole.id,
       });
 

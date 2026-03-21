@@ -19,11 +19,17 @@ export default function ColumnGroupCms({ data, sectionVariant = "default" }) {
       overlay="vignette"
     >
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+        <div
+          className={`grid grid-cols-1 md:grid-cols-${columns.length} gap-8`}
+        >
           {columns.map((column, i) => (
             <motion.div
               key={i}
-              style={column.col_start ? { gridColumnStart: column.col_start } : undefined}
+              style={
+                column.col_start
+                  ? { gridColumnStart: column.col_start }
+                  : undefined
+              }
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{

@@ -1,0 +1,55 @@
+{
+  "collectionName": "components_theme_spacing",
+  "info": {
+    "displayName": "Spacing",
+    "icon": "grid",
+    "description": "Fluid spacing scale — maps to Tailwind p-*, m-*, gap-* utilities. Values are CSS (clamp() supported)."
+  },
+  "options": {},
+  "attributes": {
+    "spacing_1": {
+      "type": "string",
+      "default": "clamp(0.25rem, 0.5vw, 0.5rem)"
+    },
+    "spacing_2": {
+      "type": "string",
+      "default": "clamp(0.5rem, 1vw, 0.75rem)"
+    },
+    "spacing_3": {
+      "type": "string",
+      "default": "clamp(0.75rem, 1.5vw, 1rem)"
+    },
+    "spacing_4": {
+      "type": "string",
+      "default": "clamp(1rem, 2vw, 1.25rem)"
+    },
+    "spacing_5": {
+      "type": "string",
+      "default": "clamp(1.25rem, 2.5vw, 1.5rem)"
+    },
+    "spacing_6": {
+      "type": "string",
+      "default": "clamp(1.5rem, 3vw, 2rem)"
+    },
+    "spacing_8": {
+      "type": "string",
+      "default": "clamp(2rem, 4vw, 3rem)"
+    },
+    "spacing_10": {
+      "type": "string",
+      "default": "clamp(2.5rem, 5vw, 4rem)"
+    },
+    "spacing_12": {
+      "type": "string",
+      "default": "clamp(3rem, 6vw, 5rem)"
+    },
+    "spacing_16": {
+      "type": "string",
+      "default": "clamp(4rem, 8vw, 6rem)"
+    },
+    "spacing_20": {
+      "type": "string",
+      "default": "clamp(5rem, 10vw, 8rem)"
+    }
+  }
+}
