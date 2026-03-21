@@ -25,6 +25,7 @@ export interface ColumnColumn extends Struct.ComponentSchema {
   attributes: {
     body: Schema.Attribute.RichText &
       Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
+    col_start: Schema.Attribute.Integer;
     column_name: Schema.Attribute.String & Schema.Attribute.Private;
   };
 }
@@ -39,70 +40,6 @@ export interface FaqItemFaqItem extends Struct.ComponentSchema {
   attributes: {
     answer: Schema.Attribute.String & Schema.Attribute.Required;
     question: Schema.Attribute.String & Schema.Attribute.Required;
-  };
-}
-
-export interface FooterBrandColumn extends Struct.ComponentSchema {
-  collectionName: 'components_footer_brand_columns';
-  info: {
-    displayName: 'Brand Column';
-    icon: 'star';
-  };
-  attributes: {
-    description: Schema.Attribute.Text;
-    tagline: Schema.Attribute.String;
-    title: Schema.Attribute.String;
-  };
-}
-
-export interface FooterContactColumn extends Struct.ComponentSchema {
-  collectionName: 'components_footer_contact_columns';
-  info: {
-    displayName: 'Contact Column';
-    icon: 'envelop';
-  };
-  attributes: {
-    email: Schema.Attribute.Email;
-    heading: Schema.Attribute.String;
-    location: Schema.Attribute.String;
-    note: Schema.Attribute.String;
-  };
-}
-
-export interface FooterLinkItem extends Struct.ComponentSchema {
-  collectionName: 'components_footer_link_items';
-  info: {
-    displayName: 'Link Item';
-    icon: 'link';
-  };
-  attributes: {
-    label: Schema.Attribute.String & Schema.Attribute.Required;
-    url: Schema.Attribute.String & Schema.Attribute.Required;
-  };
-}
-
-export interface FooterLinksColumn extends Struct.ComponentSchema {
-  collectionName: 'components_footer_links_columns';
-  info: {
-    displayName: 'Links Column';
-    icon: 'bulletList';
-  };
-  attributes: {
-    heading: Schema.Attribute.String;
-    links: Schema.Attribute.Component<'footer.link-item', true>;
-  };
-}
-
-export interface FooterRichtextColumn extends Struct.ComponentSchema {
-  collectionName: 'components_footer_richtext_columns';
-  info: {
-    displayName: 'Rich Text Column';
-    icon: 'pencil';
-  };
-  attributes: {
-    body: Schema.Attribute.RichText &
-      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
-    heading: Schema.Attribute.String;
   };
 }
 
@@ -215,21 +152,6 @@ export interface SectionsGallery extends Struct.ComponentSchema {
   };
 }
 
-export interface SectionsHero extends Struct.ComponentSchema {
-  collectionName: 'components_sections_heroes';
-  info: {
-    description: 'Full-width hero section with headline and CTA';
-    displayName: 'Hero';
-    icon: 'layout';
-  };
-  attributes: {
-    cta_link: Schema.Attribute.String;
-    cta_text: Schema.Attribute.String;
-    headline: Schema.Attribute.String;
-    subheadline: Schema.Attribute.Text;
-  };
-}
-
 export interface SectionsImage extends Struct.ComponentSchema {
   collectionName: 'components_sections_images';
   info: {
@@ -260,65 +182,6 @@ export interface SectionsStepGroup extends Struct.ComponentSchema {
   };
 }
 
-export interface SectionsTextBlock extends Struct.ComponentSchema {
-  collectionName: 'components_sections_text_blocks';
-  info: {
-    description: 'Rich text body for all the basic page content';
-    displayName: 'Text Block';
-    icon: 'file-text';
-  };
-  attributes: {
-    anchor_id: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    animation: Schema.Attribute.Enumeration<
-      [
-        'fade-up',
-        'fade-down',
-        'fade-left',
-        'fade-right',
-        'fade-in',
-        'scale-in',
-        'none',
-      ]
-    > &
-      Schema.Attribute.DefaultTo<'fade-up'>;
-    background: Schema.Attribute.Enumeration<
-      ['void', 'stone-dark', 'stone-deeper', 'transparent']
-    > &
-      Schema.Attribute.DefaultTo<'void'>;
-    body: Schema.Attribute.RichText &
-      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
-    container_size: Schema.Attribute.Enumeration<
-      ['narrow', 'reading', 'wide']
-    > &
-      Schema.Attribute.DefaultTo<'reading'>;
-    corners: Schema.Attribute.Enumeration<['none', 'accent', 'flourish']> &
-      Schema.Attribute.DefaultTo<'none'>;
-    enable_prose: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    overlay: Schema.Attribute.Enumeration<['none', 'vignette', 'fog']> &
-      Schema.Attribute.DefaultTo<'none'>;
-    texture: Schema.Attribute.Enumeration<
-      ['none', 'metal', 'stone', 'rune', 'gallery']
-    > &
-      Schema.Attribute.DefaultTo<'none'>;
-    texture_opacity: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<3>;
-    vertical_spacing: Schema.Attribute.Enumeration<
-      ['tight', 'normal', 'loose']
-    > &
-      Schema.Attribute.DefaultTo<'normal'>;
-  };
-}
-
 export interface StepStep extends Struct.ComponentSchema {
   collectionName: 'components_step_steps';
   info: {
@@ -343,11 +206,6 @@ declare module '@strapi/strapi' {
       'bullet-list.bullet-item': BulletListBulletItem;
       'column.column': ColumnColumn;
       'faq-item.faq-item': FaqItemFaqItem;
-      'footer.brand-column': FooterBrandColumn;
-      'footer.contact-column': FooterContactColumn;
-      'footer.link-item': FooterLinkItem;
-      'footer.links-column': FooterLinksColumn;
-      'footer.richtext-column': FooterRichtextColumn;
       'navigation.logo-image': NavigationLogoImage;
       'navigation.logo-text': NavigationLogoText;
       'navigation.nav-link': NavigationNavLink;
@@ -356,10 +214,8 @@ declare module '@strapi/strapi' {
       'sections.cta': SectionsCta;
       'sections.faq': SectionsFaq;
       'sections.gallery': SectionsGallery;
-      'sections.hero': SectionsHero;
       'sections.image': SectionsImage;
       'sections.step-group': SectionsStepGroup;
-      'sections.text-block': SectionsTextBlock;
       'step.step': StepStep;
     }
   }

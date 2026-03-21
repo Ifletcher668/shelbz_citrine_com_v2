@@ -9,24 +9,18 @@
   "options": {
     "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
-    "columns": {
-      "type": "dynamiczone",
-      "components": [
-        "footer.brand-column",
-        "footer.links-column",
-        "footer.contact-column",
-        "footer.richtext-column"
-      ]
+    "title": {
+      "type": "string",
+      "private": true,
+      "default": "Footer",
+      "required": true,
+      "unique": true
     },
-    "copyright_entity": {
-      "type": "string"
-    },
-    "partner_name": {
-      "type": "string"
-    },
-    "partner_url": {
-      "type": "string"
+    "footer_content": {
+      "type": "customField",
+      "customField": "plugin::wysiwyg-editor.wysiwyg-editor"
     }
   }
 }

@@ -478,27 +478,23 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    columns: Schema.Attribute.DynamicZone<
-      [
-        'footer.brand-column',
-        'footer.links-column',
-        'footer.contact-column',
-        'footer.richtext-column',
-      ]
-    >;
-    copyright_entity: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    footer_content: Schema.Attribute.RichText &
+      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::footer.footer'
     > &
       Schema.Attribute.Private;
-    partner_name: Schema.Attribute.String;
-    partner_url: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.Unique &
+      Schema.Attribute.DefaultTo<'Footer'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -538,6 +534,11 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
         number
       >;
     publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.Unique &
+      Schema.Attribute.DefaultTo<'Header'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

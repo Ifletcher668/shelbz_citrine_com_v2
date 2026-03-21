@@ -9,22 +9,33 @@
   "options": {
     "draftAndPublish": true
   },
+  "pluginOptions": {},
   "attributes": {
     "primary": {
       "type": "dynamiczone",
-      "components": ["navigation.logo-image", "navigation.logo-text"],
+      "components": [
+        "navigation.logo-image",
+        "navigation.logo-text"
+      ],
       "max": 1
     },
     "nav_links": {
       "type": "component",
-      "repeatable": true,
-      "component": "navigation.nav-link"
+      "component": "navigation.nav-link",
+      "repeatable": true
     },
     "cta_text": {
       "type": "string"
     },
     "cta_link": {
       "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "private": true,
+      "default": "Header",
+      "required": true,
+      "unique": true
     }
   }
 }

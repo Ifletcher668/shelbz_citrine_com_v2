@@ -67,9 +67,7 @@ describe('GalleryCms', () => {
     expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
   });
 
-  // Bug exposure: GalleryCms destructures data directly without a data ?? {} guard.
-  // This test FAILS until the guard is added — that's intentional.
-  it('BUG: should not crash when data is undefined (missing null guard)', () => {
+  it('does not crash when data is undefined', () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => render(<GalleryCms data={undefined} />)).not.toThrow();
     consoleError.mockRestore();

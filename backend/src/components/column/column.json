@@ -11,6 +11,9 @@
       "type": "string",
       "private": true
     },
+    "col_start": {
+      "type": "integer"
+    },
     "body": {
       "type": "customField",
       "customField": "plugin::wysiwyg-editor.wysiwyg-editor"

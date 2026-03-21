@@ -919,7 +919,10 @@
     gap: var(--spacing-6);
   }
 
-  .md-columns-2 {
+  .md-columns-2,
+  .md-columns-3,
+  .md-columns-4,
+  .md-columns-5 {
     grid-template-columns: 1fr;
   }
 
@@ -931,10 +934,14 @@
     .md-columns-3 {
       grid-template-columns: repeat(3, 1fr);
     }
-  }
 
-  .md-columns-3 {
-    grid-template-columns: 1fr;
+    .md-columns-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .md-columns-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
   }
 
   /* Dividers */

@@ -3,21 +3,12 @@ import { motion, useInView } from "framer-motion";
 import { Section, Container } from "@/Components/layout/Section";
 import RichContent from "@/Components/shared/RichContent";
 
-const COL_CLASSES = {
-  1: "grid-cols-1",
-  2: "grid-cols-1 md:grid-cols-2",
-  3: "grid-cols-1 md:grid-cols-3",
-  4: "grid-cols-2 md:grid-cols-4",
-};
-
 export default function ColumnGroupCms({ data, sectionVariant = "default" }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { columns = [] } = data ?? {};
 
   if (!columns || columns.length === 0) return null;
-  const colCount = Math.min(columns.length, 4);
-  const gridClass = COL_CLASSES[colCount] ?? COL_CLASSES[2];
 
   return (
     <Section
@@ -28,10 +19,11 @@ export default function ColumnGroupCms({ data, sectionVariant = "default" }) {
       overlay="vignette"
     >
       <Container>
-        <div className={`grid ${gridClass} gap-8`}>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {columns.map((column, i) => (
             <motion.div
               key={i}
+              style={column.col_start ? { gridColumnStart: column.col_start } : undefined}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{

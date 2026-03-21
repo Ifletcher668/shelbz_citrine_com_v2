@@ -158,6 +158,20 @@ export const WYSIWYG_GROUPS = [
         action: "block",
         template: ":::columns-3\nCol 1\n---\nCol 2\n---\nCol 3\n:::",
       },
+      {
+        id: "columns-4",
+        label: "4 Columns",
+        title: "4 Columns",
+        action: "block",
+        template: ":::columns-4\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n:::",
+      },
+      {
+        id: "columns-5",
+        label: "5 Columns",
+        title: "5 Columns",
+        action: "block",
+        template: ":::columns-5\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n---\nCol 5\n:::",
+      },
     ],
   },
   {

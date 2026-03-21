@@ -84,3 +84,35 @@ export function makeCta(overrides = {}) {
     ...overrides,
   };
 }
+
+export function makeColumnGroup(overrides = {}) {
+  return {
+    __component: 'sections.column-group',
+    columns: [
+      { column_name: 'Col A', body: 'First column content.' },
+      { column_name: 'Col B', body: 'Second column content.' },
+    ],
+    ...overrides,
+  };
+}
+
+export function makeStepGroup(overrides = {}) {
+  return {
+    __component: 'sections.step-group',
+    ...overrides,
+  };
+}
+
+export function makeImage(overrides = {}) {
+  return {
+    __component: 'sections.image',
+    ...overrides,
+  };
+}
+
+export function makeButton(overrides = {}) {
+  return {
+    __component: 'sections.button',
+    ...overrides,
+  };
+}
