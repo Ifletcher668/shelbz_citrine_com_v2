@@ -22,7 +22,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run tests
-        run: yarn workspace shelbz-citrine-com test --ci
+        run: yarn workspace shelbz-citrine-frontend test --ci
 
   wysiwyg-editor:
     name: Wysiwyg editor unit tests
