@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "styled-components";
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   SingleSelect,
   SingleSelectOption,
 } from "@strapi/design-system";
+import { useFetchClient } from "@strapi/admin/strapi-admin";
 import {
   Bold,
   Italic,
@@ -30,11 +31,7 @@ import {
 } from "@strapi/icons";
 import { WYSIWYG_GROUPS } from "./toolbar-config";
 import { RELATION_TYPES } from "./relation-config";
-import RelationPickerGroup from "./RelationPickerGroup";
-
-const BUTTON_BY_ID = Object.fromEntries(
-  WYSIWYG_GROUPS.flatMap((g) => g.buttons.map((b) => [b.id, b])),
-);
+import { useThemeColors } from "../../hooks/useThemeColors";
 import {
   markdownHandler,
   listHandler,
@@ -43,6 +40,16 @@ import {
   wysiwygWrap,
   wysiwygBlock,
 } from "./editor-handlers";
+
+// Build a flat id→button lookup for all groups
+const BUTTON_BY_ID = Object.fromEntries(
+  WYSIWYG_GROUPS.flatMap((g) => g.buttons.map((b) => [b.id, b])),
+);
+
+// Build a label→group lookup for explicit Row 2 ordering
+const GROUP_BY_LABEL = Object.fromEntries(
+  WYSIWYG_GROUPS.map((g) => [g.label, g]),
+);
 
 // Only custom styled component — no DS equivalent for circular color swatches
 const Swatch = styled.button`
@@ -69,15 +76,90 @@ const Swatch = styled.button`
   }
 `;
 
+const Divider = () => (
+  <Box
+    style={{ width: "1px", height: "20px", flexShrink: 0 }}
+    background="neutral200"
+  />
+);
+
+// Labels for the preview button in each view mode (expanded)
+const CYCLE_LABELS = {
+  editor: "Preview",
+  split: "Full Preview",
+  preview: "Editor",
+};
+
+/**
+ * A unified "Components" dropdown that fetches all embeddable RELATION_TYPES
+ * and presents them in a single picker. Selecting an entry inserts [ref:type:id].
+ */
+function ComponentsDropdown({ editorRef, disabled }) {
+  const { get } = useFetchClient();
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    Promise.all(
+      RELATION_TYPES.map((config) => {
+        const uid = `api::${config.type}.${config.type}`;
+        return get(
+          `/content-manager/collection-types/${uid}?fields[0]=id&fields[1]=${config.displayField}&pagination[pageSize]=100&sort=${config.displayField}:asc`,
+        )
+          .then(({ data }) =>
+            (data?.results ?? []).map((item) => ({
+              value: `${config.type}:${item.id}`,
+              label: `${config.label}: ${item[config.displayField] ?? `#${item.id}`}`,
+            })),
+          )
+          .catch(() => []);
+      }),
+    ).then((groups) => setOptions(groups.flat()));
+  }, []);
+
+  const handleSelect = (value) => {
+    if (!value) return;
+    const [type, id] = value.split(":");
+    const cm = editorRef.current;
+    if (!cm || disabled) return;
+    cm.replaceSelection(`[ref:${type}:${id}]`);
+    cm.focus();
+  };
+
+  return (
+    <Field.Root>
+      <SingleSelect
+        disabled={disabled || options.length === 0}
+        placeholder={options.length === 0 ? "Components…" : "Components"}
+        aria-label="Embed component"
+        onChange={handleSelect}
+        size="S"
+      >
+        {options.map((opt) => (
+          <SingleSelectOption key={opt.value} value={opt.value}>
+            {opt.label}
+          </SingleSelectOption>
+        ))}
+      </SingleSelect>
+    </Field.Root>
+  );
+}
+
 export default function Toolbar({
   editorRef,
   disabled,
+  isExpanded,
   isPreviewMode,
+  viewMode,
   onTogglePreviewMode,
+  onCycleViewMode,
   onToggleMediaLib,
 }) {
-  // disabled OR preview mode = all editing actions blocked
-  const isDisabled = disabled || isPreviewMode;
+  // In expanded mode, editing is blocked only when in full preview
+  // In normal mode, editing is blocked in preview mode
+  const effectivePreview = isExpanded ? viewMode === "preview" : isPreviewMode;
+  const isDisabled = disabled || effectivePreview;
+
+  const themeColors = useThemeColors();
 
   const guard =
     (fn) =>
@@ -87,16 +169,6 @@ export default function Toolbar({
     };
 
   const handleHeading = guard((value) => titleHandler(editorRef, value));
-
-  const handleContainer = guard((value) => {
-    const templates = {
-      narrow: ":::container-narrow\n${selection}\n:::",
-      reading: ":::container-reading\n${selection}\n:::",
-      wide: ":::container-wide\n${selection}\n:::",
-      full: ":::container-full\n${selection}\n:::",
-    };
-    wysiwygBlock(editorRef, templates[value]);
-  });
 
   const handleStd = guard((type) => {
     switch (type) {
@@ -127,6 +199,61 @@ export default function Toolbar({
     if (btn.action === "wrap") wysiwygWrap(editorRef, btn.before, btn.after);
     else if (btn.action === "block") wysiwygBlock(editorRef, btn.template);
   });
+
+  const handleColor = guard(({ name }) => {
+    wysiwygWrap(editorRef, `{color:${name}}`, "{/color}");
+  });
+
+  // Preview button: cycles view modes in expanded state, toggles in normal state
+  const previewLabel = isExpanded
+    ? CYCLE_LABELS[viewMode]
+    : isPreviewMode
+      ? "Markdown mode"
+      : "Preview mode";
+  const handlePreviewClick = isExpanded ? onCycleViewMode : onTogglePreviewMode;
+
+  // Renders a non-dropdown group (flat buttons)
+  const renderFlatGroup = (group) => (
+    <Flex gap={1} alignItems="center" style={{ flexWrap: "wrap" }}>
+      <IconButtonGroup>
+        {group.buttons.map((btn) => (
+          <Button
+            key={btn.id}
+            type="button"
+            title={btn.title}
+            disabled={isDisabled}
+            onClick={() => handleWysiwyg(btn)}
+            variant="tertiary"
+            size="S"
+          >
+            {btn.label}
+          </Button>
+        ))}
+      </IconButtonGroup>
+    </Flex>
+  );
+
+  // Renders a dropdown group
+  const renderDropdownGroup = (group) => (
+    <Field.Root>
+      <SingleSelect
+        disabled={isDisabled}
+        placeholder={group.label}
+        aria-label={group.label}
+        onChange={(value) => handleWysiwyg(BUTTON_BY_ID[value])}
+        size="S"
+      >
+        {group.buttons.map((btn) => (
+          <SingleSelectOption key={btn.id} value={btn.id}>
+            {btn.label}
+          </SingleSelectOption>
+        ))}
+      </SingleSelect>
+    </Field.Root>
+  );
+
+  const renderGroup = (group) =>
+    group.dropdown ? renderDropdownGroup(group) : renderFlatGroup(group);
 
   return (
     <Box>
@@ -268,119 +395,71 @@ export default function Toolbar({
           </IconButtonGroup>
         </Flex>
 
-        {/* Preview toggle — mirrors WysiwygPreviewToggleButton */}
+        {/* Preview toggle — cycles through modes in expanded, toggles in normal */}
         <Button
           type="button"
           variant="tertiary"
-          onClick={onTogglePreviewMode}
+          onClick={handlePreviewClick}
           disabled={disabled}
         >
-          {isPreviewMode ? "Markdown mode" : "Preview mode"}
+          {previewLabel}
         </Button>
       </Flex>
 
-      {/* ── Row 2: wysiwyg-specific toolbar ── */}
+      {/* ── Row 2: wysiwyg-specific toolbar ────────────────────────────────────
+          Order: Structure | Components | == ? [-] [+] | [color swatches] | Button | Block | Decorative
+          ─────────────────────────────────────────────────────────────────────── */}
       <Flex
         padding={2}
         background="neutral100"
         gap={2}
-        justifyContent="space-between"
         alignItems="center"
         style={{ borderRadius: "4px 4px 0 0", flexWrap: "wrap" }}
       >
-        {/* Container width dropdown */}
-        <Field.Root>
-          <SingleSelect
-            disabled={isDisabled}
-            placeholder="Container"
-            aria-label="Container width"
-            onChange={handleContainer}
-            size="S"
-          >
-            <SingleSelectOption value="narrow">Narrow</SingleSelectOption>
-            <SingleSelectOption value="reading">Reading</SingleSelectOption>
-            <SingleSelectOption value="wide">Wide</SingleSelectOption>
-            <SingleSelectOption value="full">Full</SingleSelectOption>
-          </SingleSelect>
-        </Field.Root>
+        {/* Structure — container widths, alignment, columns */}
+        {renderGroup(GROUP_BY_LABEL["Structure"])}
 
-        <Box
-          style={{ width: "1px", height: "20px", flexShrink: 0 }}
-          background="neutral200"
-        />
+        <Divider />
 
-        {/* Embed relation pickers */}
-        {RELATION_TYPES.map((config) => (
-          <React.Fragment key={config.type}>
-            <Box
-              style={{ width: "1px", height: "20px", flexShrink: 0 }}
-              background="neutral200"
-            />
-            <RelationPickerGroup
-              editorRef={editorRef}
+        {/* Components — embeddable Strapi content type references */}
+        <ComponentsDropdown editorRef={editorRef} disabled={isDisabled} />
+
+        <Divider />
+
+        {/* Formatting — highlight, tooltip, bullet types */}
+        {renderGroup(GROUP_BY_LABEL["Formatting"])}
+
+        <Divider />
+
+        {/* Color swatches — theme-driven semantic colors */}
+        <Flex gap={1} alignItems="center">
+          {themeColors.map(({ name, hex }) => (
+            <Swatch
+              key={name}
+              type="button"
+              $color={hex}
+              title={name}
               disabled={isDisabled}
-              config={config}
+              onClick={() => handleColor({ name })}
+              aria-label={`Color: ${name}`}
             />
-          </React.Fragment>
-        ))}
+          ))}
+        </Flex>
 
-        {WYSIWYG_GROUPS.map((group, gi) => (
-          <React.Fragment key={group.label}>
-            {gi > 0 && (
-              <Box
-                style={{ width: "1px", height: "20px", flexShrink: 0 }}
-                background="neutral200"
-              />
-            )}
-            {group.dropdown ? (
-              <Field.Root>
-                <SingleSelect
-                  disabled={isDisabled}
-                  placeholder={group.label}
-                  aria-label={group.label}
-                  onChange={(value) => handleWysiwyg(BUTTON_BY_ID[value])}
-                  size="S"
-                >
-                  {group.buttons.map((btn) => (
-                    <SingleSelectOption key={btn.id} value={btn.id}>
-                      {btn.label}
-                    </SingleSelectOption>
-                  ))}
-                </SingleSelect>
-              </Field.Root>
-            ) : (
-              <Flex gap={1} alignItems="center" style={{ flexWrap: "wrap" }}>
-                <IconButtonGroup>
-                  {group.buttons.map((btn) =>
-                    btn.color ? (
-                      <Swatch
-                        key={btn.id}
-                        type="button"
-                        $color={btn.color}
-                        title={btn.title}
-                        disabled={isDisabled}
-                        onClick={() => handleWysiwyg(btn)}
-                        aria-label={btn.title}
-                      />
-                    ) : (
-                      <Button
-                        key={btn.id}
-                        type="button"
-                        title={btn.title}
-                        disabled={isDisabled}
-                        onClick={() => handleWysiwyg(btn)}
-                        variant="tertiary"
-                        size="S"
-                      >
-                        {btn.label}
-                      </Button>
-                    ),
-                  )}
-                </IconButtonGroup>
-              </Flex>
-            )}
-          </React.Fragment>
-        ))}
+        <Divider />
+
+        {/* Button — CTA button links */}
+        {renderGroup(GROUP_BY_LABEL["Button"])}
+
+        <Divider />
+
+        {/* Block — typographic block styles */}
+        {renderGroup(GROUP_BY_LABEL["Block"])}
+
+        <Divider />
+
+        {/* Decorative — ornamental dividers and spacers */}
+        {renderGroup(GROUP_BY_LABEL["Decorative"])}
       </Flex>
     </Box>
   );

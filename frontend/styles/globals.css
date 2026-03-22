@@ -1221,3 +1221,18 @@
     background-clip: text;
   }
 }
+
+/* ============================================
+   WYSIWYG Color Backward Compatibility
+   Maps legacy aesthetic color names to the closest semantic equivalents.
+   Allows old content using {color:pale-gold} to continue rendering.
+   ============================================ */
+:root {
+  --color-pale-gold: var(--color-accent);
+  --color-silver-white: var(--color-text-heading);
+  --color-frost-blue: var(--color-info);
+  --color-deep-crimson: var(--color-danger);
+  --color-moss-green: var(--color-success);
+  --color-fog: var(--color-neutral);
+  --color-stone-grey: var(--color-text-body);
+}

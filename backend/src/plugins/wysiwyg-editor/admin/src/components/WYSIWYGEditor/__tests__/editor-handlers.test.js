@@ -150,4 +150,63 @@ describe("wysiwygBlock", () => {
     const inserted = ed.replaceSelection.mock.calls[0][0];
     expect(inserted.startsWith("\n")).toBe(false);
   });
+
+  test('<br> template inserts literal <br> with trailing newline', () => {
+    const { ed, replaceSelection } = makeMockEditor({ selection: "" });
+    wysiwygBlock(makeRef(ed), "<br>");
+    const inserted = replaceSelection.mock.calls[0][0];
+    expect(inserted).toBe("<br>\n");
+  });
+
+  test('<br> template ignores selection — always inserts <br>', () => {
+    const { ed, replaceSelection } = makeMockEditor({ selection: "ignored" });
+    wysiwygBlock(makeRef(ed), "<br>");
+    const inserted = replaceSelection.mock.calls[0][0];
+    // <br> has no ${selection} placeholder, so selection is irrelevant
+    expect(inserted).toContain("<br>");
+    expect(inserted).not.toContain("ignored");
+  });
+});
+
+// ─── Keyboard shortcut shim pattern ──────────────────────────────────────────
+
+describe("keyboard shortcut inline shim { current: cm }", () => {
+  /**
+   * CodeMirror keyboard handlers receive the editor instance directly (not a ref).
+   * The shortcuts in index.jsx use the inline shim: (editor) => handler({ current: editor }, ...).
+   * These tests verify that shim works identically to passing a real ref object.
+   */
+
+  test("markdownHandler Bold works with inline shim", () => {
+    const { ed, replaceSelection } = makeMockEditor({ selection: "word" });
+    // Simulate what the keyboard shortcut does: (editor) => markdownHandler({ current: editor }, "Bold")
+    const keyboardShortcut = (editor) =>
+      markdownHandler({ current: editor }, "Bold");
+    keyboardShortcut(ed);
+    expect(replaceSelection).toHaveBeenCalledWith("**word**");
+  });
+
+  test("markdownHandler Italic works with inline shim", () => {
+    const { ed, replaceSelection } = makeMockEditor({ selection: "phrase" });
+    const keyboardShortcut = (editor) =>
+      markdownHandler({ current: editor }, "Italic");
+    keyboardShortcut(ed);
+    expect(replaceSelection).toHaveBeenCalledWith("_phrase_");
+  });
+
+  test("markdownHandler Link works with inline shim", () => {
+    const { ed, replaceSelection } = makeMockEditor({ selection: "my link" });
+    const keyboardShortcut = (editor) =>
+      markdownHandler({ current: editor }, "Link");
+    keyboardShortcut(ed);
+    expect(replaceSelection).toHaveBeenCalledWith("[my link](link)");
+  });
+
+  test("wysiwygWrap highlight works with inline shim (Cmd-Shift-H)", () => {
+    const { ed, replaceSelection } = makeMockEditor({ selection: "text" });
+    const keyboardShortcut = (editor) =>
+      wysiwygWrap({ current: editor }, "==", "==");
+    keyboardShortcut(ed);
+    expect(replaceSelection).toHaveBeenCalledWith("==text==");
+  });
 });
