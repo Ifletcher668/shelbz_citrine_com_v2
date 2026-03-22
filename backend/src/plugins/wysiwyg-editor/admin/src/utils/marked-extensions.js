@@ -60,6 +60,17 @@ import { Marked } from "marked";
 // ─── Security Whitelists ──────────────────────────────────────────────────────
 
 const ALLOWED_COLORS = new Set([
+  // Semantic theme colors (current)
+  "text-muted",
+  "text-body",
+  "text-heading",
+  "accent",
+  "interactive",
+  "neutral",
+  "info",
+  "danger",
+  "success",
+  // Aesthetic names — kept for backward compatibility with existing content
   "pale-gold",
   "silver-white",
   "frost-blue",

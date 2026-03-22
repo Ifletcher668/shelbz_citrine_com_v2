@@ -2,16 +2,32 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Flex, Box, Field, Button, Typography } from "@strapi/design-system";
 import { useStrapiApp } from "@strapi/admin/strapi-admin";
 import { Collapse, Expand } from "@strapi/icons";
-import { styled } from "styled-components";
+import { styled, createGlobalStyle } from "styled-components";
 import CodeMirror from "codemirror5";
 import "codemirror5/lib/codemirror.css";
 import "codemirror5/addon/display/placeholder";
 import "codemirror5/mode/markdown/markdown";
+import "codemirror5/addon/search/searchcursor";
+import "codemirror5/addon/edit/matchbrackets";
+import "codemirror5/keymap/sublime";
 import Toolbar from "./Toolbar";
 import Preview from "./Preview";
-import { insertFile } from "./editor-handlers";
+import {
+  insertFile,
+  markdownHandler,
+  wysiwygWrap,
+} from "./editor-handlers";
 
 // ── Styled components ──────────────────────────────────────────────────────────
+
+// When the editor is expanded, Radix UI popper portals (used by SingleSelect)
+// render in document.body with z-index:auto which loses to our z-index:9999 overlay.
+// This global style lifts them above the overlay only while expanded.
+const ExpandedPopperStyles = createGlobalStyle`
+  [data-radix-popper-content-wrapper] {
+    z-index: 10000 !important;
+  }
+`;
 
 const Backdrop = styled.div`
   position: fixed;
@@ -123,6 +139,9 @@ const WYSIWYGEditor = React.forwardRef(
     const [isPreviewMode, setIsPreviewMode] = useState(false);
     const [mediaLibVisible, setMediaLibVisible] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    // viewMode controls the expanded split-view state:
+    // "editor" = full editor only, "split" = side-by-side, "preview" = full preview
+    const [viewMode, setViewMode] = useState("editor");
 
     const components = useStrapiApp(
       "WYSIWYGEditorMediaLib",
@@ -146,7 +165,23 @@ const WYSIWYGEditor = React.forwardRef(
       const cm = CodeMirror.fromTextArea(textareaRef.current, {
         mode: "markdown",
         lineWrapping: true,
-        extraKeys: { Tab: false, "Shift-Tab": false },
+        extraKeys: {
+          Tab: false,
+          "Shift-Tab": false,
+          // Formatting shortcuts (Obsidian-style)
+          "Cmd-B": (editor) => markdownHandler({ current: editor }, "Bold"),
+          "Cmd-I": (editor) => markdownHandler({ current: editor }, "Italic"),
+          "Cmd-K": (editor) => markdownHandler({ current: editor }, "Link"),
+          "Cmd-Shift-H": (editor) =>
+            wysiwygWrap({ current: editor }, "==", "=="),
+          // Line moving (Alt+Up/Down, like Obsidian)
+          "Alt-Up": "swapLineUp",
+          "Alt-Down": "swapLineDown",
+          // Multi-cursor (Sublime-style)
+          "Cmd-D": "selectNextOccurrence",
+          "Ctrl-Shift-Up": "addCursorToPrevLine",
+          "Ctrl-Shift-Down": "addCursorToNextLine",
+        },
         readOnly: false,
         smartIndent: false,
         placeholder: "Write markdown\u2026",
@@ -164,6 +199,11 @@ const WYSIWYGEditor = React.forwardRef(
             type: "text",
           },
         });
+      });
+
+      // Auto-expand to full-screen when editor receives focus
+      cm.on("focus", () => {
+        setIsExpanded(true);
       });
 
       editorRef.current = cm;
@@ -195,19 +235,35 @@ const WYSIWYGEditor = React.forwardRef(
 
     // ── Refresh CodeMirror layout when view or expand state changes ───────────
     useEffect(() => {
-      if (editorRef.current && !isPreviewMode) {
+      const effectivePreview = isExpanded
+        ? viewMode === "preview"
+        : isPreviewMode;
+      if (editorRef.current && !effectivePreview) {
         setTimeout(() => editorRef.current?.refresh(), 50);
       }
-    }, [isPreviewMode, isExpanded]);
+    }, [isPreviewMode, isExpanded, viewMode]);
 
     // ── Expand / collapse ─────────────────────────────────────────────────────
-    const handleToggleExpand = useCallback(() => setIsExpanded((v) => !v), []);
+    const handleExpand = useCallback(() => setIsExpanded(true), []);
+    const handleCollapse = useCallback(() => {
+      setIsExpanded(false);
+      setViewMode("editor");
+    }, []);
 
-    // ── Preview mode toggle ───────────────────────────────────────────────────
+    // ── Preview mode toggle (non-expanded) ────────────────────────────────────
     const handleTogglePreviewMode = useCallback(
       () => setIsPreviewMode((v) => !v),
       [],
     );
+
+    // ── View mode cycling (expanded) ──────────────────────────────────────────
+    const handleCycleViewMode = useCallback(() => {
+      setViewMode((current) => {
+        if (current === "editor") return "split";
+        if (current === "split") return "preview";
+        return "editor";
+      });
+    }, []);
 
     // ── Media library ─────────────────────────────────────────────────────────
     const handleToggleMediaLib = useCallback(
@@ -225,9 +281,9 @@ const WYSIWYGEditor = React.forwardRef(
       setMediaLibVisible(false);
     }, []);
 
-    // In expanded mode always show both panes (split — mirrors EditorLayout expanded)
-    const showEditor = !isPreviewMode || isExpanded;
-    const showPreview = isPreviewMode || isExpanded;
+    // In expanded mode, viewMode drives visibility; otherwise isPreviewMode does
+    const showEditor = isExpanded ? viewMode !== "preview" : !isPreviewMode;
+    const showPreview = isExpanded ? viewMode !== "editor" : isPreviewMode;
 
     const expandedContainerStyle = isExpanded
       ? {
@@ -255,8 +311,11 @@ const WYSIWYGEditor = React.forwardRef(
         <Flex direction="column" alignItems="stretch" gap={1}>
           <Field.Label action={labelAction}>{label}</Field.Label>
 
-          {/* Backdrop when expanded */}
-          {isExpanded && <Backdrop onClick={handleToggleExpand} />}
+          {/* Lift Radix popper portals above the overlay when expanded */}
+          {isExpanded && <ExpandedPopperStyles />}
+
+          {/* Backdrop when expanded — click to collapse */}
+          {isExpanded && <Backdrop onClick={handleCollapse} />}
 
           {/* Outer border — matches Strapi's EditorLayout normal-mode Flex */}
           <Flex
@@ -272,8 +331,11 @@ const WYSIWYGEditor = React.forwardRef(
             <Toolbar
               editorRef={editorRef}
               disabled={disabled}
+              isExpanded={isExpanded}
               isPreviewMode={isPreviewMode}
+              viewMode={viewMode}
               onTogglePreviewMode={handleTogglePreviewMode}
+              onCycleViewMode={handleCycleViewMode}
               onToggleMediaLib={handleToggleMediaLib}
             />
 
@@ -289,7 +351,7 @@ const WYSIWYGEditor = React.forwardRef(
               {/* CodeMirror host — always mounted, hidden in preview-only mode */}
               <EditorStylesContainer
                 $isExpanded={isExpanded}
-                $splitView={showPreview}
+                $splitView={showEditor && showPreview}
                 style={{ display: showEditor ? "block" : "none" }}
               >
                 <textarea ref={textareaRef} style={{ display: "none" }} />
@@ -317,7 +379,7 @@ const WYSIWYGEditor = React.forwardRef(
                   type="button"
                   variant="tertiary"
                   size="M"
-                  onClick={handleToggleExpand}
+                  onClick={isExpanded ? handleCollapse : handleExpand}
                 >
                   <Typography textColor="neutral800">
                     {isExpanded ? "Collapse" : "Expand"}

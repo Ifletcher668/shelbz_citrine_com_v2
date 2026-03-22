@@ -1,8 +1,100 @@
 /**
  * wysiwyg-only toolbar groups.
  * Standard markdown buttons (Bold, Italic, Headings, etc.) live directly in Toolbar.jsx.
+ *
+ * Note: The "Colors" group is no longer static. Color swatches are built
+ * dynamically in Toolbar.jsx from the active theme via useThemeColors().
+ *
+ * Row 2 layout:
+ *   Structure ▾ | Components ▾ | == ? [-] [+] | [color swatches] | Button ▾ | Block ▾ | Decorative ▾
  */
 export const WYSIWYG_GROUPS = [
+  /**
+   * Structure — container widths, alignment, and multi-column layouts.
+   * Merges the old standalone "Container" dropdown + "Layout" dropdown.
+   */
+  {
+    label: "Structure",
+    dropdown: true,
+    buttons: [
+      // Container widths
+      {
+        id: "container-narrow",
+        label: "Narrow",
+        title: "Narrow Container",
+        action: "block",
+        template: ":::container-narrow\n${selection}\n:::",
+      },
+      {
+        id: "container-reading",
+        label: "Reading",
+        title: "Reading Width Container",
+        action: "block",
+        template: ":::container-reading\n${selection}\n:::",
+      },
+      {
+        id: "container-wide",
+        label: "Wide",
+        title: "Wide Container",
+        action: "block",
+        template: ":::container-wide\n${selection}\n:::",
+      },
+      {
+        id: "container-full",
+        label: "Full Width",
+        title: "Full Width Container",
+        action: "block",
+        template: ":::container-full\n${selection}\n:::",
+      },
+      // Alignment
+      {
+        id: "center",
+        label: "Center",
+        title: "Center Align",
+        action: "block",
+        template: ":::center\n${selection}\n:::",
+      },
+      {
+        id: "right",
+        label: "Right",
+        title: "Right Align",
+        action: "block",
+        template: ":::right\n${selection}\n:::",
+      },
+      // Columns
+      {
+        id: "columns-2",
+        label: "2 Columns",
+        title: "2 Columns",
+        action: "block",
+        template: ":::columns-2\nLeft\n---\nRight\n:::",
+      },
+      {
+        id: "columns-3",
+        label: "3 Columns",
+        title: "3 Columns",
+        action: "block",
+        template: ":::columns-3\nCol 1\n---\nCol 2\n---\nCol 3\n:::",
+      },
+      {
+        id: "columns-4",
+        label: "4 Columns",
+        title: "4 Columns",
+        action: "block",
+        template: ":::columns-4\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n:::",
+      },
+      {
+        id: "columns-5",
+        label: "5 Columns",
+        title: "5 Columns",
+        action: "block",
+        template: ":::columns-5\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n---\nCol 5\n:::",
+      },
+    ],
+  },
+  /**
+   * Formatting — inline text decorations.
+   */
   {
     label: "Formatting",
     buttons: [
@@ -36,76 +128,18 @@ export const WYSIWYG_GROUPS = [
         action: "block",
         template: "[+] ${selection}",
       },
-    ],
-  },
-  {
-    label: "Colors",
-    buttons: [
       {
-        id: "color-pale-gold",
-        label: "",
-        title: "Pale Gold",
-        color: "#b4aa96",
-        action: "wrap",
-        before: "{color:pale-gold}",
-        after: "{/color}",
-      },
-      {
-        id: "color-silver-white",
-        label: "",
-        title: "Silver White",
-        color: "#d8d3cc",
-        action: "wrap",
-        before: "{color:silver-white}",
-        after: "{/color}",
-      },
-      {
-        id: "color-frost-blue",
-        label: "",
-        title: "Frost Blue",
-        color: "#b8c5d6",
-        action: "wrap",
-        before: "{color:frost-blue}",
-        after: "{/color}",
-      },
-      {
-        id: "color-deep-crimson",
-        label: "",
-        title: "Deep Crimson",
-        color: "#8b2020",
-        action: "wrap",
-        before: "{color:deep-crimson}",
-        after: "{/color}",
-      },
-      {
-        id: "color-moss-green",
-        label: "",
-        title: "Moss Green",
-        color: "#4a6b4d",
-        action: "wrap",
-        before: "{color:moss-green}",
-        after: "{/color}",
-      },
-      {
-        id: "color-fog",
-        label: "",
-        title: "Fog",
-        color: "#7a7a8a",
-        action: "wrap",
-        before: "{color:fog}",
-        after: "{/color}",
-      },
-      {
-        id: "color-stone-grey",
-        label: "",
-        title: "Stone Grey",
-        color: "#8c8273",
-        action: "wrap",
-        before: "{color:stone-grey}",
-        after: "{/color}",
+        id: "line-break",
+        label: "↵",
+        title: "Line Break (<br>)",
+        action: "block",
+        template: "<br>",
       },
     ],
   },
+  /**
+   * Button — inline CTA button links.
+   */
   {
     label: "Button",
     dropdown: true,
@@ -126,54 +160,9 @@ export const WYSIWYG_GROUPS = [
       },
     ],
   },
-  {
-    label: "Layout",
-    dropdown: true,
-    buttons: [
-      {
-        id: "center",
-        label: "Center",
-        title: "Center Block",
-        action: "block",
-        template: ":::center\n${selection}\n:::",
-      },
-      {
-        id: "right",
-        label: "Right",
-        title: "Right Align",
-        action: "block",
-        template: ":::right\n${selection}\n:::",
-      },
-      {
-        id: "columns-2",
-        label: "2 Columns",
-        title: "2 Columns",
-        action: "block",
-        template: ":::columns-2\nLeft\n---\nRight\n:::",
-      },
-      {
-        id: "columns-3",
-        label: "3 Columns",
-        title: "3 Columns",
-        action: "block",
-        template: ":::columns-3\nCol 1\n---\nCol 2\n---\nCol 3\n:::",
-      },
-      {
-        id: "columns-4",
-        label: "4 Columns",
-        title: "4 Columns",
-        action: "block",
-        template: ":::columns-4\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n:::",
-      },
-      {
-        id: "columns-5",
-        label: "5 Columns",
-        title: "5 Columns",
-        action: "block",
-        template: ":::columns-5\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n---\nCol 5\n:::",
-      },
-    ],
-  },
+  /**
+   * Block — typographic block styles.
+   */
   {
     label: "Block",
     dropdown: true,
@@ -215,6 +204,9 @@ export const WYSIWYG_GROUPS = [
       },
     ],
   },
+  /**
+   * Decorative — ornamental dividers and spacing.
+   */
   {
     label: "Decorative",
     dropdown: true,

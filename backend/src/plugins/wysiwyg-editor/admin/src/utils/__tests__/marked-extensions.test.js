@@ -39,7 +39,7 @@ describe("highlightExtension", () => {
 // ─── coloredTextExtension ─────────────────────────────────────────────────────
 
 describe("coloredTextExtension", () => {
-  const COLORS = [
+  const LEGACY_COLORS = [
     "pale-gold",
     "silver-white",
     "frost-blue",
@@ -49,11 +49,35 @@ describe("coloredTextExtension", () => {
     "stone-grey",
   ];
 
-  test.each(COLORS)("%s produces correct span style", (color) => {
-    const html = parse(`{color:${color}}hello{/color}`);
-    expect(html).toContain(`style="color:var(--color-${color})"`);
-    expect(html).toContain("hello");
-  });
+  const SEMANTIC_COLORS = [
+    "text-muted",
+    "text-body",
+    "text-heading",
+    "accent",
+    "interactive",
+    "neutral",
+    "info",
+    "danger",
+    "success",
+  ];
+
+  test.each(LEGACY_COLORS)(
+    "legacy color %s still produces correct span (backward compat)",
+    (color) => {
+      const html = parse(`{color:${color}}hello{/color}`);
+      expect(html).toContain(`style="color:var(--color-${color})"`);
+      expect(html).toContain("hello");
+    },
+  );
+
+  test.each(SEMANTIC_COLORS)(
+    "semantic color %s produces correct span",
+    (color) => {
+      const html = parse(`{color:${color}}hello{/color}`);
+      expect(html).toContain(`style="color:var(--color-${color})"`);
+      expect(html).toContain("hello");
+    },
+  );
 
   test("disallowed color passes through as raw text", () => {
     const html = parse("{color:red}danger{/color}");
@@ -61,7 +85,14 @@ describe("coloredTextExtension", () => {
     expect(html).toContain("{color:red}");
   });
 
-  test("color spans wrap the text content", () => {
+  test("semantic color accent wraps text correctly", () => {
+    const html = parse("{color:accent}golden text{/color}");
+    expect(html).toContain(
+      '<span style="color:var(--color-accent)">golden text</span>',
+    );
+  });
+
+  test("legacy color fog still wraps text correctly", () => {
     const html = parse("{color:fog}misty words{/color}");
     expect(html).toContain(
       '<span style="color:var(--color-fog)">misty words</span>',
