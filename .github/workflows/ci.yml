@@ -1,0 +1,186 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─── Shared install ──────────────────────────────────────────────────────────
+  install:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Install
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+  # ─── Frontend lint ────────────────────────────────────────────────────────────
+  frontend-lint:
+    name: Frontend lint
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Lint
+        run: yarn workspace shelbz-citrine-frontend lint
+
+  # ─── Frontend tests ───────────────────────────────────────────────────────────
+  frontend-test:
+    name: Frontend tests
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Test
+        run: yarn workspace shelbz-citrine-frontend test --ci
+
+  # ─── Frontend build ───────────────────────────────────────────────────────────
+  frontend-build:
+    name: Frontend build
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Build
+        run: yarn workspace shelbz-citrine-frontend build
+
+  # ─── Backend tests ────────────────────────────────────────────────────────────
+  backend-test:
+    name: Backend tests
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Test
+        run: yarn workspace shelbz-citrine-backend test --ci
+
+  # ─── WYSIWYG editor tests ─────────────────────────────────────────────────────
+  wysiwyg-editor-test:
+    name: WYSIWYG editor tests
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Test
+        run: yarn workspace wysiwyg-editor test
+
+  # ─── Launcher UI type-check ───────────────────────────────────────────────────
+  launcher-typecheck:
+    name: Launcher UI type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - name: Cache launcher node_modules
+        id: cache-launcher
+        uses: actions/cache@v4
+        with:
+          path: launcher/ui/node_modules
+          key: launcher-nm-${{ runner.os }}-${{ hashFiles('launcher/ui/package.json') }}
+
+      - name: Install launcher deps
+        if: steps.cache-launcher.outputs.cache-hit != 'true'
+        run: cd launcher/ui && yarn install --frozen-lockfile
+
+      - name: Type-check
+        run: cd launcher/ui && npx tsc --noEmit
