@@ -39,6 +39,53 @@ npm run dev
 
 ---
 
+## iCloud Data Sync
+
+Strapi data (database + uploaded media) is shared between collaborators via a folder in iCloud Drive:
+
+```
+~/Library/Mobile Documents/com~apple~CloudDocs/shelbz_citrine_com_cms_data/
+├── current/      # Latest save
+├── backups/      # Last 5 saves (auto-pruned)
+└── meta.json     # Who saved last and when
+```
+
+The local database at `backend/.tmp/data.db` is the working copy. Scripts push/pull between local and iCloud explicitly.
+
+### First-time setup (just cloned the repo)
+
+```bash
+yarn icloud:restore   # Pull latest data from iCloud
+yarn backend          # Start Strapi
+```
+
+If restore reports "No database found in iCloud", nobody has saved yet — just run `yarn backend` to create a fresh DB, then `yarn icloud:save` when done.
+
+### Daily workflow
+
+```bash
+yarn icloud:restore   # Pull latest before starting
+yarn backend          # Work in Strapi
+# (stop Strapi when done)
+yarn icloud:save      # Push changes to iCloud
+```
+
+### Restore a previous version
+
+```bash
+yarn icloud:status                          # List available backups
+yarn icloud:restore --backup <backup-name>  # Restore a specific backup
+```
+
+### Rules
+
+1. **Never run Strapi simultaneously** — two people editing SQLite at once causes corruption. Coordinate first.
+2. **Restore before starting** to get your collaborator's latest changes.
+3. **Save after finishing** so your changes are available to your collaborator.
+4. If iCloud shows files with a cloud icon in Finder, click them to download before running restore.
+
+---
+
 ## TODO / Ideas
 
 ### Testing & Quality
@@ -49,11 +96,11 @@ npm run dev
 
 ### Data & CMS
 
-- [ ] Save Strapi data to iCloud (local backup/portability)
-- [ ] Build seed script: iCloud → Strapi (restore or bootstrap from backup)
+- [x] Save Strapi data to iCloud (local backup/portability)
+- [x] Build seed script: iCloud → Strapi (restore or bootstrap from backup)
 - [ ] Implement caching for seeds (avoid re-seeding unchanged content)
 - [ ] Enable Next.js preview mode for Strapi content types (draft previews before publish)
-- [ ] Add option to change color theme. Wire this to the frontend using css variables. Follow Obsidian's structure for clear variable naming and theming
+- [x] Add option to change color theme. Wire this to the frontend using css variables. Follow Obsidian's structure for clear variable naming and theming
 - [ ] Whitelabel Strapi to look prettier
 
 ### Developer Experience
@@ -70,24 +117,14 @@ npm run dev
 - [ ] Add a **Publish** button: saves new Strapi data to iCloud + triggers a Netlify deploy
 - [ ] Option to launch Storybook from the launcher
 - [ ] Option to view the log files for debugging
+- [ ] Install dependencies with launcher (node, etc)
+- [ ] Detect if github repo is different than local one and suggest to "update to latest version" 
 - [ ] Stretch goal: Add image optimization tool based on conventions set for Strapi uploads
 
 ### Components & Content Types
 
-- [ ] **Add Header single type** in Strapi
-  - `site_name` (string) + `logo` (media)
-  - `nav_links` — repeatable `nav/nav-link` component
-    - `label` (string, required)
-    - `link_type` (enum: `page | blog | store | external`)
-    - `page` (relation → Page, used when `link_type = page`)
-    - `url` (string, used when `link_type = external`)
-    - `open_in_new_tab` (boolean)
-  - Grant public `find` permission in bootstrap
-- [ ] **Add Footer single type** in Strapi
-  - `copyright` (string)
-  - `links` — repeatable `nav/nav-link` component (reuse same component)
-  - `social_links` — repeatable `nav/social-link` component (`platform` enum + `url`)
-  - Grant public `find` permission in bootstrap
+- [-] **Add Header single type** in Strapi
+- [-] **Add Footer single type** in Strapi
 - [ ] Build out every Strapi component type
   - Audit current hard-coded pages for all component patterns
   - Build each component, add tests, add Storybook stories

@@ -22,20 +22,6 @@ async function seed() {
           "Commission a one-of-a-kind piece — black spinel, forged metal, and seventh-generation craft.",
         sections: [
           {
-            __component: "sections.hero",
-            headline: "Commission Something Built to Last",
-            subheadline:
-              "Every piece begins with a conversation. We work with a small number of clients each year to create rings and jewelry that carry genuine weight.",
-            cta_text: "Book a Consultation",
-            cta_link: "/consultation",
-          },
-          {
-            __component: "sections.text-block",
-            heading: "What to Expect",
-            body: "<p>The commission process takes 8–16 weeks from first conversation to final delivery. We source stones directly from our artisan network, and metalwork is handled by multigenerational workshops we have worked with for years.</p><p>There are no surprises. We discuss budget, materials, and timeline before any work begins.</p>",
-            alignment: "left",
-          },
-          {
             __component: "sections.faq",
             items: [
               {

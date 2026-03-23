@@ -18,7 +18,12 @@
   "scripts": {
     "frontend": "yarn workspace shelbz-citrine-frontend dev",
     "backend": "yarn workspace shelbz-citrine-backend develop",
-    "dev": "concurrently \"yarn frontend\" \"yarn backend\""
+    "dev": "concurrently \"yarn frontend\" \"yarn backend\"",
+    "icloud:save": "yarn workspace shelbz-citrine-backend icloud:save",
+    "icloud:restore": "yarn workspace shelbz-citrine-backend icloud:restore",
+    "icloud:status": "yarn workspace shelbz-citrine-backend icloud:status",
+    "launcher:dev": "cd launcher/src-tauri && cargo tauri dev",
+    "launcher:build": "cd launcher/src-tauri && cargo tauri build"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
