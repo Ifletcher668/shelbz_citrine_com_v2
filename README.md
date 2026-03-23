@@ -94,6 +94,13 @@ yarn icloud:restore --backup <backup-name>  # Restore a specific backup
 - [ ] Add Claude.md files with rich context where appropriate (per package, key directories)
 - [ ] Ensure consistent UI across the app (design tokens, shared component library)
 
+### Deployment
+
+- [ ] **Disable git-triggered Netlify deploys** — add `ignore = "exit 0"` under `[build]` in `netlify.toml` so git pushes never trigger a build (Strapi won't be running)
+- [ ] **Create a Netlify deploy hook** — Netlify dashboard → Settings → Build & Deploy → Build hooks. Deploy hooks bypass the `ignore` script, so they always trigger a real build
+- [ ] **Add Strapi webhook** — point it at the Netlify deploy hook URL, trigger on `entry.publish` and `entry.unpublish` events. This is the only way a deploy should fire
+- [ ] **Launcher Publish button should POST to the deploy hook** — so frontend code changes (not content changes) can also trigger a deploy manually (see Launcher section)
+
 ### Data & CMS
 
 - [x] Save Strapi data to iCloud (local backup/portability)
