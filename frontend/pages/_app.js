@@ -1,10 +1,15 @@
 import "@/styles/globals.css";
+import App from "next/app";
 import Head from "next/head";
 import GlobalSVGDefs from "@/Components/shared/GlobalSVGDefs";
+import { HeaderDataContext } from "@/lib/HeaderDataContext";
+import { getHeader } from "@/lib/strapi";
 
-export default function App({ Component, pageProps }) {
+export default function MyApp({ Component, pageProps }) {
+  const { headerData, ...restPageProps } = pageProps;
+
   return (
-    <>
+    <HeaderDataContext.Provider value={headerData ?? null}>
       <Head>
         {/* Preload critical fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,7 +32,13 @@ export default function App({ Component, pageProps }) {
       {/* Global SVG Pattern Definitions */}
       <GlobalSVGDefs />
 
-      <Component {...pageProps} />
-    </>
+      <Component {...restPageProps} />
+    </HeaderDataContext.Provider>
   );
 }
+
+MyApp.getInitialProps = async (appContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  const headerData = await getHeader().catch(() => null);
+  return { ...appProps, pageProps: { ...appProps.pageProps, headerData } };
+};

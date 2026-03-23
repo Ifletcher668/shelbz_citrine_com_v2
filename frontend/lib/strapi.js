@@ -1,13 +1,19 @@
 const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
+const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
+
 /**
  * Base fetch wrapper for the Strapi v5 REST API.
  * Strapi v5 responses: { data: [...], meta: {...} }
  * Attributes are FLAT in v5 — data[0].title, not data[0].attributes.title
  */
 async function strapiGet(path) {
-  const res = await fetch(`${STRAPI_URL}/api${path}`);
+  const headers = {};
+  if (STRAPI_TOKEN) {
+    headers["Authorization"] = `Bearer ${STRAPI_TOKEN}`;
+  }
+  const res = await fetch(`${STRAPI_URL}/api${path}`, { headers });
   if (!res.ok) {
     throw new Error(
       `Strapi fetch failed: ${res.status} ${res.statusText} — /api${path}`,

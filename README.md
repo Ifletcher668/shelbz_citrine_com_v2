@@ -44,7 +44,7 @@ npm run dev
 Strapi data (database + uploaded media) is shared between collaborators via a folder in iCloud Drive:
 
 ```
-~/Library/Mobile Documents/com~apple~CloudDocs/shelbz_citrine_com_cms_data/
+ICloud Folder
 ├── current/      # Latest save
 ├── backups/      # Last 5 saves (auto-pruned)
 └── meta.json     # Who saved last and when
@@ -118,7 +118,7 @@ yarn icloud:restore --backup <backup-name>  # Restore a specific backup
 - [ ] Option to launch Storybook from the launcher
 - [ ] Option to view the log files for debugging
 - [ ] Install dependencies with launcher (node, etc)
-- [ ] Detect if github repo is different than local one and suggest to "update to latest version" 
+- [ ] Detect if github repo is different than local one and suggest to "update to latest version"
 - [ ] Stretch goal: Add image optimization tool based on conventions set for Strapi uploads
 
 ### Components & Content Types
