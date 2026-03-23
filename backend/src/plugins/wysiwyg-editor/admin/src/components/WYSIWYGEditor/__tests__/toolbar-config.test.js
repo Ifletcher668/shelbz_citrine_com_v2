@@ -2,15 +2,17 @@ import { WYSIWYG_GROUPS } from "../toolbar-config";
 import { SEMANTIC_COLOR_NAMES } from "../../../hooks/color-slots";
 
 describe("WYSIWYG_GROUPS structure", () => {
-  test("exports an array with 5 groups", () => {
+  test("exports an array with 7 groups", () => {
     expect(Array.isArray(WYSIWYG_GROUPS)).toBe(true);
-    expect(WYSIWYG_GROUPS).toHaveLength(5);
+    expect(WYSIWYG_GROUPS).toHaveLength(7);
   });
 
-  test("group labels are Structure, Formatting, Button, Block, Decorative", () => {
+  test("group labels are Structure, Alignment, Columns, Formatting, Button, Block, Decorative", () => {
     const labels = WYSIWYG_GROUPS.map((g) => g.label);
     expect(labels).toEqual([
       "Structure",
+      "Alignment",
+      "Columns",
       "Formatting",
       "Button",
       "Block",
@@ -79,7 +81,7 @@ describe("WYSIWYG_GROUPS structure", () => {
     expect(ids).toContain("line-break");
   });
 
-  test("Structure group is a dropdown and contains container, alignment, and column buttons", () => {
+  test("Structure group is a dropdown and contains container buttons", () => {
     const structureGroup = WYSIWYG_GROUPS.find((g) => g.label === "Structure");
     expect(structureGroup).toBeDefined();
     expect(structureGroup.dropdown).toBe(true);
@@ -89,8 +91,24 @@ describe("WYSIWYG_GROUPS structure", () => {
     expect(ids).toContain("container-reading");
     expect(ids).toContain("container-wide");
     expect(ids).toContain("container-full");
+  });
+
+  test("Alignment group is a dropdown and contains center and right buttons", () => {
+    const alignmentGroup = WYSIWYG_GROUPS.find((g) => g.label === "Alignment");
+    expect(alignmentGroup).toBeDefined();
+    expect(alignmentGroup.dropdown).toBe(true);
+
+    const ids = alignmentGroup.buttons.map((b) => b.id);
     expect(ids).toContain("center");
     expect(ids).toContain("right");
+  });
+
+  test("Columns group is a dropdown and contains column buttons", () => {
+    const columnsGroup = WYSIWYG_GROUPS.find((g) => g.label === "Columns");
+    expect(columnsGroup).toBeDefined();
+    expect(columnsGroup.dropdown).toBe(true);
+
+    const ids = columnsGroup.buttons.map((b) => b.id);
     expect(ids).toContain("columns-2");
     expect(ids).toContain("columns-5");
   });
