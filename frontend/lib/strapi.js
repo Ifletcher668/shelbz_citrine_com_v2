@@ -153,15 +153,18 @@ export function extractAllRefs(obj) {
 export async function fetchRelationData(refs) {
   if (!refs.length) return {};
   const results = {};
-
+  console.log("refs", refs);
   await Promise.all(
     refs.map(async ({ type, id }) => {
       const path = RELATION_API_PATHS[type];
+      console.log("path", path);
       if (!path) return;
       try {
         const { data } = await strapiGet(`/${path}/${id}?populate=*`);
+        console.log(data);
         if (data) results[`${type}:${id}`] = data;
-      } catch {
+      } catch (error) {
+        console.log("Could not fetch relations", error);
         // silent — the embed placeholder will render as empty
       }
     }),

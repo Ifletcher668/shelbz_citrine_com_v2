@@ -46,7 +46,12 @@ export const WYSIWYG_GROUPS = [
         action: "block",
         template: ":::container-full\n${selection}\n:::",
       },
-      // Alignment
+    ],
+  },
+  {
+    label: "Alignment",
+    dropdown: true,
+    buttons: [
       {
         id: "center",
         label: "Center",
@@ -61,7 +66,12 @@ export const WYSIWYG_GROUPS = [
         action: "block",
         template: ":::right\n${selection}\n:::",
       },
-      // Columns
+    ],
+  },
+  {
+    label: "Columns",
+    dropdown: true,
+    buttons: [
       {
         id: "columns-2",
         label: "2 Columns",
@@ -81,14 +91,16 @@ export const WYSIWYG_GROUPS = [
         label: "4 Columns",
         title: "4 Columns",
         action: "block",
-        template: ":::columns-4\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n:::",
+        template:
+          ":::columns-4\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n:::",
       },
       {
         id: "columns-5",
         label: "5 Columns",
         title: "5 Columns",
         action: "block",
-        template: ":::columns-5\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n---\nCol 5\n:::",
+        template:
+          ":::columns-5\nCol 1\n---\nCol 2\n---\nCol 3\n---\nCol 4\n---\nCol 5\n:::",
       },
     ],
   },

@@ -12,11 +12,7 @@ import "codemirror5/addon/edit/matchbrackets";
 import "codemirror5/keymap/sublime";
 import Toolbar from "./Toolbar";
 import Preview from "./Preview";
-import {
-  insertFile,
-  markdownHandler,
-  wysiwygWrap,
-} from "./editor-handlers";
+import { insertFile, markdownHandler, wysiwygWrap } from "./editor-handlers";
 
 // ── Styled components ──────────────────────────────────────────────────────────
 
@@ -199,11 +195,6 @@ const WYSIWYGEditor = React.forwardRef(
             type: "text",
           },
         });
-      });
-
-      // Auto-expand to full-screen when editor receives focus
-      cm.on("focus", () => {
-        setIsExpanded(true);
       });
 
       editorRef.current = cm;

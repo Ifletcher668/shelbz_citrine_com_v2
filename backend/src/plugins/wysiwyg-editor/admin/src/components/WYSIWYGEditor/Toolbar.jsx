@@ -407,7 +407,6 @@ export default function Toolbar({
       </Flex>
 
       {/* ── Row 2: wysiwyg-specific toolbar ────────────────────────────────────
-          Order: Structure | Components | == ? [-] [+] | [color swatches] | Button | Block | Decorative
           ─────────────────────────────────────────────────────────────────────── */}
       <Flex
         padding={2}
@@ -416,8 +415,9 @@ export default function Toolbar({
         alignItems="center"
         style={{ borderRadius: "4px 4px 0 0", flexWrap: "wrap" }}
       >
-        {/* Structure — container widths, alignment, columns */}
         {renderGroup(GROUP_BY_LABEL["Structure"])}
+        {renderGroup(GROUP_BY_LABEL["Alignment"])}
+        {renderGroup(GROUP_BY_LABEL["Columns"])}
 
         <Divider />
 

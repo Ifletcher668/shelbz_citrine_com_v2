@@ -31,9 +31,11 @@ backend/build/
 backend/exports/
 
 # Launcher (Tauri/Rust)
-launcher/target/
+launcher/src-tauri/target/
 launcher/ui/node_modules/
 launcher/ui/dist/
+launcher/logs/
+launcher.config.json
 
 # Claude
 .claude/

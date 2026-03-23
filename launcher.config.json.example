@@ -1,0 +1,3 @@
+{
+  "netlifyBuildHookUrl": "https://api.netlify.com/build_hooks/YOUR_HOOK_ID"
+}

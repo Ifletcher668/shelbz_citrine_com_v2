@@ -10,6 +10,9 @@
     "strapi": "strapi",
     "seed": "node scripts/seed.js",
     "seed:theme": "node scripts/seed-heritage-theme.js",
+    "icloud:save": "node scripts/icloud-save.js",
+    "icloud:restore": "node scripts/icloud-restore.js",
+    "icloud:status": "node scripts/icloud-status.js",
     "test": "jest --config jest.config.js",
     "test:plugin:editor": "yarn workspace wysiwyg-editor test"
   },
