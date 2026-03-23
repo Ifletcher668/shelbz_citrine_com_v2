@@ -5,7 +5,24 @@ use crate::commands::icloud::icloud_save;
 use crate::commands::processes::get_process_status;
 use crate::state::AppState;
 
-const NETLIFY_HOOK_URL: &str = "https://api.netlify.com/build_hooks/69c01671fd19e223778ece30";
+#[derive(serde::Deserialize)]
+struct LauncherConfig {
+    #[serde(rename = "netlifyBuildHookUrl")]
+    netlify_build_hook_url: String,
+}
+
+fn read_netlify_hook_url(project_root: &std::path::Path) -> Result<String, String> {
+    let config_path = project_root.join("launcher.config.json");
+    let json = std::fs::read_to_string(&config_path).map_err(|_| {
+        format!(
+            "launcher.config.json not found at {}. Copy launcher.config.json.example and set your Netlify build hook URL.",
+            config_path.display()
+        )
+    })?;
+    let config: LauncherConfig =
+        serde_json::from_str(&json).map_err(|e| format!("Failed to parse launcher.config.json: {e}"))?;
+    Ok(config.netlify_build_hook_url)
+}
 
 #[tauri::command]
 pub async fn publish(
@@ -24,8 +41,9 @@ pub async fn publish(
 
     // Step 3: trigger Netlify deploy
     let _ = app.emit("publish:step", "Triggering Netlify deploy...");
+    let hook_url = read_netlify_hook_url(&state.root())?;
     let output = Command::new("curl")
-        .args(["-s", "-o", "/dev/null", "-w", "%{http_code}", "-X", "POST", NETLIFY_HOOK_URL])
+        .args(["-s", "-o", "/dev/null", "-w", "%{http_code}", "-X", "POST", &hook_url])
         .output()
         .map_err(|e| format!("Failed to trigger deploy: {e}"))?;
 

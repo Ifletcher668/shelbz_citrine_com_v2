@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import BackgroundTexture from "@/Components/shared/BackgroundTexture";
 import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
-import { getHeader, getStrapiMediaUrl } from "@/lib/strapi";
+import { getStrapiMediaUrl } from "@/lib/strapi";
+import { useHeaderData } from "@/lib/HeaderDataContext";
 
 /**
  * Header Component - "Grimoire Navigation"
@@ -20,7 +21,7 @@ const FALLBACK_PRIMARY = { type: "text", text: "Shelbz Citrine", link: "/" };
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [cmsData, setCmsData] = useState(null);
+  const cmsData = useHeaderData();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,12 +40,6 @@ export default function Header() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    getHeader()
-      .then(setCmsData)
-      .catch(() => {});
   }, []);
 
   // Prevent body scroll when mobile menu is open
