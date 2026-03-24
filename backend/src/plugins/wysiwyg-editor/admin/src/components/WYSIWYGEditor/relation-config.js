@@ -17,6 +17,18 @@ export const RELATION_TYPES = [
     apiPath: "bullet-lists",
     displayField: "title",
   },
+  {
+    type: "faq",
+    label: "FAQ",
+    apiPath: "faqs",
+    displayField: "title",
+  },
+  {
+    type: "step-group",
+    label: "Step Group",
+    apiPath: "step-groups",
+    displayField: "title",
+  },
   // Future component types go here:
   // { type: "modal", label: "Modal", apiPath: "modals", displayField: "title" },
 ];

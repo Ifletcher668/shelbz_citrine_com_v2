@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "step_groups",
+  "info": {
+    "singularName": "step-group",
+    "pluralName": "step-groups",
+    "displayName": "Step Group",
+    "description": "A reusable ordered group of steps with configurable column count, embeddable in WYSIWYG content via [ref:step-group:id]"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "columns": {
+      "type": "enumeration",
+      "enum": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "default": "5"
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "step.step"
+    },
+    "cta_text": {
+      "type": "string"
+    },
+    "cta_link": {
+      "type": "string"
+    }
+  }
+}
