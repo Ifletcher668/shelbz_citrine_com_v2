@@ -39,3 +39,6 @@ launcher.config.json
 
 # Claude
 .claude/
+
+# Git worktrees
+.worktrees/

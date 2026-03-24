@@ -45,12 +45,7 @@ export async function getPageBySlug(slug) {
   const qs =
     `?filters[slug][$eq]=${encodeURIComponent(slug)}` +
     `&filters[publishedAt][$notNull]=true` +
-    `&populate[sections][on][sections.gallery][populate]=*` +
-    `&populate[sections][on][sections.faq][populate][items]=*` +
-    `&populate[sections][on][sections.column-group][populate][columns]=*` +
-    `&populate[sections][on][sections.step-group][populate][steps]=*` +
-    `&populate[sections][on][sections.image][populate]=*` +
-    `&populate[sections][on][sections.button][populate]=*`;
+    `&populate[sections][on][sections.column-group][populate][columns]=*`;
 
   const { data } = await strapiGet(`/pages${qs}`);
   if (!data || data.length === 0) return null;
@@ -119,6 +114,8 @@ export async function getActiveTheme() {
  */
 const RELATION_API_PATHS = {
   "bullet-list": "bullet-lists",
+  "faq": "faqs",
+  "step-group": "step-groups",
 };
 
 /**

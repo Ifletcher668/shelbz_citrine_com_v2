@@ -40,10 +40,52 @@ function renderBulletList(data) {
   return `<div class="md-bullet-list">\n${items}\n</div>`;
 }
 
+// ─── FAQ ──────────────────────────────────────────────────────────────────────
+
+function renderFaq(data) {
+  const items = (data.items ?? [])
+    .map(
+      ({ question, answer }) =>
+        `<div class="md-faq-item">` +
+        `<div class="md-faq-question">${question}</div>` +
+        `<div class="md-faq-answer">${answer}</div>` +
+        `</div>`,
+    )
+    .join("\n");
+  return `<div class="md-faq">\n${items}\n</div>`;
+}
+
+// ─── Step Group ───────────────────────────────────────────────────────────────
+
+function renderStepGroup(data) {
+  const cols = data.columns ?? "1";
+  const steps = (data.steps ?? [])
+    .map(
+      ({ icon, title, description }) =>
+        `<div class="md-step">` +
+        `<span class="md-step-icon">${icon}</span>` +
+        `<div class="md-step-title">${title}</div>` +
+        `${description ? `<div class="md-step-description">${description}</div>` : ""}` +
+        `</div>`,
+    )
+    .join("\n");
+  const cta =
+    data.cta_text && data.cta_link
+      ? `\n<div class="md-step-cta"><a href="${data.cta_link}">${data.cta_text}</a></div>`
+      : "";
+  return (
+    `<div class="md-step-group md-step-group-cols-${cols}">` +
+    `\n${steps}${cta}\n` +
+    `</div>`
+  );
+}
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 const RENDERERS = {
   "bullet-list": renderBulletList,
+  "faq": renderFaq,
+  "step-group": renderStepGroup,
 };
 
 /**

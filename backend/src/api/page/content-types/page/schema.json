@@ -29,12 +29,7 @@
     "sections": {
       "type": "dynamiczone",
       "components": [
-        "sections.column-group",
-        "sections.step-group",
-        "sections.gallery",
-        "sections.faq",
-        "sections.image",
-        "sections.button"
+        "sections.column-group"
       ]
     },
     "theme_overrides": {

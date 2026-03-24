@@ -1088,6 +1088,104 @@
     border-color: rgba(66, 72, 82, 0.6);
   }
 
+  /* FAQ (accordion-style relation embed) */
+  .md-faq {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(var(--color-border-rgb, 66, 72, 82), 0.2);
+  }
+
+  .md-faq-item {
+    border-bottom: 1px solid rgba(var(--color-border-rgb, 66, 72, 82), 0.2);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .md-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .md-faq-question {
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--color-text-heading);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .md-faq-answer {
+    font-size: var(--text-sm);
+    color: var(--color-text-body);
+    line-height: 1.6;
+  }
+
+  /* Step Group (relation embed) */
+  .md-step-group {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .md-step-group-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .md-step-group-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md-step-group-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .md-step-group-cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+  .md-step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .md-step-icon {
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    font-family: var(--font-mono, monospace);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .md-step-title {
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--color-text-heading);
+    line-height: 1.3;
+  }
+
+  .md-step-description {
+    font-size: var(--text-sm);
+    color: var(--color-text-body);
+    line-height: 1.6;
+  }
+
+  .md-step-cta {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .md-step-cta a {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+    font-family: var(--font-mono, monospace);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .md-step-cta a:hover {
+    background-color: var(--color-accent);
+    color: var(--color-bg-base);
+  }
+
   /* Figures (attributed images) */
   .md-figure {
     margin-top: 1rem;
