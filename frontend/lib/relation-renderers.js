@@ -65,7 +65,7 @@ function renderStepGroup(data) {
         `<div class="md-step">` +
         `<span class="md-step-icon">${icon}</span>` +
         `<div class="md-step-title">${title}</div>` +
-        `<div class="md-step-description">${description ?? ""}</div>` +
+        `${description ? `<div class="md-step-description">${description}</div>` : ""}` +
         `</div>`,
     )
     .join("\n");
