@@ -2,16 +2,17 @@ import { WYSIWYG_GROUPS } from "../toolbar-config";
 import { SEMANTIC_COLOR_NAMES } from "../../../hooks/color-slots";
 
 describe("WYSIWYG_GROUPS structure", () => {
-  test("exports an array with 7 groups", () => {
+  test("exports an array with 8 groups", () => {
     expect(Array.isArray(WYSIWYG_GROUPS)).toBe(true);
-    expect(WYSIWYG_GROUPS).toHaveLength(7);
+    expect(WYSIWYG_GROUPS).toHaveLength(8);
   });
 
-  test("group labels are Structure, Alignment, Columns, Formatting, Button, Block, Decorative", () => {
+  test("group labels are Structure, Alignment, Image, Columns, Formatting, Button, Block, Decorative", () => {
     const labels = WYSIWYG_GROUPS.map((g) => g.label);
     expect(labels).toEqual([
       "Structure",
       "Alignment",
+      "Image",
       "Columns",
       "Formatting",
       "Button",
@@ -99,8 +100,8 @@ describe("WYSIWYG_GROUPS structure", () => {
     expect(alignmentGroup.dropdown).toBe(true);
 
     const ids = alignmentGroup.buttons.map((b) => b.id);
-    expect(ids).toContain("center");
-    expect(ids).toContain("right");
+    expect(ids).toContain("align-center");
+    expect(ids).toContain("align-right");
   });
 
   test("Columns group is a dropdown and contains column buttons", () => {
