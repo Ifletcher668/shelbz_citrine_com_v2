@@ -94,45 +94,104 @@ test("attributedImage: unknown classes are filtered out", () => {
   expect(html).not.toContain("dangerous-class");
 });
 
-// ─── Container directive extension ──────────────────────────────────────────
+// ─── mdElementExtension — alignment ──────────────────────────────────────────
 
-test("containerDirective: :::center wraps content", () => {
-  const html = wysiwygMarked.parse(":::center\nContent\n:::");
+test("md-align center: wraps in md-center", () => {
+  const html = wysiwygMarked.parse('<md-align data-dir="center">\nhello\n</md-align>');
   expect(html).toContain('class="md-container md-center"');
-  expect(html).toContain("Content");
+  expect(html).toContain("hello");
 });
 
-test("containerDirective: :::callout renders aside", () => {
-  const html = wysiwygMarked.parse(":::callout\nNote text\n:::");
-  expect(html).toContain("<aside");
-  expect(html).toContain('class="md-container md-callout"');
+test("md-align right: wraps in md-right", () => {
+  const html = wysiwygMarked.parse('<md-align data-dir="right">\nhello\n</md-align>');
+  expect(html).toContain('class="md-container md-right"');
 });
 
-test("containerDirective: :::callout-warning renders warning aside", () => {
-  const html = wysiwygMarked.parse(":::callout-warning\nWarning\n:::");
+test("md-align left: wraps in md-left", () => {
+  const html = wysiwygMarked.parse('<md-align data-dir="left">\nhello\n</md-align>');
+  expect(html).toContain('class="md-left"');
+});
+
+test("md-align justify: wraps in md-justify", () => {
+  const html = wysiwygMarked.parse('<md-align data-dir="justify">\nhello\n</md-align>');
+  expect(html).toContain('class="md-justify"');
+});
+
+test("md-align valign middle: wraps in md-valign-middle", () => {
+  const html = wysiwygMarked.parse('<md-align data-valign="middle">\nhello\n</md-align>');
+  expect(html).toContain('class="md-valign-middle"');
+});
+
+// ─── mdElementExtension — containers ─────────────────────────────────────────
+
+test("md-container reading: wraps in md-constrain-reading", () => {
+  const html = wysiwygMarked.parse('<md-container data-width="reading">\ntext\n</md-container>');
+  expect(html).toContain("md-constrain-reading");
+});
+
+// ─── mdElementExtension — callouts ───────────────────────────────────────────
+
+test("md-callout: renders aside with md-callout class", () => {
+  const html = wysiwygMarked.parse("<md-callout>\nNote!\n</md-callout>");
+  expect(html).toContain('<aside class="md-container md-callout">');
+  expect(html).toContain("Note!");
+});
+
+test("md-callout warning variant: renders md-callout-warning", () => {
+  const html = wysiwygMarked.parse('<md-callout data-variant="warning">\nWatch out\n</md-callout>');
   expect(html).toContain("md-callout-warning");
 });
 
-test("containerDirective: :::divider renders ornamental SVG div", () => {
-  const html = wysiwygMarked.parse(":::divider\n:::");
-  expect(html).toContain('<div class="md-divider"');
+// ─── mdElementExtension — columns ────────────────────────────────────────────
+
+test("md-columns count=2: splits on --- and creates 2 md-column divs", () => {
+  const html = wysiwygMarked.parse('<md-columns data-count="2">\nLeft\n---\nRight\n</md-columns>');
+  expect(html).toContain("md-columns md-columns-2");
+  expect(html.match(/class="md-column"/g)).toHaveLength(2);
+});
+
+test("md-columns: --- separator not parsed as <hr>", () => {
+  const html = wysiwygMarked.parse('<md-columns data-count="2">\nLeft\n---\nRight\n</md-columns>');
+  expect(html).not.toContain("<hr");
+});
+
+// ─── mdElementExtension — cards ──────────────────────────────────────────────
+
+test("md-card gold: renders md-card md-card-gold", () => {
+  const html = wysiwygMarked.parse('<md-card data-variant="gold">\nContent\n</md-card>');
+  expect(html).toContain('class="md-card md-card-gold"');
+});
+
+// ─── mdElementExtension — self-closing ───────────────────────────────────────
+
+test("md-divider: renders ornamental SVG", () => {
+  const html = wysiwygMarked.parse("<md-divider />");
+  expect(html).toContain('class="md-divider"');
   expect(html).toContain("<svg");
 });
 
-test("containerDirective: :::spacer renders spacer div", () => {
-  const html = wysiwygMarked.parse(":::spacer\n:::");
-  expect(html).toContain('<div class="md-spacer"');
+test("md-spacer: renders md-spacer", () => {
+  const html = wysiwygMarked.parse("<md-spacer />");
+  expect(html).toContain('class="md-spacer"');
 });
 
-test("containerDirective: :::columns-2 renders column layout", () => {
-  const html = wysiwygMarked.parse(":::columns-2\nLeft\n---\nRight\n:::");
-  expect(html).toContain("md-columns");
-  expect(html).toContain("md-column");
+test('md-spacer size=sm: renders md-spacer-sm', () => {
+  const html = wysiwygMarked.parse('<md-spacer data-size="sm" />');
+  expect(html).toContain('class="md-spacer-sm"');
 });
 
-test("containerDirective: disallowed directive name is not rendered as directive", () => {
-  const html = wysiwygMarked.parse(":::injected-div\ncontent\n:::");
-  expect(html).not.toContain('class="md-container"');
+// ─── mdElementExtension — security ───────────────────────────────────────────
+
+test("old ::: syntax is no longer rendered (hard cut)", () => {
+  const html = wysiwygMarked.parse(":::center\nhello\n:::");
+  expect(html).not.toContain("md-center");
+  expect(html).not.toContain("md-container");
+});
+
+test('<md-card data-variant="invalid"> is not rendered with md-card class', () => {
+  const html = wysiwygMarked.parse('<md-card data-variant="invalid">\nContent\n</md-card>');
+  expect(html).not.toContain('class="md-card');
+  expect(html).not.toContain("md-card-invalid");
 });
 
 // ─── Bullet point extension ──────────────────────────────────────────────────
