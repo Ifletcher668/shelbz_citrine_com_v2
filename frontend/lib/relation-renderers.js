@@ -58,7 +58,7 @@ function renderFaq(data) {
 // ─── Step Group ───────────────────────────────────────────────────────────────
 
 function renderStepGroup(data) {
-  const cols = data.columns ?? "1";
+  const cols = (data.columns ?? "col-1").replace("col-", "");
   const steps = (data.steps ?? [])
     .map(
       ({ icon, title, description }) =>

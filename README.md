@@ -25,16 +25,16 @@ shelbz_citrine_com_v2/
 
 ```bash
 # Install all workspace dependencies
-npm install
+yarn install
 
 # Run frontend dev server
-npm run frontend
+yarn frontend
 
 # Run backend (Strapi)
-npm run backend
+yarn backend
 
 # Run both concurrently
-npm run dev
+yarn dev
 ```
 
 ---
@@ -130,8 +130,8 @@ yarn icloud:restore --backup <backup-name>  # Restore a specific backup
 
 ### Components & Content Types
 
-- [-] **Add Header single type** in Strapi
-- [-] **Add Footer single type** in Strapi
+- [x] **Add Header single type** in Strapi
+- [x] **Add Footer single type** in Strapi
 - [ ] Build out every Strapi component type
   - Audit current hard-coded pages for all component patterns
   - Build each component, add tests, add Storybook stories

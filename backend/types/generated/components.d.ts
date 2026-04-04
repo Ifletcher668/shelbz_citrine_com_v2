@@ -80,24 +80,6 @@ export interface NavigationNavLink extends Struct.ComponentSchema {
   };
 }
 
-export interface SectionsButton extends Struct.ComponentSchema {
-  collectionName: 'components_sections_buttons';
-  info: {
-    description: 'Standalone button section';
-    displayName: 'Button';
-    icon: 'cursor';
-  };
-  attributes: {
-    alignment: Schema.Attribute.Enumeration<['left', 'center', 'right']> &
-      Schema.Attribute.DefaultTo<'center'>;
-    anchor_id: Schema.Attribute.String;
-    link: Schema.Attribute.String & Schema.Attribute.Required;
-    text: Schema.Attribute.String & Schema.Attribute.Required;
-    variant: Schema.Attribute.Enumeration<['primary', 'secondary']> &
-      Schema.Attribute.DefaultTo<'primary'>;
-  };
-}
-
 export interface SectionsColumnGroup extends Struct.ComponentSchema {
   collectionName: 'components_sections_column_groups';
   info: {
@@ -109,76 +91,6 @@ export interface SectionsColumnGroup extends Struct.ComponentSchema {
     colum_name: Schema.Attribute.String & Schema.Attribute.Private;
     columns: Schema.Attribute.Component<'column.column', true>;
     section_id: Schema.Attribute.String & Schema.Attribute.Unique;
-  };
-}
-
-export interface SectionsCta extends Struct.ComponentSchema {
-  collectionName: 'components_sections_ctas';
-  info: {
-    description: 'Call-to-action section with headline, body, and button';
-    displayName: 'CTA';
-    icon: 'cursor';
-  };
-  attributes: {
-    body: Schema.Attribute.Text;
-    button_link: Schema.Attribute.String;
-    button_text: Schema.Attribute.String;
-    headline: Schema.Attribute.String;
-  };
-}
-
-export interface SectionsFaq extends Struct.ComponentSchema {
-  collectionName: 'components_sections_faqs';
-  info: {
-    description: 'Accordion-style FAQ section';
-    displayName: 'FAQ';
-    icon: 'question';
-  };
-  attributes: {
-    items: Schema.Attribute.Component<'faq-item.faq-item', true>;
-  };
-}
-
-export interface SectionsGallery extends Struct.ComponentSchema {
-  collectionName: 'components_sections_galleries';
-  info: {
-    description: 'Image gallery with optional title';
-    displayName: 'Gallery';
-    icon: 'landscape';
-  };
-  attributes: {
-    images: Schema.Attribute.Media<'images', true>;
-    title: Schema.Attribute.String;
-  };
-}
-
-export interface SectionsImage extends Struct.ComponentSchema {
-  collectionName: 'components_sections_images';
-  info: {
-    description: 'Standalone image section';
-    displayName: 'Image';
-    icon: 'picture';
-  };
-  attributes: {
-    alt_text: Schema.Attribute.String;
-    anchor_id: Schema.Attribute.String;
-    media: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
-  };
-}
-
-export interface SectionsStepGroup extends Struct.ComponentSchema {
-  collectionName: 'components_sections_step_groups';
-  info: {
-    description: 'An ordered sequence of Steps with configurable column count (2\u20135). Includes optional CTA button.';
-    displayName: 'Step Group';
-    icon: 'arrow-right';
-  };
-  attributes: {
-    columns: Schema.Attribute.Enumeration<['2', '3', '4', '5']> &
-      Schema.Attribute.DefaultTo<'5'>;
-    cta_link: Schema.Attribute.String;
-    cta_text: Schema.Attribute.String;
-    steps: Schema.Attribute.Component<'step.step', true>;
   };
 }
 
@@ -359,13 +271,7 @@ declare module '@strapi/strapi' {
       'navigation.logo-image': NavigationLogoImage;
       'navigation.logo-text': NavigationLogoText;
       'navigation.nav-link': NavigationNavLink;
-      'sections.button': SectionsButton;
       'sections.column-group': SectionsColumnGroup;
-      'sections.cta': SectionsCta;
-      'sections.faq': SectionsFaq;
-      'sections.gallery': SectionsGallery;
-      'sections.image': SectionsImage;
-      'sections.step-group': SectionsStepGroup;
       'step.step': StepStep;
       'theme.layout': ThemeLayout;
       'theme.semantic-colors': ThemeSemanticColors;
