@@ -93,13 +93,17 @@ Depth-counting scan — same strategy as the existing `:::` tokenizer. Finds bal
 
 ### Renderer output
 
-Maps element name + data attributes to existing CSS classes — no CSS changes needed:
+Maps element name + data attributes to CSS classes. **Note:** `md-left`, `md-justify`, and the three `md-valign-*` classes are new and must be added to `globals.css`; all other classes already exist.
 
 | Input | Output |
 |---|---|
+| `<md-align data-dir="left">` | `<div class="md-left">...</div>` |
 | `<md-align data-dir="center">` | `<div class="md-center">...</div>` |
+| `<md-align data-dir="right">` | `<div class="md-right">...</div>` |
 | `<md-align data-dir="justify">` | `<div class="md-justify">...</div>` |
-| `<md-align data-valign="middle">` | `<div style="display:flex;align-items:center">...</div>` |
+| `<md-align data-valign="top">` | `<div class="md-valign-top">...</div>` |
+| `<md-align data-valign="middle">` | `<div class="md-valign-middle">...</div>` |
+| `<md-align data-valign="bottom">` | `<div class="md-valign-bottom">...</div>` |
 | `<md-container data-width="reading">` | `<div class="md-container md-constrain-reading">...</div>` |
 | `<md-columns data-count="3">` | `<div class="md-columns md-columns-3">` + column splitting |
 | `<md-callout data-variant="warning">` | `<div class="md-callout md-callout-warning">...</div>` |
@@ -201,9 +205,15 @@ Behavior:
 | `lib/marked-extensions.js` | Same tokenizer swap as admin |
 | `__tests__/lib/marked-extensions.test.js` | Replace all `:::` test cases with `<md-*>` equivalents |
 
+### Frontend styles
+
+| File | Change |
+|---|---|
+| `frontend/styles/globals.css` | Add `md-left` (text-align: left), `md-justify` (text-align: justify), `md-valign-top/middle/bottom` (flex + align-items) |
+
 ### No changes needed
 
-`globals.css`, `relation-renderers.js`, `strapi.js`, `relation-config.js`, `Preview.jsx`, `Toolbar.jsx`, `editor-handlers.js`
+`relation-renderers.js`, `strapi.js`, `relation-config.js`, `Preview.jsx`, `Toolbar.jsx`, `editor-handlers.js`
 
 ---
 
