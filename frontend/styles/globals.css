@@ -898,6 +898,32 @@
     text-align: right;
   }
 
+  .md-left {
+    text-align: left;
+  }
+
+  .md-justify {
+    text-align: justify;
+  }
+
+  .md-valign-top {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .md-valign-middle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .md-valign-bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
   /* Callouts */
   .md-callout {
     border-left: 2px solid rgba(180, 170, 150, 0.4);
