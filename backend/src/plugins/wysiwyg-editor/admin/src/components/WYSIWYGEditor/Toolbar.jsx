@@ -417,6 +417,7 @@ export default function Toolbar({
       >
         {renderGroup(GROUP_BY_LABEL["Structure"])}
         {renderGroup(GROUP_BY_LABEL["Alignment"])}
+        {renderGroup(GROUP_BY_LABEL["Image"])}
         {renderGroup(GROUP_BY_LABEL["Columns"])}
 
         <Divider />
