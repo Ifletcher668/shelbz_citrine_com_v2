@@ -13,6 +13,8 @@ import "codemirror5/keymap/sublime";
 import Toolbar from "./Toolbar";
 import Preview from "./Preview";
 import { insertFile, markdownHandler, wysiwygWrap } from "./editor-handlers";
+import CommandPalette from "./CommandPalette";
+import { COMMANDS } from "./command-registry";
 
 // ── Styled components ──────────────────────────────────────────────────────────
 
@@ -138,6 +140,8 @@ const WYSIWYGEditor = React.forwardRef(
     // viewMode controls the expanded split-view state:
     // "editor" = full editor only, "split" = side-by-side, "preview" = full preview
     const [viewMode, setViewMode] = useState("editor");
+    const [paletteOpen, setPaletteOpen] = useState(false);
+    const slashPosRef = useRef(null); // set when palette is opened via '/' trigger
 
     const components = useStrapiApp(
       "WYSIWYGEditorMediaLib",
@@ -173,6 +177,11 @@ const WYSIWYGEditor = React.forwardRef(
           // Line moving (Alt+Up/Down, like Obsidian)
           "Alt-Up": "swapLineUp",
           "Alt-Down": "swapLineDown",
+          // Command palette
+          "Cmd-P": () => {
+            slashPosRef.current = null;
+            setPaletteOpen(true);
+          },
           // Multi-cursor (Sublime-style)
           "Cmd-D": "selectNextOccurrence",
           "Ctrl-Shift-Up": "addCursorToPrevLine",
@@ -198,6 +207,17 @@ const WYSIWYGEditor = React.forwardRef(
       });
 
       editorRef.current = cm;
+
+      cm.on("inputRead", (editor, change) => {
+        if (change.text[0] !== "/") return;
+        const cursor = editor.getCursor();
+        const lineContent = editor.getLine(cursor.line);
+        const beforeSlash = lineContent.slice(0, cursor.ch - 1).trim();
+        if (beforeSlash !== "") return;
+        // '/' at start of line — open palette and track slash position for cleanup
+        slashPosRef.current = { line: cursor.line, ch: cursor.ch - 1 };
+        setPaletteOpen(true);
+      });
 
       return () => {
         if (editorRef.current) {
@@ -239,6 +259,23 @@ const WYSIWYGEditor = React.forwardRef(
     const handleCollapse = useCallback(() => {
       setIsExpanded(false);
       setViewMode("editor");
+    }, []);
+
+    const closePalette = useCallback(() => {
+      setPaletteOpen(false);
+      editorRef.current?.focus();
+    }, []);
+
+    const handlePaletteExecute = useCallback((cmd) => {
+      const cm = editorRef.current;
+      if (!cm) return;
+      if (slashPosRef.current) {
+        const { line, ch } = slashPosRef.current;
+        cm.replaceRange("", { line, ch }, { line, ch: ch + 1 });
+        slashPosRef.current = null;
+      }
+      cmd.action(cm);
+      cm.focus();
     }, []);
 
     // ── Preview mode toggle (non-expanded) ────────────────────────────────────
@@ -392,6 +429,13 @@ const WYSIWYGEditor = React.forwardRef(
             onSelectAssets={handleSelectAssets}
           />
         )}
+
+        <CommandPalette
+          isOpen={paletteOpen}
+          onClose={closePalette}
+          onExecute={handlePaletteExecute}
+          commands={COMMANDS}
+        />
       </Field.Root>
     );
   },
