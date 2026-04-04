@@ -103,6 +103,8 @@ const ALLOWED_MD_ELEMENTS = new Set([
 ]);
 
 const ALLOWED_MD_ATTRS = {
+  // dir and valign are mutually exclusive in the renderer (valign takes priority).
+  // Both are listed here so each is individually valid; combining them is not an error.
   "md-align": {
     dir: ["left", "center", "right", "justify"],
     valign: ["top", "middle", "bottom"],
@@ -192,7 +194,7 @@ function parseDataAttrs(str) {
 function isAllowedElement(tagName, attrs) {
   if (!ALLOWED_MD_ELEMENTS.has(tagName)) return false;
   const allowedAttrs = ALLOWED_MD_ATTRS[tagName];
-  if (!allowedAttrs) return true;
+  if (!allowedAttrs) return Object.keys(attrs).length === 0;
   for (const [key, value] of Object.entries(attrs)) {
     if (!(key in allowedAttrs)) return false;
     if (!allowedAttrs[key].includes(value)) return false;
@@ -326,7 +328,8 @@ const mdElementExtension = {
           wide: "md-constrain-wide",
           full: "md-constrain-full",
         };
-        return `<div class="md-container ${widthMap[attrs.width] || ""}">${inner}</div>\n`;
+        const widthClass = widthMap[attrs.width];
+        return `<div class="${widthClass ? `md-container ${widthClass}` : "md-container"}">${inner}</div>\n`;
       }
       case "md-callout": {
         if (attrs.variant === "warning")
@@ -347,6 +350,9 @@ const mdElementExtension = {
         return `<div class="md-container">${inner}</div>\n`;
     }
   },
+  // Note: colTokens (used by md-columns) is an array of token arrays, not a flat
+  // token array, so it cannot be listed in childTokens. Column content is invisible
+  // to marked's walkTokens — rendered directly via this.parser.parse() instead.
   childTokens: ["tokens"],
 };
 

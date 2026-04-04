@@ -366,6 +366,12 @@ describe("mdElementExtension", () => {
       expect(html).not.toContain("md-container");
       expect(html).not.toContain("md-center");
     });
+
+    test('<md-card data-variant="invalid"> is not rendered with md-card class', () => {
+      const html = parse('<md-card data-variant="invalid">\nContent\n</md-card>');
+      expect(html).not.toContain('class="md-card');
+      expect(html).not.toContain("md-card-invalid");
+    });
   });
 
   describe("combined", () => {
