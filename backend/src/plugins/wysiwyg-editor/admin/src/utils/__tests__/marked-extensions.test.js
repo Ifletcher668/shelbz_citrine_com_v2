@@ -192,99 +192,200 @@ describe("attributedImageExtension", () => {
   });
 });
 
-// ─── containerDirectiveExtension ─────────────────────────────────────────────
+// ─── mdElementExtension ───────────────────────────────────────────────────────
 
-describe("containerDirectiveExtension", () => {
-  describe("alignment", () => {
-    test(":::center wraps in md-center", () => {
-      const html = parse(":::center\nhello\n:::");
+describe("mdElementExtension", () => {
+  describe("alignment — horizontal", () => {
+    test('<md-align data-dir="center"> wraps in md-center', () => {
+      const html = parse('<md-align data-dir="center">\nhello\n</md-align>');
       expect(html).toContain('class="md-container md-center"');
       expect(html).toContain("hello");
     });
 
-    test(":::right wraps in md-right", () => {
-      const html = parse(":::right\nhello\n:::");
+    test('<md-align data-dir="right"> wraps in md-right', () => {
+      const html = parse('<md-align data-dir="right">\nhello\n</md-align>');
       expect(html).toContain('class="md-container md-right"');
+    });
+
+    test('<md-align data-dir="left"> wraps in md-left', () => {
+      const html = parse('<md-align data-dir="left">\nhello\n</md-align>');
+      expect(html).toContain('class="md-left"');
+    });
+
+    test('<md-align data-dir="justify"> wraps in md-justify', () => {
+      const html = parse('<md-align data-dir="justify">\nhello\n</md-align>');
+      expect(html).toContain('class="md-justify"');
+    });
+  });
+
+  describe("alignment — vertical", () => {
+    test('<md-align data-valign="top"> wraps in md-valign-top', () => {
+      const html = parse('<md-align data-valign="top">\nhello\n</md-align>');
+      expect(html).toContain('class="md-valign-top"');
+    });
+
+    test('<md-align data-valign="middle"> wraps in md-valign-middle', () => {
+      const html = parse('<md-align data-valign="middle">\nhello\n</md-align>');
+      expect(html).toContain('class="md-valign-middle"');
+    });
+
+    test('<md-align data-valign="bottom"> wraps in md-valign-bottom', () => {
+      const html = parse('<md-align data-valign="bottom">\nhello\n</md-align>');
+      expect(html).toContain('class="md-valign-bottom"');
+    });
+  });
+
+  describe("containers", () => {
+    test('<md-container data-width="reading"> wraps in md-constrain-reading', () => {
+      const html = parse('<md-container data-width="reading">\ntext\n</md-container>');
+      expect(html).toContain("md-constrain-reading");
+    });
+
+    test('<md-container data-width="narrow"> wraps in md-constrain-narrow', () => {
+      const html = parse('<md-container data-width="narrow">\ntext\n</md-container>');
+      expect(html).toContain("md-constrain-narrow");
+    });
+
+    test('<md-container data-width="wide"> wraps in md-constrain-wide', () => {
+      const html = parse('<md-container data-width="wide">\ntext\n</md-container>');
+      expect(html).toContain("md-constrain-wide");
+    });
+
+    test('<md-container data-width="full"> wraps in md-constrain-full', () => {
+      const html = parse('<md-container data-width="full">\ntext\n</md-container>');
+      expect(html).toContain("md-constrain-full");
     });
   });
 
   describe("callouts", () => {
-    test(":::callout renders <aside> with md-callout", () => {
-      const html = parse(":::callout\nNote!\n:::");
+    test("<md-callout> renders <aside> with md-callout", () => {
+      const html = parse("<md-callout>\nNote!\n</md-callout>");
       expect(html).toContain('<aside class="md-container md-callout">');
       expect(html).toContain("Note!");
     });
 
-    test(":::callout-warning renders md-callout-warning", () => {
-      const html = parse(":::callout-warning\nWatch out\n:::");
+    test('<md-callout data-variant="warning"> renders md-callout-warning', () => {
+      const html = parse('<md-callout data-variant="warning">\nWatch out\n</md-callout>');
       expect(html).toContain("md-callout-warning");
     });
 
-    test(":::callout-info renders md-callout-info", () => {
-      const html = parse(":::callout-info\nFYI\n:::");
+    test('<md-callout data-variant="info"> renders md-callout-info', () => {
+      const html = parse('<md-callout data-variant="info">\nFYI\n</md-callout>');
       expect(html).toContain("md-callout-info");
     });
   });
 
   describe("columns", () => {
-    test(":::columns-2 splits on --- and creates 2 md-column divs", () => {
-      const html = parse(":::columns-2\nLeft\n---\nRight\n:::");
+    test('<md-columns data-count="2"> splits on --- and creates 2 md-column divs', () => {
+      const html = parse('<md-columns data-count="2">\nLeft\n---\nRight\n</md-columns>');
       expect(html).toContain("md-columns md-columns-2");
       expect(html.match(/class="md-column"/g)).toHaveLength(2);
     });
 
-    test(":::columns-3 splits on --- and creates 3 md-column divs", () => {
-      const html = parse(":::columns-3\nA\n---\nB\n---\nC\n:::");
+    test('<md-columns data-count="3"> splits on --- and creates 3 md-column divs', () => {
+      const html = parse('<md-columns data-count="3">\nA\n---\nB\n---\nC\n</md-columns>');
       expect(html).toContain("md-columns md-columns-3");
       expect(html.match(/class="md-column"/g)).toHaveLength(3);
     });
 
     test("--- column separator is not parsed as <hr>", () => {
-      const html = parse(":::columns-2\nLeft\n---\nRight\n:::");
+      const html = parse('<md-columns data-count="2">\nLeft\n---\nRight\n</md-columns>');
       expect(html).not.toContain("<hr");
     });
   });
 
-  describe("drop-cap and text", () => {
-    test(":::drop-cap renders drop-cap class", () => {
-      const html = parse(":::drop-cap\nFirst paragraph.\n:::");
+  describe("drop-cap and prose", () => {
+    test("<md-drop-cap> renders drop-cap class", () => {
+      const html = parse("<md-drop-cap>\nFirst paragraph.\n</md-drop-cap>");
       expect(html).toContain('class="md-container drop-cap"');
     });
 
-    test(":::text renders prose-heritage class", () => {
-      const html = parse(":::text\nSome text.\n:::");
+    test("<md-prose> renders prose-heritage class", () => {
+      const html = parse("<md-prose>\nSome text.\n</md-prose>");
       expect(html).toContain('class="md-container prose-heritage"');
     });
   });
 
-  describe("self-closing directives", () => {
-    test(":::divider renders ornamental SVG", () => {
-      const html = parse(":::divider\n:::");
+  describe("self-closing", () => {
+    test("<md-divider /> renders ornamental SVG", () => {
+      const html = parse("<md-divider />");
       expect(html).toContain('class="md-divider"');
       expect(html).toContain("<svg");
     });
 
-    test(":::spacer renders md-spacer", () => {
-      const html = parse(":::spacer\n:::");
+    test("<md-spacer /> renders md-spacer", () => {
+      const html = parse("<md-spacer />");
       expect(html).toContain('class="md-spacer"');
       expect(html).not.toContain("<svg");
     });
 
-    test(":::spacer-sm renders md-spacer-sm", () => {
-      const html = parse(":::spacer-sm\n:::");
+    test('<md-spacer data-size="sm" /> renders md-spacer-sm', () => {
+      const html = parse('<md-spacer data-size="sm" />');
       expect(html).toContain('class="md-spacer-sm"');
     });
 
-    test(":::spacer-lg renders md-spacer-lg", () => {
-      const html = parse(":::spacer-lg\n:::");
+    test('<md-spacer data-size="lg" /> renders md-spacer-lg', () => {
+      const html = parse('<md-spacer data-size="lg" />');
       expect(html).toContain('class="md-spacer-lg"');
     });
   });
 
-  describe("unknown directive", () => {
-    test("unknown directive is rejected and not rendered as container", () => {
-      const html = parse(":::unknown-thing\nhello\n:::");
+  describe("cards", () => {
+    test('<md-card data-variant="dark"> renders md-card md-card-dark', () => {
+      const html = parse('<md-card data-variant="dark">\nContent\n</md-card>');
+      expect(html).toContain('class="md-card md-card-dark"');
+      expect(html).toContain("Content");
+    });
+
+    test('<md-card data-variant="gold"> renders md-card md-card-gold', () => {
+      const html = parse('<md-card data-variant="gold">\nContent\n</md-card>');
+      expect(html).toContain('class="md-card md-card-gold"');
+    });
+
+    test('<md-card data-variant="steel"> renders md-card md-card-steel', () => {
+      const html = parse('<md-card data-variant="steel">\nContent\n</md-card>');
+      expect(html).toContain('class="md-card md-card-steel"');
+    });
+
+    test("card renders inner block content", () => {
+      const html = parse('<md-card data-variant="gold">\n## Title\n\nParagraph\n</md-card>');
+      expect(html).toContain("<h2");
+      expect(html).toContain("Title");
+      expect(html).toContain("Paragraph");
+    });
+  });
+
+  describe("security", () => {
+    test("unknown <md-*> element is not rendered as a container", () => {
+      const html = parse("<md-unknown>\nhello\n</md-unknown>");
       expect(html).not.toContain("md-container");
+    });
+
+    test("old ::: syntax passes through as plain text (hard cut)", () => {
+      const html = parse(":::center\nhello\n:::");
+      expect(html).not.toContain("md-container");
+      expect(html).not.toContain("md-center");
+    });
+  });
+
+  describe("combined", () => {
+    test("highlight inside <md-callout> renders both", () => {
+      const html = parse("<md-callout>\n==important==\n</md-callout>");
+      expect(html).toContain("md-callout");
+      expect(html).toContain('<mark class="md-highlight">important</mark>');
+    });
+
+    test('colored text inside <md-align data-dir="center"> renders both', () => {
+      const html = parse('<md-align data-dir="center">\n{color:pale-gold}golden{/color}\n</md-align>');
+      expect(html).toContain("md-center");
+      expect(html).toContain("color:var(--color-pale-gold)");
+    });
+
+    test("nested: <md-align> inside <md-container>", () => {
+      const html = parse('<md-container data-width="full">\n<md-align data-dir="center">\n# Heading\n</md-align>\n</md-container>');
+      expect(html).toContain("md-constrain-full");
+      expect(html).toContain("md-center");
+      expect(html).toContain("<h1");
     });
   });
 });
@@ -327,33 +428,6 @@ describe("tooltipExtension", () => {
   });
 });
 
-// ─── card directives ──────────────────────────────────────────────────────────
-
-describe("card directives", () => {
-  test(":::card-dark renders md-card md-card-dark", () => {
-    const html = parse(":::card-dark\nContent\n:::");
-    expect(html).toContain('class="md-card md-card-dark"');
-    expect(html).toContain("Content");
-  });
-
-  test(":::card-gold renders md-card md-card-gold", () => {
-    const html = parse(":::card-gold\nContent\n:::");
-    expect(html).toContain('class="md-card md-card-gold"');
-  });
-
-  test(":::card-steel renders md-card md-card-steel", () => {
-    const html = parse(":::card-steel\nContent\n:::");
-    expect(html).toContain('class="md-card md-card-steel"');
-  });
-
-  test("card renders inner block content", () => {
-    const html = parse(":::card-gold\n## Title\n\nParagraph\n:::");
-    expect(html).toContain("<h2");
-    expect(html).toContain("Title");
-    expect(html).toContain("Paragraph");
-  });
-});
-
 // ─── bulletPointExtension ─────────────────────────────────────────────────────
 
 describe("bulletPointExtension", () => {
@@ -381,15 +455,15 @@ describe("bulletPointExtension", () => {
     expect(html).toContain("Second");
   });
 
-  test("bullets inside card-dark render within the card", () => {
-    const html = parse(":::card-dark\n[-] Problem item\n:::");
+  test("bullets inside <md-card data-variant='dark'> render within the card", () => {
+    const html = parse('<md-card data-variant="dark">\n[-] Problem item\n</md-card>');
     expect(html).toContain("md-card-dark");
     expect(html).toContain("md-bullet-x");
     expect(html).toContain("Problem item");
   });
 
-  test("bullets inside card-gold render within the card", () => {
-    const html = parse(":::card-gold\n[+] Solution item\n:::");
+  test("bullets inside <md-card data-variant='gold'> render within the card", () => {
+    const html = parse('<md-card data-variant="gold">\n[+] Solution item\n</md-card>');
     expect(html).toContain("md-card-gold");
     expect(html).toContain("md-bullet-check");
     expect(html).toContain("Solution item");
@@ -426,21 +500,20 @@ describe("relationEmbedExtension", () => {
 // ─── combined ─────────────────────────────────────────────────────────────────
 
 describe("combined extensions", () => {
-  test("highlight inside callout renders both", () => {
-    const html = parse(":::callout\n==important==\n:::");
+  test("highlight inside <md-callout> renders both", () => {
+    const html = parse("<md-callout>\n==important==\n</md-callout>");
     expect(html).toContain("md-callout");
     expect(html).toContain('<mark class="md-highlight">important</mark>');
   });
 
-  test("colored text inside center block renders both", () => {
-    const html = parse(":::center\n{color:pale-gold}golden{/color}\n:::");
+  test('colored text inside <md-align data-dir="center"> renders both', () => {
+    const html = parse('<md-align data-dir="center">\n{color:pale-gold}golden{/color}\n</md-align>');
     expect(html).toContain("md-center");
     expect(html).toContain("color:var(--color-pale-gold)");
   });
 
-  test("nested directives: :::center inside :::container-full", () => {
-    const md = ":::container-full\n:::center\n# Heading\n:::\n:::";
-    const html = parse(md);
+  test("nested: <md-align> inside <md-container>", () => {
+    const html = parse('<md-container data-width="full">\n<md-align data-dir="center">\n# Heading\n</md-align>\n</md-container>');
     expect(html).toContain("md-constrain-full");
     expect(html).toContain("md-center");
     expect(html).toContain("<h1");
