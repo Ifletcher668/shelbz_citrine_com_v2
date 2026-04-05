@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_form_input_fields",
+  "info": {
+    "displayName": "Input Field",
+    "icon": "pencil",
+    "description": "A single form field — any standard HTML input type or textarea"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "regex": "^[a-zA-Z][a-zA-Z0-9_-]*$"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["text", "email", "tel", "number", "url", "date", "time", "textarea"],
+      "default": "text",
+      "required": true
+    },
+    "placeholder": {
+      "type": "string"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "help_text": {
+      "type": "string"
+    }
+  }
+}
