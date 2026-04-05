@@ -80,12 +80,32 @@ function renderStepGroup(data) {
   );
 }
 
+// ─── Contact Form ─────────────────────────────────────────────────────────────
+
+function renderContactForm(data) {
+  const config = {
+    action: data.action ?? "contact",
+    submitLabel: data.submit_label || "Send Message",
+    successMessage: data.success_message || "Thank you — we'll be in touch soon.",
+    fields: (data.fields || []).map((f) => ({
+      name: f.name,
+      type: f.type || "text",
+      label: f.label,
+      placeholder: f.placeholder || "",
+      required: f.required || false,
+      helpText: f.help_text || "",
+    })),
+  };
+  return `<div class="md-contact-form" data-config="${encodeURIComponent(JSON.stringify(config))}"></div>`;
+}
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 const RENDERERS = {
   "bullet-list": renderBulletList,
   "faq": renderFaq,
   "step-group": renderStepGroup,
+  "contact-form": renderContactForm,
 };
 
 /**

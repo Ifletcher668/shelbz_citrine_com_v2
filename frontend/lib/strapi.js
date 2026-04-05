@@ -116,6 +116,7 @@ const RELATION_API_PATHS = {
   "bullet-list": "bullet-lists",
   "faq": "faqs",
   "step-group": "step-groups",
+  "contact-form": "contact-forms",
 };
 
 /**
