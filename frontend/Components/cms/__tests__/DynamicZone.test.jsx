@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import DynamicZone from '../DynamicZone';
-import { makeColumnGroup } from './fixtures';
+import { makeRow } from './fixtures';
 
-jest.mock('../sections/ColumnGroupCms', () =>
-  function ColumnGroupCms({ data, sectionVariant }) {
-    return <div data-testid="column-group-cms" data-variant={sectionVariant}>{JSON.stringify(data)}</div>;
+jest.mock('../sections/RowCms', () =>
+  function RowCms({ data, sectionVariant }) {
+    return <div data-testid="row-cms" data-variant={sectionVariant}>{JSON.stringify(data)}</div>;
   }
 );
 
@@ -24,29 +24,29 @@ describe('DynamicZone', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders ColumnGroupCms for sections.column-group', () => {
-    render(<DynamicZone sections={[makeColumnGroup()]} />);
-    expect(screen.getByTestId('column-group-cms')).toBeInTheDocument();
+  it('renders RowCms for sections.row', () => {
+    render(<DynamicZone sections={[makeRow()]} />);
+    expect(screen.getByTestId('row-cms')).toBeInTheDocument();
   });
 
-  it('passes sectionVariant="hero" to first ColumnGroupCms', () => {
-    render(<DynamicZone sections={[makeColumnGroup()]} />);
-    expect(screen.getByTestId('column-group-cms')).toHaveAttribute('data-variant', 'hero');
+  it('passes sectionVariant="hero" to first RowCms', () => {
+    render(<DynamicZone sections={[makeRow()]} />);
+    expect(screen.getByTestId('row-cms')).toHaveAttribute('data-variant', 'hero');
   });
 
-  it('passes sectionVariant="default" to non-first ColumnGroupCms', () => {
-    render(<DynamicZone sections={[makeColumnGroup(), makeColumnGroup()]} />);
-    const sections = screen.getAllByTestId('column-group-cms');
+  it('passes sectionVariant="default" to non-first RowCms', () => {
+    render(<DynamicZone sections={[makeRow({ id: 1 }), makeRow({ id: 2 })]} />);
+    const sections = screen.getAllByTestId('row-cms');
     expect(sections[1]).toHaveAttribute('data-variant', 'default');
   });
 
   it('renders multiple sections in correct DOM order', () => {
-    const sections = [makeColumnGroup(), makeColumnGroup(), makeColumnGroup()];
+    const sections = [makeRow({ id: 1 }), makeRow({ id: 2 }), makeRow({ id: 3 })];
     const { container } = render(<DynamicZone sections={sections} />);
     const rendered = container.querySelectorAll('[data-testid]');
 
     expect(rendered).toHaveLength(3);
-    rendered.forEach(el => expect(el).toHaveAttribute('data-testid', 'column-group-cms'));
+    rendered.forEach(el => expect(el).toHaveAttribute('data-testid', 'row-cms'));
   });
 
   it('warns in development when __component is unknown', () => {
@@ -54,7 +54,7 @@ describe('DynamicZone', () => {
     Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', configurable: true });
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(<DynamicZone sections={[{ __component: 'sections.unknown' }]} />);
+    render(<DynamicZone sections={[{ __component: 'sections.unknown', id: 99 }]} />);
 
     expect(spy).toHaveBeenCalledWith(
       expect.stringContaining('sections.unknown')
@@ -69,7 +69,7 @@ describe('DynamicZone', () => {
     Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', configurable: true });
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(<DynamicZone sections={[{ __component: 'sections.unknown' }]} />);
+    render(<DynamicZone sections={[{ __component: 'sections.unknown', id: 99 }]} />);
 
     expect(spy).not.toHaveBeenCalled();
 
@@ -79,11 +79,11 @@ describe('DynamicZone', () => {
 
   it('renders known sections and omits unknown ones', () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const sections = [makeColumnGroup(), { __component: 'sections.unknown' }, makeColumnGroup()];
+    const sections = [makeRow({ id: 1 }), { __component: 'sections.unknown', id: 99 }, makeRow({ id: 2 })];
 
     render(<DynamicZone sections={sections} />);
 
-    expect(screen.getAllByTestId('column-group-cms')).toHaveLength(2);
+    expect(screen.getAllByTestId('row-cms')).toHaveLength(2);
     expect(screen.queryByTestId('unknown-cms')).not.toBeInTheDocument();
 
     spy.mockRestore();
