@@ -116,3 +116,15 @@ export function makeButton(overrides = {}) {
     ...overrides,
   };
 }
+
+export function makeRow(overrides = {}) {
+  return {
+    __component: 'sections.row',
+    id: 1,
+    columns: [
+      { id: 10, column_name: 'Col A', body: 'First column content.' },
+      { id: 11, column_name: 'Col B', body: 'Second column content.' },
+    ],
+    ...overrides,
+  };
+}
