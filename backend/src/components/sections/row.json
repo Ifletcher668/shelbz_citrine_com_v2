@@ -1,13 +1,13 @@
 {
-  "collectionName": "components_sections_column_groups",
+  "collectionName": "components_sections_rows",
   "info": {
-    "displayName": "Column Group",
+    "displayName": "Row",
     "icon": "grid",
-    "description": "A flexible grid of WYSIWYG columns (up to 4). Column count is implicit from the number of items added."
+    "description": "A row containing up to six WYSIWYG columns. Column order determines layout position."
   },
   "options": {},
   "attributes": {
-    "colum_name": {
+    "row_name": {
       "type": "string",
       "private": true
     },
@@ -19,7 +19,9 @@
     "columns": {
       "type": "component",
       "component": "column.column",
-      "repeatable": true
+      "repeatable": true,
+      "min": 1,
+      "max": 6
     }
   }
 }
