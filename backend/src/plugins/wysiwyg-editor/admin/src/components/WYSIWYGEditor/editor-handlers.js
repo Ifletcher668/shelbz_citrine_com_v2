@@ -203,8 +203,12 @@ const _insertWithoutSelection = (ed, type, line, contentLength) => {
   ed.focus();
 };
 
-/** Insert uploaded files into the editor (mirrors Strapi's insertFile). */
-export const insertFile = (editorRef, files) => {
+/** Insert uploaded files into the editor (mirrors Strapi's insertFile).
+ *  @param {object} editorRef
+ *  @param {Array<{alt: string, url: string, mime: string}>} files
+ *  @param {string} [alignClass] — optional CSS class for image alignment (e.g. "mx-auto", "float-left")
+ */
+export const insertFile = (editorRef, files, alignClass) => {
   const ed = editorRef.current;
   let { line } = ed.getCursor();
   const { ch } = ed.getCursor();
@@ -218,7 +222,8 @@ export const insertFile = (editorRef, files) => {
       ed.replaceSelection("\n");
     }
     if (file.mime.includes("image")) {
-      ed.replaceSelection(`![${file.alt}](${file.url})`);
+      const suffix = alignClass ? `{.${alignClass}}` : "";
+      ed.replaceSelection(`![${file.alt}](${file.url})${suffix}`);
     } else {
       ed.replaceSelection(`[${file.alt}](${file.url})`);
     }

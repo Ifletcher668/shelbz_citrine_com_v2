@@ -2,17 +2,16 @@ import { WYSIWYG_GROUPS } from "../toolbar-config";
 import { SEMANTIC_COLOR_NAMES } from "../../../hooks/color-slots";
 
 describe("WYSIWYG_GROUPS structure", () => {
-  test("exports an array with 8 groups", () => {
+  test("exports an array with 7 groups", () => {
     expect(Array.isArray(WYSIWYG_GROUPS)).toBe(true);
-    expect(WYSIWYG_GROUPS).toHaveLength(8);
+    expect(WYSIWYG_GROUPS).toHaveLength(7);
   });
 
-  test("group labels are Structure, Alignment, Image, Columns, Formatting, Button, Block, Decorative", () => {
+  test("group labels are Structure, Alignment, Columns, Formatting, Button, Block, Decorative", () => {
     const labels = WYSIWYG_GROUPS.map((g) => g.label);
     expect(labels).toEqual([
       "Structure",
       "Alignment",
-      "Image",
       "Columns",
       "Formatting",
       "Button",

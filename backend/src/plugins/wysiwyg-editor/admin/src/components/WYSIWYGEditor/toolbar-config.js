@@ -6,7 +6,8 @@
  * dynamically in Toolbar.jsx from the active theme via useThemeColors().
  *
  * Row 2 layout:
- *   Structure ▾ | Alignment ▾ | Image ▾ | Columns ▾ | Components ▾ | == ? [-] [+] | [color swatches] | Button ▾ | Block ▾ | Decorative ▾
+ *   Structure ▾ | Alignment ▾ | Columns ▾ | Formatting | [color swatches] | Button ▾ | Block ▾ | Decorative ▾
+ *   Image alignment is handled via the media library toolbar button (alignment picker shown after selection).
  */
 export const WYSIWYG_GROUPS = [
   /**
@@ -101,43 +102,6 @@ export const WYSIWYG_GROUPS = [
         title: "Vertical Align Bottom",
         action: "block",
         template: '<md-align data-valign="bottom">\n${selection}\n</md-align>',
-      },
-    ],
-  },
-  /**
-   * Image Alignment — float and width controls for attributed images.
-   */
-  {
-    label: "Image",
-    dropdown: true,
-    buttons: [
-      {
-        id: "img-float-left",
-        label: "Float Left",
-        title: "Image Float Left",
-        action: "block",
-        template: "![alt](url){.float-left .w-1/3}",
-      },
-      {
-        id: "img-float-right",
-        label: "Float Right",
-        title: "Image Float Right",
-        action: "block",
-        template: "![alt](url){.float-right .w-1/3}",
-      },
-      {
-        id: "img-center",
-        label: "Center",
-        title: "Image Center",
-        action: "block",
-        template: "![alt](url){.mx-auto}",
-      },
-      {
-        id: "img-full",
-        label: "Full Width",
-        title: "Image Full Width",
-        action: "block",
-        template: "![alt](url){.w-full}",
       },
     ],
   },
