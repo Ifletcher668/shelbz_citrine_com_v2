@@ -45,7 +45,7 @@ export async function getPageBySlug(slug) {
   const qs =
     `?filters[slug][$eq]=${encodeURIComponent(slug)}` +
     `&filters[publishedAt][$notNull]=true` +
-    `&populate[sections][on][sections.column-group][populate][columns]=*`;
+    `&populate[sections][on][sections.row][populate][columns]=*`;
 
   const { data } = await strapiGet(`/pages${qs}`);
   if (!data || data.length === 0) return null;
