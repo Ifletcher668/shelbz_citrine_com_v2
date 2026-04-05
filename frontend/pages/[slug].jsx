@@ -58,9 +58,10 @@ export default function CmsPage({ page, relations = {} }) {
 export async function getStaticPaths() {
   try {
     const pages = await getPages();
-    const paths = pages.map((page) => ({
-      params: { slug: page.slug },
-    }));
+    // "home" is served at "/" via pages/index.jsx — exclude it here
+    const paths = pages
+      .filter((page) => page.slug !== "home")
+      .map((page) => ({ params: { slug: page.slug } }));
 
     return { paths, fallback: false };
   } catch (err) {
