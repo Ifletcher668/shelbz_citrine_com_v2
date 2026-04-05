@@ -17,18 +17,18 @@
        Named by purpose, not appearance.
        Each drives multiple CSS variables via theme.css.
        ============================================ */
-  --color-bg-base: #000000;       /* page / root background */
-  --color-bg-raised: #0a0a0a;     /* cards, elevated surfaces */
-  --color-bg-inset: #141414;      /* form inputs, code blocks */
-  --color-text-muted: #5a5a5a;    /* disabled, subdued text */
-  --color-text-body: #8c8273;     /* default body text */
-  --color-text-heading: #e5e0d8;  /* headings, bright text */
-  --color-accent: #b4aa96;        /* links, borders, highlights */
+  --color-bg-base: #000000; /* page / root background */
+  --color-bg-raised: #0a0a0a; /* cards, elevated surfaces */
+  --color-bg-inset: #141414; /* form inputs, code blocks */
+  --color-text-muted: #5a5a5a; /* disabled, subdued text */
+  --color-text-body: #8c8273; /* default body text */
+  --color-text-heading: #e5e0d8; /* headings, bright text */
+  --color-accent: #b4aa96; /* links, borders, highlights */
   --color-interactive: #291d0466; /* button face / fill */
-  --color-neutral: #424852;       /* secondary UI elements */
-  --color-info: #b8c5d6;          /* info callouts, cool highlights */
-  --color-danger: #4a1a1a;        /* destructive actions, warnings */
-  --color-success: #2d3a2e;       /* success states */
+  --color-neutral: #424852; /* secondary UI elements */
+  --color-info: #b8c5d6; /* info callouts, cool highlights */
+  --color-danger: #4a1a1a; /* destructive actions, warnings */
+  --color-success: #2d3a2e; /* success states */
 
   /* shadcn/ui compatibility aliases */
   --color-border: rgb(60 60 60 / 0.2);
@@ -244,7 +244,6 @@
     }
   }
 
-  /* 5. Improve text rendering and set line-height */
   html,
   body {
     -webkit-font-smoothing: antialiased;
@@ -258,7 +257,7 @@
     font-weight: 400;
     line-height: 1.65;
     /* Optimized brutalist texture - lighter grain for smooth scrolling */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
     background-repeat: repeat;
   }
 
@@ -729,13 +728,6 @@
     padding-right: var(--spacing-4);
   }
 
-  @media (min-width: 768px) {
-    .section-container {
-      padding-left: var(--spacing-6);
-      padding-right: var(--spacing-6);
-    }
-  }
-
   .section-narrow {
     max-width: var(--max-width-container-narrow);
     margin-left: auto;
@@ -1156,10 +1148,18 @@
     margin-bottom: 1.5rem;
   }
 
-  .md-step-group-cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .md-step-group-cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .md-step-group-cols-4 { grid-template-columns: repeat(4, 1fr); }
-  .md-step-group-cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .md-step-group-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .md-step-group-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .md-step-group-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .md-step-group-cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
 
   .md-step {
     display: flex;
@@ -1204,7 +1204,9 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     text-decoration: none;
-    transition: background-color 0.2s, color 0.2s;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
   }
 
   .md-step-cta a:hover {
@@ -1359,4 +1361,86 @@
   --color-moss-green: var(--color-success);
   --color-fog: var(--color-neutral);
   --color-stone-grey: var(--color-text-body);
+}
+
+/* ── Contact Form ─────────────────────────────────────────────────────────── */
+
+.md-contact-form {
+  margin: 2rem 0;
+}
+
+.md-contact-form-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.md-form-honeypot {
+  display: none;
+}
+
+.md-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.md-form-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.md-form-required {
+  color: var(--color-accent);
+  margin-left: 0.25rem;
+}
+
+.md-form-input {
+  background: transparent;
+  border: 1px solid rgba(var(--color-border-rgb, 66, 72, 82), 0.3);
+  color: var(--color-text-body);
+  padding: 0.75rem 1rem;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  transition: border-color 300ms;
+  outline: none;
+  width: 100%;
+}
+
+.md-form-input:focus {
+  border-color: var(--color-accent);
+}
+
+.md-form-textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.md-form-help {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.md-form-error {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+.md-form-success {
+  padding: 1.5rem;
+  border: 1px solid rgba(var(--color-border-rgb, 66, 72, 82), 0.2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-heading);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.md-form-submit {
+  align-self: flex-start;
 }
