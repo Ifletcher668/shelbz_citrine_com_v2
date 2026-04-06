@@ -158,7 +158,7 @@ Section.displayName = "Section";
  *   </Container>
  * </Section>
  */
-export const Container = ({ children, size = "wide", className, ...props }) => {
+export const Container = ({ children, size = "wide", className = undefined, ...props }) => {
   const sizeClasses = {
     narrow: "max-w-container-narrow",
     reading: "max-w-container-reading",

@@ -4,7 +4,7 @@ import { parseWithRelations } from "@/lib/marked-extensions";
 import { useRelations } from "@/lib/RelationsContext";
 import ContactFormEmbed from "@/Components/shared/ContactFormEmbed";
 
-export default function RichContent({ body, className, as: Tag = "div" }) {
+export default function RichContent({ body, className = undefined, as: Tag = "div" }) {
   const relations = useRelations();
   const containerRef = useRef(null);
   const [portals, setPortals] = useState([]);
