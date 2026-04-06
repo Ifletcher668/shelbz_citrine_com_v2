@@ -117,6 +117,9 @@ export function makeButton(overrides = {}) {
   };
 }
 
+/**
+ * @returns {import('../../../types/cms').StrapiRow}
+ */
 export function makeRow(overrides = {}) {
   return {
     __component: 'sections.row',
