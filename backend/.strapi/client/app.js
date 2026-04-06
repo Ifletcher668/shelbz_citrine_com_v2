@@ -5,6 +5,7 @@
 import usersPermissions from "@strapi/plugin-users-permissions/strapi-admin";
 import wysiwygEditor from "../../src/plugins/wysiwyg-editor/strapi-admin";
 import colorPicker from "../../src/plugins/color-picker/strapi-admin";
+import formLayoutEditor from "../../src/plugins/form-layout-editor/strapi-admin";
 import { renderAdmin } from "@strapi/strapi/admin";
 
 renderAdmin(document.getElementById("strapi"), {
@@ -12,5 +13,6 @@ renderAdmin(document.getElementById("strapi"), {
     "users-permissions": usersPermissions,
     "wysiwyg-editor": wysiwygEditor,
     "color-picker": colorPicker,
+    "form-layout-editor": formLayoutEditor,
   },
 });

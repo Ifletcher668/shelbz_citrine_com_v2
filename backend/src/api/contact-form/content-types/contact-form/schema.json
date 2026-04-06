@@ -37,6 +37,10 @@
     "success_message": {
       "type": "string",
       "default": "Thank you — we'll be in touch soon."
+    },
+    "layout": {
+      "type": "customField",
+      "customField": "plugin::form-layout-editor.form-layout-editor"
     }
   }
 }

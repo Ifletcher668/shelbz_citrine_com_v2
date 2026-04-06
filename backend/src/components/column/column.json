@@ -9,7 +9,8 @@
   "attributes": {
     "column_name": {
       "type": "string",
-      "private": true
+      "private": true,
+      "default": "Column"
     },
     "body": {
       "type": "customField",

@@ -95,6 +95,7 @@ function renderContactForm(data) {
       required: f.required || false,
       helpText: f.help_text || "",
     })),
+    layout: data.layout ?? null,
   };
   return `<div class="md-contact-form" data-config="${encodeURIComponent(JSON.stringify(config))}"></div>`;
 }

@@ -467,6 +467,54 @@ export interface ApiBulletListBulletList extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiContactFormContactForm extends Struct.CollectionTypeSchema {
+  collectionName: 'contact_forms';
+  info: {
+    description: 'A reusable contact form with configurable fields and a semantic action type, embeddable in WYSIWYG content via [ref:contact-form:id]';
+    displayName: 'Contact Form';
+    pluralName: 'contact-forms';
+    singularName: 'contact-form';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    action: Schema.Attribute.Enumeration<['contact', 'consultation']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'contact'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    fields: Schema.Attribute.Component<'form.input-field', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    layout: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::form-layout-editor.form-layout-editor'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-form.contact-form'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    submit_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Send Message'>;
+    success_message: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Thank you \u2014 we'll be in touch soon.">;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
   collectionName: 'faqs';
   info: {
@@ -598,7 +646,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<['sections.column-group']>;
+    sections: Schema.Attribute.DynamicZone<['sections.row']>;
     seo_description: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 320;
@@ -1206,6 +1254,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::bullet-list.bullet-list': ApiBulletListBulletList;
+      'api::contact-form.contact-form': ApiContactFormContactForm;
       'api::faq.faq': ApiFaqFaq;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;

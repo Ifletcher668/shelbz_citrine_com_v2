@@ -102,18 +102,49 @@ const ALLOWED_MD_ELEMENTS = new Set([
   "md-spacer",
 ]);
 
-const ALLOWED_MD_ATTRS = {
+export const ALLOWED_MD_ATTRS = {
   // dir and valign are mutually exclusive in the renderer (valign takes priority).
   // Both are listed here so each is individually valid; combining them is not an error.
   "md-align": {
-    dir: ["left", "center", "right", "justify"],
-    valign: ["top", "middle", "bottom"],
+    dir: {
+      values: ["left", "center", "right", "justify"],
+      placeholder: "Horizontal alignment",
+    },
+    valign: {
+      values: ["top", "middle", "bottom"],
+      placeholder: "Vertical alignment",
+    },
   },
-  "md-container": { width: ["narrow", "reading", "wide", "full"] },
-  "md-columns": { count: ["2", "3", "4", "5"] },
-  "md-callout": { variant: ["warning", "info"] },
-  "md-card": { variant: ["dark", "gold", "steel"] },
-  "md-spacer": { size: ["sm", "lg"] },
+  "md-container": {
+    width: {
+      values: ["narrow", "reading", "wide", "full"],
+      placeholder: "Container width",
+    },
+  },
+  "md-columns": {
+    count: {
+      values: ["2", "3", "4", "5"],
+      placeholder: "Number of columns",
+    },
+  },
+  "md-callout": {
+    variant: {
+      values: ["warning", "info"],
+      placeholder: "Callout style",
+    },
+  },
+  "md-card": {
+    variant: {
+      values: ["dark", "gold", "steel"],
+      placeholder: "Card style",
+    },
+  },
+  "md-spacer": {
+    size: {
+      values: ["sm", "lg"],
+      placeholder: "Spacer size",
+    },
+  },
 };
 
 // ─── Inline SVGs ──────────────────────────────────────────────────────────────
@@ -197,7 +228,7 @@ function isAllowedElement(tagName, attrs) {
   if (!allowedAttrs) return Object.keys(attrs).length === 0;
   for (const [key, value] of Object.entries(attrs)) {
     if (!(key in allowedAttrs)) return false;
-    if (!allowedAttrs[key].includes(value)) return false;
+    if (!allowedAttrs[key].values.includes(value)) return false;
   }
   return true;
 }

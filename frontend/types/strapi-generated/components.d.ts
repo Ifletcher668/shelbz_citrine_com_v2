@@ -25,8 +25,9 @@ export interface ColumnColumn extends Struct.ComponentSchema {
   attributes: {
     body: Schema.Attribute.RichText &
       Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
-    col_start: Schema.Attribute.Integer;
-    column_name: Schema.Attribute.String & Schema.Attribute.Private;
+    column_name: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.DefaultTo<'Column'>;
   };
 }
 
@@ -40,6 +41,27 @@ export interface FaqItemFaqItem extends Struct.ComponentSchema {
   attributes: {
     answer: Schema.Attribute.String & Schema.Attribute.Required;
     question: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface FormInputField extends Struct.ComponentSchema {
+  collectionName: 'components_form_input_fields';
+  info: {
+    description: 'A single form field \u2014 any standard HTML input type or textarea';
+    displayName: 'Input Field';
+    icon: 'pencil';
+  };
+  attributes: {
+    help_text: Schema.Attribute.String;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    placeholder: Schema.Attribute.String;
+    required: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    type: Schema.Attribute.Enumeration<
+      ['text', 'email', 'tel', 'number', 'url', 'date', 'time', 'textarea']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'text'>;
   };
 }
 
@@ -80,16 +102,23 @@ export interface NavigationNavLink extends Struct.ComponentSchema {
   };
 }
 
-export interface SectionsColumnGroup extends Struct.ComponentSchema {
-  collectionName: 'components_sections_column_groups';
+export interface SectionsRow extends Struct.ComponentSchema {
+  collectionName: 'components_sections_rows';
   info: {
-    description: 'A flexible grid of WYSIWYG columns (up to 4). Column count is implicit from the number of items added.';
-    displayName: 'Column Group';
+    description: 'A row containing up to six WYSIWYG columns. Column order determines layout position.';
+    displayName: 'Row';
     icon: 'grid';
   };
   attributes: {
-    colum_name: Schema.Attribute.String & Schema.Attribute.Private;
-    columns: Schema.Attribute.Component<'column.column', true>;
+    columns: Schema.Attribute.Component<'column.column', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+          min: 1;
+        },
+        number
+      >;
+    row_name: Schema.Attribute.String & Schema.Attribute.Private;
     section_id: Schema.Attribute.String & Schema.Attribute.Unique;
   };
 }
@@ -268,10 +297,11 @@ declare module '@strapi/strapi' {
       'bullet-list.bullet-item': BulletListBulletItem;
       'column.column': ColumnColumn;
       'faq-item.faq-item': FaqItemFaqItem;
+      'form.input-field': FormInputField;
       'navigation.logo-image': NavigationLogoImage;
       'navigation.logo-text': NavigationLogoText;
       'navigation.nav-link': NavigationNavLink;
-      'sections.column-group': SectionsColumnGroup;
+      'sections.row': SectionsRow;
       'step.step': StepStep;
       'theme.layout': ThemeLayout;
       'theme.semantic-colors': ThemeSemanticColors;

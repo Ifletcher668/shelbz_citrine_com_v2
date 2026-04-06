@@ -85,6 +85,7 @@ export async function getStaticProps({ params }) {
     const refs = extractAllRefs(page);
     const rawRelations = await fetchRelationData(refs);
     const relations = renderRelations(rawRelations);
+    console.log("meep", relations, rawRelations);
 
     return { props: { page, relations } };
   } catch (err) {
