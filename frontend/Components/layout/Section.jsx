@@ -49,6 +49,21 @@ function CornerAccents({ size = 16, color = "pale-gold" }) {
   );
 }
 
+/**
+ * @type {React.ForwardRefExoticComponent<{
+ *   children?: React.ReactNode;
+ *   className?: string;
+ *   variant?: "default" | "hero";
+ *   background?: string;
+ *   overlay?: string;
+ *   texture?: { variant: string; opacity: number } | false;
+ *   corners?: string | false;
+ *   cornerSize?: number;
+ *   cornerColor?: string;
+ *   id?: string;
+ *   [key: string]: any;
+ * } & React.RefAttributes<HTMLElement>>}
+ */
 export const Section = forwardRef(
   (
     {
