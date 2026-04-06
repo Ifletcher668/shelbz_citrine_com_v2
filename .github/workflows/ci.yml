@@ -184,6 +184,25 @@ jobs:
       - name: Test
         run: yarn workspace wysiwyg-editor test
 
+  # ─── Types in sync ───────────────────────────────────────────────────────────
+  types-in-sync:
+    name: Strapi types in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+
+      - name: Sync types from backend
+        run: node frontend/scripts/sync-strapi-types.js
+
+      - name: Assert no diff
+        run: |
+          git diff --exit-code frontend/types/strapi-generated/ || \
+            (echo "::error::frontend/types/strapi-generated/ is out of sync with backend/types/generated/. Run 'yarn workspace shelbz-citrine-frontend sync-types' locally and commit the result." && exit 1)
+
   # ─── Launcher UI type-check ───────────────────────────────────────────────────
   launcher-typecheck:
     name: Launcher UI type-check
