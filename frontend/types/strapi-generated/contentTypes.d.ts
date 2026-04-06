@@ -493,6 +493,8 @@ export interface ApiContactFormContactForm extends Struct.CollectionTypeSchema {
         },
         number
       >;
+    layout: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::form-layout-editor.form-layout-editor'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
