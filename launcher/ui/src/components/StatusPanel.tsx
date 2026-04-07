@@ -14,8 +14,8 @@ const SERVICE_URLS: Record<keyof ProcessStatus, string> = {
 };
 
 const services: { key: keyof ProcessStatus; label: string; start: () => Promise<unknown> }[] = [
-  { key: "frontend", label: "Frontend", start: startFrontend },
-  { key: "backend", label: "Backend", start: startBackend },
+  { key: "frontend", label: "Development Website", start: startFrontend },
+  { key: "backend", label: "CMS Admin", start: startBackend },
   { key: "storybook", label: "Storybook", start: startStorybook },
 ];
 

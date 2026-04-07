@@ -47,7 +47,7 @@ export function PublishFlow({ status, onClose }: Props) {
 
         {backendRunning && !running && !done && (
           <div className="text-xs text-amber-400 bg-amber-950 rounded px-3 py-2">
-            Backend is running. It will be stopped automatically before saving.
+            CMS Admin is running. It will be stopped automatically before saving.
           </div>
         )}
 

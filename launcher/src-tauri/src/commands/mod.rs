@@ -1,3 +1,4 @@
+pub mod browser;
 pub mod deploy;
 pub mod git;
 pub mod icloud;

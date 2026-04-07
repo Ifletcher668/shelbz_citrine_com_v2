@@ -12,8 +12,7 @@ pub fn setup_tray<R: Runtime>(app: &App<R>) -> tauri::Result<()> {
 
     TrayIconBuilder::new()
         .icon(app.default_window_icon().unwrap().clone())
-        .icon_as_template(true)
-        .tooltip("Shelbz Citrine Launcher")
+        .tooltip("Shelbz Web Manager")
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(move |_tray, event| {

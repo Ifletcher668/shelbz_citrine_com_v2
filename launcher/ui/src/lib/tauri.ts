@@ -34,6 +34,7 @@ export const getProcessStatus = () => invoke<ProcessStatus>("get_process_status"
 
 // Git
 export const checkUpdates = () => invoke<GitInfo>("check_updates");
+export const gitFetch = () => invoke<void>("git_fetch");
 export const gitPull = () => invoke<string>("git_pull");
 
 // iCloud
@@ -56,6 +57,13 @@ export const setProjectPath = (path: string) => invoke("set_project_path", { pat
 export const cloneRepo = (destDir: string) => invoke<string>("clone_repo", { destDir: destDir });
 export const installDeps = () => invoke("install_deps");
 export const getProjectPath = () => invoke<string>("get_project_path");
+
+// Browser
+export const showBrowser = (label: string, url: string, x: number, y: number, width: number, height: number) =>
+  invoke<void>("show_browser", { label, url, x, y, width, height });
+export const hideBrowser = (label: string) => invoke<void>("hide_browser", { label });
+export const reloadBrowser = (label: string) => invoke<void>("reload_browser", { label });
+export const navigateBrowser = (label: string, url: string) => invoke<void>("navigate_browser", { label, url });
 
 // Event listeners
 export const onLog = (process: string, cb: (line: string) => void): Promise<UnlistenFn> =>
