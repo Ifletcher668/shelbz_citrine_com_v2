@@ -2,11 +2,14 @@ import Head from "next/head";
 import PageLayout from "@/Components/layout/PageLayout";
 import DynamicZone from "@/Components/cms/DynamicZone";
 import { RelationsContext } from "@/lib/RelationsContext";
+import { MediaContext } from "@/lib/MediaContext";
 import {
   getPages,
   getPageBySlug,
   extractAllRefs,
   fetchRelationData,
+  extractImageUrls,
+  fetchMediaData,
 } from "@/lib/strapi";
 import { renderRelations } from "@/lib/relation-renderers";
 
@@ -20,7 +23,7 @@ import { renderRelations } from "@/lib/relation-renderers";
  * Next.js resolves explicit page files (about.jsx, process.jsx, etc.)
  * before this catch-all, so existing pages are unaffected.
  */
-export default function CmsPage({ page, relations = {} }) {
+export default function CmsPage({ page, relations = {}, mediaMap = {} }) {
   if (!page) return null;
 
   const overrideEntries =
@@ -46,11 +49,13 @@ export default function CmsPage({ page, relations = {} }) {
         )}
       </Head>
 
-      <RelationsContext.Provider value={relations}>
-        <PageLayout>
-          <DynamicZone sections={page.sections} />
-        </PageLayout>
-      </RelationsContext.Provider>
+      <MediaContext.Provider value={mediaMap}>
+        <RelationsContext.Provider value={relations}>
+          <PageLayout>
+            <DynamicZone sections={page.sections} />
+          </PageLayout>
+        </RelationsContext.Provider>
+      </MediaContext.Provider>
     </>
   );
 }
@@ -77,7 +82,6 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   try {
     const page = await getPageBySlug(params.slug);
-
     if (!page) {
       return { notFound: true };
     }
@@ -85,9 +89,11 @@ export async function getStaticProps({ params }) {
     const refs = extractAllRefs(page);
     const rawRelations = await fetchRelationData(refs);
     const relations = renderRelations(rawRelations);
-    console.log("meep", relations, rawRelations);
 
-    return { props: { page, relations } };
+    const imageUrls = extractImageUrls(page);
+    const mediaMap = await fetchMediaData(imageUrls);
+
+    return { props: { page, relations, mediaMap } };
   } catch (err) {
     console.error(
       `[getStaticProps] Could not fetch page "${params.slug}":`,

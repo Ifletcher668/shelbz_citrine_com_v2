@@ -2,16 +2,18 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { parseWithRelations } from "@/lib/marked-extensions";
 import { useRelations } from "@/lib/RelationsContext";
+import { useMediaMap } from "@/lib/MediaContext";
 import ContactFormEmbed from "@/Components/shared/ContactFormEmbed";
 
 export default function RichContent({ body, className = undefined, as: Tag = "div" }) {
   const relations = useRelations();
+  const mediaMap = useMediaMap();
   const containerRef = useRef(null);
   const [portals, setPortals] = useState([]);
 
   const html = useMemo(
-    () => (body ? parseWithRelations(body, relations) : ""),
-    [body, relations],
+    () => (body ? parseWithRelations(body, relations, mediaMap) : ""),
+    [body, relations, mediaMap],
   );
 
   useEffect(() => {

@@ -1,12 +1,18 @@
 import "@/styles/globals.css";
+import { useEffect } from "react";
 import App from "next/app";
 import Head from "next/head";
 import GlobalSVGDefs from "@/Components/shared/GlobalSVGDefs";
 import { HeaderDataContext } from "@/lib/HeaderDataContext";
 import { getHeader } from "@/lib/strapi";
+import { initActionButtons } from "@/lib/actions";
 
 export default function MyApp({ Component, pageProps }) {
   const { headerData, ...restPageProps } = pageProps;
+
+  useEffect(() => {
+    initActionButtons();
+  }, []);
 
   return (
     <HeaderDataContext.Provider value={headerData ?? null}>

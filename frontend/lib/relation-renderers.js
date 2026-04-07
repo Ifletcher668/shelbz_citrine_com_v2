@@ -100,6 +100,28 @@ function renderContactForm(data) {
   return `<div class="md-contact-form" data-config="${encodeURIComponent(JSON.stringify(config))}"></div>`;
 }
 
+// ─── Button ───────────────────────────────────────────────────────────────────
+
+function renderButton(data) {
+  const { text, variant, action, link } = data;
+  const cls = `btn-${variant ?? "primary"}`;
+
+  if (action?.name) {
+    return `<button class="${cls}" data-action="${action.name}">${text}</button>`;
+  }
+
+  if (link) {
+    if (link.type === "internal" && link.page?.slug) {
+      return `<a class="${cls}" href="/${link.page.slug}">${text}</a>`;
+    }
+    if (link.type === "external" && link.url) {
+      return `<a class="${cls}" href="${link.url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    }
+  }
+
+  return `<span class="${cls}">${text}</span>`;
+}
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 const RENDERERS = {
@@ -107,6 +129,7 @@ const RENDERERS = {
   "faq": renderFaq,
   "step-group": renderStepGroup,
   "contact-form": renderContactForm,
+  "button": renderButton,
 };
 
 /**

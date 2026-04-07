@@ -4,6 +4,34 @@
  * These reflect the schema after the Page → Row → Column restructure.
  */
 
+export interface StrapiMediaFormat {
+  url: string;
+  width: number;
+  height: number;
+  size: number;
+  mime: string;
+  name: string;
+  hash: string;
+  ext: string;
+}
+
+export interface StrapiMedia {
+  id: number;
+  url: string;
+  alternativeText?: string | null;
+  width?: number | null;
+  height?: number | null;
+  mime?: string | null;
+  size?: number | null;
+  name?: string | null;
+  formats?: {
+    thumbnail?: StrapiMediaFormat;
+    small?: StrapiMediaFormat;
+    medium?: StrapiMediaFormat;
+    large?: StrapiMediaFormat;
+  } | null;
+}
+
 export interface StrapiColumn {
   id: number;
   column_name?: string | null;

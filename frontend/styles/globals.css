@@ -424,7 +424,9 @@
      Buttons - Brutalist Souls-like
      ============================================ */
 
-  .btn-primary {
+  .btn-primary,
+  .btn-secondary,
+  .btn-tertiary {
     position: relative;
     overflow: hidden;
     display: inline-flex;
@@ -438,12 +440,14 @@
     font-size: 11px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-text-heading);
     transition: all 200ms;
     min-height: 44px;
+  }
+
+  .btn-primary {
+    color: var(--color-text-heading);
     background-color: var(--color-interactive);
     border: 1px solid rgb(180 170 150 / 0.4);
-    color: #f5f0e8;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   }
 
@@ -487,28 +491,20 @@
       inset 0 0 20px rgba(180, 170, 150, 0.05);
   }
 
-  /* Secondary Button - Ghost variant */
+  /* Secondary Button */
   .btn-secondary {
-    position: relative;
-    overflow: hidden;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-text-body);
-    transition: all 200ms;
-    min-height: 44px;
     background-color: transparent;
-    border: 1px solid rgba(180, 170, 150, 0.3);
-    color: #a8a193;
+    color: var(--color-text-body);
     text-shadow: none;
+    border: 1px solid rgba(180, 170, 150, 0.3);
+  }
+
+  .btn-secondary:hover {
+    background-color: rgb(180 170 150 / 0.05);
+    border-color: rgb(180 170 150 / 0.6);
+    box-shadow:
+      0 0 20px rgba(180, 170, 150, 0.1),
+      inset 0 0 20px rgba(180, 170, 150, 0.05);
   }
 
   .btn-secondary::before {
@@ -539,13 +535,6 @@
     z-index: 2;
   }
 
-  .btn-secondary:hover {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-color: rgba(180, 170, 150, 0.5);
-    color: #e5e0d8;
-    box-shadow: 0 0 15px rgba(180, 170, 150, 0.08);
-  }
-
   .btn-secondary:hover::before {
     opacity: 0.7;
   }
@@ -554,12 +543,20 @@
     transform: translateX(100%);
   }
 
-  .btn-secondary:hover {
-    background-color: rgb(180 170 150 / 0.05);
-    border-color: rgb(180 170 150 / 0.6);
-    box-shadow:
-      0 0 20px rgba(180, 170, 150, 0.1),
-      inset 0 0 20px rgba(180, 170, 150, 0.05);
+  /* Tertiary Button — ghost variant */
+  .btn-tertiary {
+    background-color: transparent;
+    color: var(--color-accent);
+    border: none;
+    text-decoration: none;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .btn-tertiary:hover {
+    color: var(--color-text-heading);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   /* ============================================
@@ -1371,6 +1368,11 @@
   }
 
   .md-figure.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .md-figure.mx-auto img {
     margin-left: auto;
     margin-right: auto;
   }

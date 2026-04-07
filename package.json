@@ -20,6 +20,7 @@
     "frontend": "yarn workspace shelbz-citrine-frontend dev",
     "backend": "yarn workspace shelbz-citrine-backend develop",
     "dev": "concurrently \"yarn frontend\" \"yarn backend\"",
+    "images:publish": "yarn workspace shelbz-citrine-backend images:publish",
     "icloud:save": "yarn workspace shelbz-citrine-backend icloud:save",
     "icloud:restore": "yarn workspace shelbz-citrine-backend icloud:restore",
     "icloud:status": "yarn workspace shelbz-citrine-backend icloud:status",

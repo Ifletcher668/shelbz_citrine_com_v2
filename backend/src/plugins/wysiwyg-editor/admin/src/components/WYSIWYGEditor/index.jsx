@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Flex, Box, Field, Button, Typography } from "@strapi/design-system";
-import { useStrapiApp } from "@strapi/admin/strapi-admin";
+import { useStrapiApp, useFetchClient } from "@strapi/admin/strapi-admin";
 import { Collapse, Expand } from "@strapi/icons";
 import { styled, createGlobalStyle } from "styled-components";
 import CodeMirror from "codemirror5";
@@ -12,6 +12,7 @@ import "codemirror5/addon/edit/matchbrackets";
 import "codemirror5/keymap/sublime";
 import "./codemirror-mode";
 import Toolbar from "./Toolbar";
+import { RELATION_TYPES } from "./relation-config";
 import Preview from "./Preview";
 import { insertFile, markdownHandler, wysiwygWrap } from "./editor-handlers";
 import CommandPalette from "./CommandPalette";
@@ -21,6 +22,12 @@ import {
   applyBlockDecorations,
   createDecorationScheduler,
 } from "./block-decorations";
+
+// ── Relation label lookup ─────────────────────────────────────────────────────
+
+const RELATION_CONFIG_MAP = Object.fromEntries(
+  RELATION_TYPES.map((r) => [r.type, r])
+);
 
 // ── Styled components ──────────────────────────────────────────────────────────
 
@@ -142,6 +149,26 @@ const EditorStylesContainer = styled.div`
     line-height: 18px;
   }
 
+  .cm-md-block-handle {
+    cursor: grab;
+    opacity: 0.35;
+    font-size: 12px;
+    line-height: 1;
+    /* Generous padding so the grab target doesn't require pixel-perfect aim */
+    padding: 0 6px;
+    margin-left: -6px;
+    color: ${({ theme }) => theme.colors.neutral600} !important;
+  }
+
+  .cm-md-block-handle:hover {
+    opacity: 0.8;
+  }
+
+  .cm-md-block-handle:active {
+    cursor: grabbing;
+    opacity: 1;
+  }
+
   .cm-md-block-open,
   .cm-md-block-self {
     background: ${({ theme }) => theme.colors.primary100};
@@ -169,6 +196,7 @@ const EditorStylesContainer = styled.div`
   }
 
   .cm-md-block-btn {
+    position: relative;
     background: none;
     border: none;
     padding: 0 2px;
@@ -185,6 +213,55 @@ const EditorStylesContainer = styled.div`
 
   .cm-md-block-delete:hover {
     color: ${({ theme }) => theme.colors.danger500};
+  }
+
+  .cm-md-block-copy:hover {
+    color: ${({ theme }) => theme.colors.primary600};
+  }
+
+  .cm-md-copy-tooltip {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${({ theme }) => theme.colors.neutral800};
+    color: ${({ theme }) => theme.colors.neutral0};
+    font-size: 10px;
+    font-family: sans-serif;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 1;
+    animation: cm-tooltip-fade 1.4s ease forwards;
+    z-index: 10010;
+  }
+
+  @keyframes cm-tooltip-fade {
+    0%   { opacity: 1; }
+    65%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ── Inline relation embed widgets ── */
+  .cm-md-ref-widget {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: ${({ theme }) => theme.fontWeights.semiBold};
+    cursor: default;
+    user-select: none;
+    vertical-align: middle;
+    line-height: 18px;
+    background: ${({ theme }) => theme.colors.alternative100};
+    border: 1px solid ${({ theme }) => theme.colors.alternative200};
+  }
+
+  .cm-md-ref-label {
+    color: ${({ theme }) => theme.colors.alternative600} !important;
   }
 `;
 
@@ -225,6 +302,106 @@ const ALIGN_OPTIONS = [
   { label: "Center", value: "mx-auto" },
   { label: "Full Width", value: "w-full" },
 ];
+
+// ── Ref edit popover ───────────────────────────────────────────────────────────
+
+const RefEditOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 10004;
+`;
+
+const RefEditPanel = styled.div`
+  position: fixed;
+  z-index: 10005;
+  background: ${({ theme }) => theme.colors.neutral0};
+  border: 1px solid ${({ theme }) => theme.colors.neutral150};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  box-shadow: ${({ theme }) => theme.shadows.filterShadow};
+  min-width: 200px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: ${({ theme }) => theme.spaces[1]} 0;
+`;
+
+const RefEditItem = styled.button`
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: ${({ $active, theme }) => ($active ? theme.colors.primary100 : "transparent")};
+  border: none;
+  padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+  color: ${({ $active, theme }) =>
+    $active ? theme.colors.primary600 : theme.colors.neutral800};
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary100};
+    color: ${({ theme }) => theme.colors.primary600};
+  }
+`;
+
+const RefEditStatusMsg = styled.div`
+  padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+  color: ${({ theme }) => theme.colors.neutral500};
+  font-style: italic;
+`;
+
+function RefEditPopover({ request, onConfirm, onClose }) {
+  const { get } = useFetchClient();
+  const [items, setItems] = useState(null);
+
+  useEffect(() => {
+    const config = RELATION_CONFIG_MAP[request.type];
+    if (!config) { onClose(); return; }
+    const uid = `api::${request.type}.${request.type}`;
+    get(
+      `/content-manager/collection-types/${uid}?fields[0]=id&fields[1]=${config.displayField}&pagination[pageSize]=100&sort=${config.displayField}:asc`,
+    )
+      .then(({ data }) =>
+        setItems(
+          (data?.results ?? []).map((item) => ({
+            id: item.id,
+            label: item[config.displayField] ?? `#${item.id}`,
+          })),
+        ),
+      )
+      .catch(() => onClose());
+  }, [request.type]);
+
+  const pos = request.rect
+    ? { top: request.rect.bottom + 4, left: request.rect.left }
+    : { top: 100, left: 100 };
+
+  return (
+    <RefEditOverlay onMouseDown={onClose}>
+      <RefEditPanel
+        style={{ top: pos.top, left: pos.left }}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        {items === null ? (
+          <RefEditStatusMsg>Loading\u2026</RefEditStatusMsg>
+        ) : items.length === 0 ? (
+          <RefEditStatusMsg>No items found</RefEditStatusMsg>
+        ) : (
+          items.map((item) => (
+            <RefEditItem
+              key={item.id}
+              $active={item.id === request.id}
+              onMouseDown={(e) => { e.stopPropagation(); onConfirm(item.id); }}
+            >
+              {item.label}
+            </RefEditItem>
+          ))
+        )}
+      </RefEditPanel>
+    </RefEditOverlay>
+  );
+}
 
 function ImageAlignPicker({ count, onConfirm, onClose }) {
   return (
@@ -280,11 +457,19 @@ const WYSIWYGEditor = React.forwardRef(
     const [viewMode, setViewMode] = useState("editor");
     const [paletteOpen, setPaletteOpen] = useState(false);
     const [editRequest, setEditRequest] = useState(null);
+    const [refEditRequest, setRefEditRequest] = useState(null);
+    const onRefEditRequestRef = useRef(null);
+    onRefEditRequestRef.current = (req) => setRefEditRequest(req);
     const [pendingImageFiles, setPendingImageFiles] = useState(null);
     const slashPosRef = useRef(null); // set when palette is opened via '/' trigger
     const onEditRequestRef = useRef(null);
     onEditRequestRef.current = (req) => setEditRequest(req);
     const scheduleDecorationsRef = useRef(null);
+    const { get } = useFetchClient();
+    const getRef = useRef(get);
+    useEffect(() => { getRef.current = get; }, [get]);
+    const relationLabelsRef = useRef({});
+    const fetchTimerRef = useRef(null);
 
     const components = useStrapiApp(
       "WYSIWYGEditorMediaLib",
@@ -341,20 +526,59 @@ const WYSIWYGEditor = React.forwardRef(
 
       const decoCallbacks = () => ({
         onEditRequest: (req) => onEditRequestRef.current(req),
+        onRefEditRequest: (req) => onRefEditRequestRef.current(req),
+        relations: relationLabelsRef.current,
       });
 
+      async function syncRelationLabels(content) {
+        const re = /\[ref:([\w-]+):(\d+)\]/g;
+        const missing = [];
+        let m;
+        while ((m = re.exec(content)) !== null) {
+          const [, type, id] = m;
+          const key = `${type}:${id}`;
+          if (!relationLabelsRef.current[key] && RELATION_CONFIG_MAP[type]) {
+            missing.push({ type, id, key, config: RELATION_CONFIG_MAP[type] });
+          }
+        }
+        if (missing.length === 0) return;
+
+        await Promise.all(
+          missing.map(async ({ type, id, key, config }) => {
+            try {
+              const uid = `api::${type}.${type}`;
+              const { data } = await getRef.current(
+                `/content-manager/collection-types/${uid}?filters[id][$eq]=${id}&fields[0]=id&fields[1]=${config.displayField}&pagination[pageSize]=1`,
+              );
+              const item = data?.results?.[0];
+              if (item) {
+                relationLabelsRef.current[key] = item[config.displayField] ?? `#${id}`;
+              }
+            } catch {
+              // silent — widget will keep showing "…"
+            }
+          }),
+        );
+
+        applyBlockDecorations(cm, decoCallbacks());
+      }
+
       applyBlockDecorations(cm, decoCallbacks());
+      syncRelationLabels(value || "");
       scheduleDecorationsRef.current = createDecorationScheduler();
 
       cm.on("change", (doc) => {
+        const content = doc.getValue();
         onChangeRef.current({
           target: {
             name: nameRef.current,
-            value: doc.getValue(),
+            value: content,
             type: "text",
           },
         });
         scheduleDecorationsRef.current(cm, decoCallbacks());
+        clearTimeout(fetchTimerRef.current);
+        fetchTimerRef.current = setTimeout(() => syncRelationLabels(content), 600);
       });
 
       editorRef.current = cm;
@@ -371,6 +595,7 @@ const WYSIWYGEditor = React.forwardRef(
       });
 
       return () => {
+        clearTimeout(fetchTimerRef.current);
         if (editorRef.current) {
           editorRef.current.toTextArea();
           editorRef.current = null;
@@ -445,6 +670,19 @@ const WYSIWYGEditor = React.forwardRef(
         });
       },
       [editRequest],
+    );
+
+    const handleRefEditConfirm = useCallback(
+      (newId) => {
+        if (!refEditRequest) return;
+        const { type, line, chStart, chEnd } = refEditRequest;
+        const cm = editorRef.current;
+        if (!cm) return;
+        cm.replaceRange(`[ref:${type}:${newId}]`, { line, ch: chStart }, { line, ch: chEnd });
+        setRefEditRequest(null);
+        cm.focus();
+      },
+      [refEditRequest],
     );
 
     // ── Preview mode toggle (non-expanded) ────────────────────────────────────
@@ -635,6 +873,14 @@ const WYSIWYGEditor = React.forwardRef(
             }
             onConfirm={handleEditConfirm}
             onClose={() => setEditRequest(null)}
+          />
+        )}
+
+        {refEditRequest && (
+          <RefEditPopover
+            request={refEditRequest}
+            onConfirm={handleRefEditConfirm}
+            onClose={() => setRefEditRequest(null)}
           />
         )}
       </Field.Root>

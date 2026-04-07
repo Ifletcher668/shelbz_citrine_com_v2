@@ -185,29 +185,6 @@ export const WYSIWYG_GROUPS = [
     ],
   },
   /**
-   * Button — inline CTA button links.
-   */
-  {
-    label: "Button",
-    dropdown: true,
-    buttons: [
-      {
-        id: "btn-primary",
-        label: "Primary",
-        title: "Primary Button",
-        action: "block",
-        template: "[${selection}](/url){.btn-primary}",
-      },
-      {
-        id: "btn-secondary",
-        label: "Secondary",
-        title: "Secondary Button",
-        action: "block",
-        template: "[${selection}](/url){.btn-secondary}",
-      },
-    ],
-  },
-  /**
    * Block — typographic block styles.
    */
   {
