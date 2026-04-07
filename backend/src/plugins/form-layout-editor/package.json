@@ -1,0 +1,11 @@
+{
+  "name": "form-layout-editor",
+  "version": "1.0.0",
+  "description": "Visual layout editor for Contact Form field arrangement",
+  "strapi": {
+    "name": "form-layout-editor",
+    "displayName": "Form Layout Editor",
+    "description": "Drag-and-drop style field layout editor for contact forms",
+    "kind": "plugin"
+  }
+}

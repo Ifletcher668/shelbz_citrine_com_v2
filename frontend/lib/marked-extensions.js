@@ -13,40 +13,27 @@
  * IMAGES:        ![alt](/img.jpg){.float-left .w-1/3 .border}
  *                ![alt](/img.jpg){.mx-auto .w-1/2}
  *
- * ALIGNMENT:     :::center           :::right
- *                content             content
- *                :::                 :::
- *
- * DROP CAP:      :::drop-cap
- *                First paragraph gets large golden first letter.
- *                :::
+ * ALIGNMENT:     <md-align data-dir="center">content</md-align>
+ *                <md-align data-dir="left|right|justify">content</md-align>
+ *                <md-align data-valign="top|middle|bottom">content</md-align>
  *
  * TOOLTIP:       ^[visible text](Tooltip content here)
  *
- * CALLOUTS:      :::callout           :::callout-warning     :::callout-info
- *                Note text            Warning text            Info text
- *                :::                  :::                     :::
+ * CONTAINERS:    <md-container data-width="narrow|reading|wide|full">content</md-container>
  *
- * COLUMNS:       :::columns-2         :::columns-3
- *                Left column          Col 1
- *                ---                  ---
- *                Right column         Col 2
- *                                     ---
- *                :::                  Col 3
- *                                     :::
+ * COLUMNS:       <md-columns data-count="2|3|4|5">col1\n---\ncol2</md-columns>
  *
- * CONTAINERS:    :::container-narrow  :::container-reading  :::container-wide  :::container-full
- *                content              content               content            content
- *                :::                  :::                   :::                :::
+ * CALLOUTS:      <md-callout>text</md-callout>
+ *                <md-callout data-variant="warning|info">text</md-callout>
  *
- * CARDS:         :::card-dark         :::card-gold          :::card-steel
- *                content              content               content
- *                :::                  :::                   :::
+ * CARDS:         <md-card data-variant="dark|gold|steel">content</md-card>
  *
- * DIVIDERS:      :::divider           (ornamental SVG divider)
- *                ---                  (simple gradient line — standard HR)
+ * TYPOGRAPHY:    <md-drop-cap>First paragraph.</md-drop-cap>
+ *                <md-prose>Prose content.</md-prose>
  *
- * SPACERS:       :::spacer            :::spacer-sm            :::spacer-lg
+ * DIVIDERS:      <md-divider />
+ *
+ * SPACERS:       <md-spacer />    <md-spacer data-size="sm" />    <md-spacer data-size="lg" />
  *
  * BULLETS:       [-] X / cross bullet point
  *                [+] checkmark bullet point
@@ -104,37 +91,31 @@ const ALLOWED_FIGURE_DECORATION_CLASSES = new Set([
   "shadow",
 ]);
 
-const ALLOWED_DIRECTIVES = new Set([
-  "center",
-  "right",
-  "drop-cap",
-  "callout",
-  "callout-warning",
-  "callout-info",
-  "columns-2",
-  "columns-3",
-  "columns-4",
-  "columns-5",
-  "container-narrow",
-  "container-reading",
-  "container-wide",
-  "container-full",
-  "divider",
-  "spacer",
-  "spacer-sm",
-  "spacer-lg",
-  "prose",
-  "card-dark",
-  "card-gold",
-  "card-steel",
+const ALLOWED_MD_ELEMENTS = new Set([
+  "md-align",
+  "md-container",
+  "md-columns",
+  "md-callout",
+  "md-card",
+  "md-drop-cap",
+  "md-prose",
+  "md-divider",
+  "md-spacer",
 ]);
 
-const SELF_CLOSING_DIRECTIVES = new Set([
-  "divider",
-  "spacer",
-  "spacer-sm",
-  "spacer-lg",
-]);
+const ALLOWED_MD_ATTRS = {
+  // dir and valign are mutually exclusive in the renderer (valign takes priority).
+  // Both are listed here so each is individually valid; combining them is not an error.
+  "md-align": {
+    dir: ["left", "center", "right", "justify"],
+    valign: ["top", "middle", "bottom"],
+  },
+  "md-container": { width: ["narrow", "reading", "wide", "full"] },
+  "md-columns": { count: ["2", "3", "4", "5"] },
+  "md-callout": { variant: ["warning", "info"] },
+  "md-card": { variant: ["dark", "gold", "steel"] },
+  "md-spacer": { size: ["sm", "lg"] },
+};
 
 // ─── Inline SVGs ──────────────────────────────────────────────────────────────
 
@@ -195,132 +176,184 @@ function sanitizeUrl(url) {
   return url;
 }
 
+/**
+ * Parse data-key="value" pairs from a tag attribute string.
+ */
+function parseDataAttrs(str) {
+  const attrs = {};
+  const re = /\bdata-([\w-]+)=["']?([^"'\s>\/]*)["']?/g;
+  let m;
+  while ((m = re.exec(str)) !== null) {
+    attrs[m[1]] = m[2];
+  }
+  return attrs;
+}
+
+/**
+ * Validate tag name and parsed attrs against ALLOWED_MD_ELEMENTS/ALLOWED_MD_ATTRS.
+ */
+function isAllowedElement(tagName, attrs) {
+  if (!ALLOWED_MD_ELEMENTS.has(tagName)) return false;
+  const allowedAttrs = ALLOWED_MD_ATTRS[tagName];
+  if (!allowedAttrs) return Object.keys(attrs).length === 0;
+  for (const [key, value] of Object.entries(attrs)) {
+    if (!(key in allowedAttrs)) return false;
+    if (!allowedAttrs[key].includes(value)) return false;
+  }
+  return true;
+}
+
 // ─── Extensions ───────────────────────────────────────────────────────────────
 
 /**
- * Container directive: :::name\nbody\n:::
- * Handles alignment, callouts, columns, dividers, spacers, prose, drop-cap.
+ * Custom element: <md-tagname data-key="value">body</md-tagname>
+ * Also handles self-closing: <md-tagname data-key="value" />
+ * Replaces the old :::directive syntax. Hard cut — ::: no longer parsed.
  */
-const containerDirectiveExtension = {
-  name: "containerDirective",
+const mdElementExtension = {
+  name: "mdElement",
   level: "block",
   start(src) {
-    const idx = src.indexOf(":::");
+    const idx = src.indexOf("<md-");
     return idx === -1 ? undefined : idx;
   },
   tokenizer(src) {
-    const openMatch = /^:::([\w][\w-]*)[^\n]*\n/.exec(src);
+    // Self-closing: <md-divider /> or <md-spacer data-size="sm" />
+    const selfCloseMatch = /^<(md-[\w-]+)([^>]*)\s*\/>/.exec(src);
+    if (selfCloseMatch) {
+      const tagName = selfCloseMatch[1];
+      const attrs = parseDataAttrs(selfCloseMatch[2]);
+      if (!isAllowedElement(tagName, attrs)) return;
+      const raw =
+        selfCloseMatch[0] +
+        (src[selfCloseMatch[0].length] === "\n" ? "\n" : "");
+      return { type: "mdElement", raw, tagName, attrs, selfClose: true, tokens: [] };
+    }
+
+    // Paired: <md-tagname ...>body</md-tagname>
+    const openMatch = /^<(md-[\w-]+)([^>]*)>/.exec(src);
     if (!openMatch) return;
+    const tagName = openMatch[1];
+    const attrs = parseDataAttrs(openMatch[2]);
+    if (!isAllowedElement(tagName, attrs)) return;
 
-    const name = openMatch[1];
-    if (!ALLOWED_DIRECTIVES.has(name)) return;
-
-    // Depth-counting scan so nested directives are supported.
-    // A closing ::: is one that isn't immediately followed by a word character.
+    const closeTag = `</${tagName}>`;
+    const openTag = `<${tagName}`;
     const rest = src.slice(openMatch[0].length);
     let depth = 1;
     let i = 0;
     while (i < rest.length && depth > 0) {
-      if (rest.slice(i).startsWith(":::")) {
-        if (/^:::\s*(?:\n|$)/.test(rest.slice(i))) {
-          if (--depth === 0) break;
-        } else {
-          depth++;
-        }
-        i += 3;
+      if (
+        rest.slice(i).startsWith(openTag) &&
+        /[\s>]/.test(rest[i + openTag.length] || ">")
+      ) {
+        depth++;
+        i += openTag.length;
+      } else if (rest.slice(i).startsWith(closeTag)) {
+        depth--;
+        if (depth === 0) break;
+        i += closeTag.length;
       } else {
         i++;
       }
     }
-    if (depth !== 0) return; // unbalanced — not a valid directive
+    if (depth !== 0) return; // unbalanced — not a valid element
 
-    const body = rest.slice(0, i).replace(/\n$/, "");
-    const rawEnd = openMatch[0].length + i + 3 + (rest[i + 3] === "\n" ? 1 : 0);
-    const token = {
-      type: "containerDirective",
-      raw: src.slice(0, rawEnd),
-      name,
-      body,
-    };
+    const body = rest.slice(0, i).trim();
+    const rawEnd = openMatch[0].length + i + closeTag.length;
+    const raw = src.slice(0, rawEnd) + (src[rawEnd] === "\n" ? "\n" : "");
+    const token = { type: "mdElement", raw, tagName, attrs, selfClose: false };
 
-    if (!SELF_CLOSING_DIRECTIVES.has(name)) {
-      if (name.startsWith("columns-")) {
-        // Split on \n---\n before tokenizing so --- isn't parsed as <hr>
-        const parts = body.split(/\n---\n/);
-        token.colTokens = parts.map((part) => {
-          const colToks = [];
-          this.lexer.blockTokens(part.trim(), colToks);
-          return colToks;
-        });
-      } else {
-        token.tokens = [];
-        this.lexer.blockTokens(body, token.tokens);
-      }
+    if (tagName === "md-columns") {
+      const parts = body.split(/\n---\n/);
+      token.colTokens = parts.map((part) => {
+        const colToks = [];
+        this.lexer.blockTokens(part.trim(), colToks);
+        return colToks;
+      });
+    } else {
+      token.tokens = [];
+      this.lexer.blockTokens(body, token.tokens);
     }
-
     return token;
   },
   renderer(token) {
-    const { name } = token;
+    const { tagName, attrs } = token;
 
-    // Self-closing directives
-    if (name === "divider") {
-      return `<div class="md-divider" aria-hidden="true">${ORNAMENTAL_DIVIDER_SVG}</div>\n`;
+    // Self-closing
+    if (token.selfClose) {
+      if (tagName === "md-divider") {
+        return `<div class="md-divider" aria-hidden="true">${ORNAMENTAL_DIVIDER_SVG}</div>\n`;
+      }
+      if (tagName === "md-spacer") {
+        const s = attrs.size;
+        if (s === "sm") return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
+        if (s === "lg") return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
+        return `<div class="md-spacer" aria-hidden="true"></div>\n`;
+      }
+      return "";
     }
-    if (name === "spacer")
-      return `<div class="md-spacer" aria-hidden="true"></div>\n`;
-    if (name === "spacer-sm")
-      return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
-    if (name === "spacer-lg")
-      return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
 
-    // Column layout
-    if (name.startsWith("columns-")) {
-      const colClass = `md-columns md-${name}`;
+    // Columns
+    if (tagName === "md-columns") {
+      const count = attrs.count || "2";
       const colsHtml = (token.colTokens || [])
         .map(
           (colToks) =>
             `<div class="md-column">${this.parser.parse(colToks)}</div>`,
         )
         .join("");
-      return `<div class="${colClass}">${colsHtml}</div>\n`;
+      return `<div class="md-columns md-columns-${count}">${colsHtml}</div>\n`;
     }
 
-    // Block directives with recursive inner content
+    // Paired with recursive inner content
     const inner = this.parser.parse(token.tokens || []);
-    switch (name) {
-      case "center":
-        return `<div class="md-container md-center">${inner}</div>\n`;
-      case "right":
-        return `<div class="md-container md-right">${inner}</div>\n`;
-      case "drop-cap":
-        return `<div class="md-container drop-cap">${inner}</div>\n`;
-      case "prose":
-        return `<div class="md-container prose-heritage">${inner}</div>\n`;
-      case "container-narrow":
-        return `<div class="md-container md-constrain-narrow">${inner}</div>\n`;
-      case "container-reading":
-        return `<div class="md-container md-constrain-reading">${inner}</div>\n`;
-      case "container-wide":
-        return `<div class="md-container md-constrain-wide">${inner}</div>\n`;
-      case "container-full":
-        return `<div class="md-container md-constrain-full">${inner}</div>\n`;
-      case "callout":
+    switch (tagName) {
+      case "md-align": {
+        if (attrs.valign)
+          return `<div class="md-valign-${attrs.valign}">${inner}</div>\n`;
+        const dir = attrs.dir || "left";
+        if (dir === "left") return `<div class="md-left">${inner}</div>\n`;
+        if (dir === "center")
+          return `<div class="md-container md-center">${inner}</div>\n`;
+        if (dir === "right")
+          return `<div class="md-container md-right">${inner}</div>\n`;
+        if (dir === "justify")
+          return `<div class="md-justify">${inner}</div>\n`;
+        return `<div>${inner}</div>\n`;
+      }
+      case "md-container": {
+        const widthMap = {
+          narrow: "md-constrain-narrow",
+          reading: "md-constrain-reading",
+          wide: "md-constrain-wide",
+          full: "md-constrain-full",
+        };
+        const widthClass = widthMap[attrs.width];
+        return `<div class="${widthClass ? `md-container ${widthClass}` : "md-container"}">${inner}</div>\n`;
+      }
+      case "md-callout": {
+        if (attrs.variant === "warning")
+          return `<aside class="md-container md-callout md-callout-warning">${inner}</aside>\n`;
+        if (attrs.variant === "info")
+          return `<aside class="md-container md-callout md-callout-info">${inner}</aside>\n`;
         return `<aside class="md-container md-callout">${inner}</aside>\n`;
-      case "callout-warning":
-        return `<aside class="md-container md-callout md-callout-warning">${inner}</aside>\n`;
-      case "callout-info":
-        return `<aside class="md-container md-callout md-callout-info">${inner}</aside>\n`;
-      case "card-dark":
-        return `<div class="md-card md-card-dark">${inner}</div>\n`;
-      case "card-gold":
-        return `<div class="md-card md-card-gold">${inner}</div>\n`;
-      case "card-steel":
-        return `<div class="md-card md-card-steel">${inner}</div>\n`;
+      }
+      case "md-card": {
+        const variant = attrs.variant || "dark";
+        return `<div class="md-card md-card-${variant}">${inner}</div>\n`;
+      }
+      case "md-drop-cap":
+        return `<div class="md-container drop-cap">${inner}</div>\n`;
+      case "md-prose":
+        return `<div class="md-container prose-heritage">${inner}</div>\n`;
       default:
         return `<div class="md-container">${inner}</div>\n`;
     }
   },
+  // Note: colTokens (used by md-columns) is an array of token arrays, not a flat
+  // token array, so it cannot be listed in childTokens. Column content is invisible
+  // to marked's walkTokens — rendered directly via this.parser.parse() instead.
   childTokens: ["tokens"],
 };
 
@@ -540,8 +573,6 @@ const tooltipExtension = {
   },
 };
 
-// ─── Configured Instance ──────────────────────────────────────────────────────
-
 // ─── Relation helpers ─────────────────────────────────────────────────────────
 
 /**
@@ -585,7 +616,7 @@ wysiwygMarked.use({
   breaks: false,
   extensions: [
     // Block first
-    containerDirectiveExtension,
+    mdElementExtension,
     bulletPointExtension,
     relationEmbedExtension,
     // Inline — button/image BEFORE default link/image tokenizers

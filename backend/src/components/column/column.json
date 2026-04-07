@@ -9,10 +9,8 @@
   "attributes": {
     "column_name": {
       "type": "string",
-      "private": true
-    },
-    "col_start": {
-      "type": "integer"
+      "private": true,
+      "default": "Column"
     },
     "body": {
       "type": "customField",

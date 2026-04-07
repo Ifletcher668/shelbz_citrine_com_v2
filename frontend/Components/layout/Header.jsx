@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,7 +9,7 @@ import { getStrapiMediaUrl } from "@/lib/strapi";
 import { useHeaderData } from "@/lib/HeaderDataContext";
 
 /**
- * Header Component - "Grimoire Navigation"
+ * Header Component
  * - Sticky header with parchment texture on scroll
  * - Fantasy game aesthetic (no corporate feel)
  * - Serif fonts throughout
@@ -22,37 +22,42 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const cmsData = useHeaderData();
+  const headerRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0.01);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 0.01);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsMobileMenuOpen(false);
-      }
+      if (window.innerWidth >= 768) setIsMobileMenuOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
+
+  // Keep --header-height in sync with the actual rendered header height
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const observer = new ResizeObserver(([entry]) => {
+      document.documentElement.style.setProperty(
+        "--header-height",
+        `${entry.contentRect.height}px`,
+      );
+    });
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
 
   const navLinks = cmsData?.nav_links?.length
     ? cmsData.nav_links.map((link) => ({
@@ -71,6 +76,7 @@ export default function Header() {
   return (
     <>
       <motion.header
+        ref={headerRef}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
@@ -81,12 +87,12 @@ export default function Header() {
         }`}
       >
         <BackgroundTexture variant="rune" opacity={0.0032} />
-        <div className="section-container">
-          <nav className="flex items-center justify-between py-5">
+        <div className="px-6 lg:px-10">
+          <nav className="flex items-start justify-between gap-6 py-4">
             {/* Logo - Ornamental */}
             <Link
               href={logoLink}
-              className="group text-xl md:text-2xl tracking-wider hover:text-pale-gold transition-colors duration-500 no-underline"
+              className="group shrink-0 text-xl md:text-2xl tracking-wider hover:text-pale-gold transition-colors duration-500 no-underline"
             >
               {primaryItem?.__component === "navigation.logo-image" &&
               primaryItem.image ? (
@@ -107,32 +113,31 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Desktop Navigation */}
-
-            <div className="hidden md:flex items-center gap-10">
-              {navLinks.map((link) => (
+            {/* Navigation — wraps on narrow screens, top-aligned; hidden on mobile */}
+            <div className="hidden md:flex flex-wrap items-center justify-center gap-x-8 gap-y-2 flex-1">
+              {navLinks.map((link, i) => (
                 <Link
-                  key={link.href}
+                  key={i}
                   href={link.href}
                   className="group font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 no-underline"
                 >
                   {link.label}
-
                   <SimpleDivider className="mt-1" />
                 </Link>
               ))}
             </div>
 
-            {/* Desktop CTA */}
+            {/* CTA — desktop only */}
             {shouldShowCTA && (
-              <div className="hidden md:block">
-                <Link href={ctaLink} className="btn-primary">
-                  {ctaText}
-                </Link>
-              </div>
+              <Link
+                href={ctaLink}
+                className="btn-primary shrink-0 hidden md:inline-flex"
+              >
+                {ctaText}
+              </Link>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile hamburger */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-1 text-stone-grey hover:text-silver-white transition-colors duration-500 border border-fog/20 hover:border-pale-gold"
@@ -163,7 +168,6 @@ export default function Header() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop with vignette */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -176,7 +180,6 @@ export default function Header() {
               <div className="absolute inset-0 bg-vignette" />
             </motion.div>
 
-            {/* Slide-in Menu - Parchment Style */}
             <motion.nav
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -190,7 +193,6 @@ export default function Header() {
               aria-label="Mobile navigation"
             >
               <div className="flex flex-col h-full p-10">
-                {/* Close button with ornament */}
                 <div className="flex justify-between items-start mb-12">
                   <span className="text-lg tracking-wider">Menu</span>
                   <button
@@ -202,14 +204,12 @@ export default function Header() {
                   </button>
                 </div>
 
-                {/* Divider */}
                 <div className="h-px bg-linear-to-r from-pale-gold via-pale-gold/50 to-pale-gold/0 mb-10" />
 
-                {/* Navigation Links */}
                 <div className="flex flex-col gap-6 grow">
                   {navLinks.map((link, index) => (
                     <motion.div
-                      key={link.href}
+                      key={index}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{
@@ -232,10 +232,8 @@ export default function Header() {
                   ))}
                 </div>
 
-                {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-aged-gold/0 via-aged-gold/50 to-aged-gold/0 my-10" />
+                <div className="h-px bg-linear-to-r from-aged-gold/0 via-aged-gold/50 to-aged-gold/0 my-10" />
 
-                {/* Mobile CTA */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -254,7 +252,6 @@ export default function Header() {
                   </Link>
                 </motion.div>
 
-                {/* Bottom ornament */}
                 <div className="mt-5 flex justify-center">
                   <svg
                     width="40"

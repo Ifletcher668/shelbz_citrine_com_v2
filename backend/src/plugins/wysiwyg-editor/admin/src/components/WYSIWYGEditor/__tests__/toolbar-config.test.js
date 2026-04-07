@@ -99,8 +99,8 @@ describe("WYSIWYG_GROUPS structure", () => {
     expect(alignmentGroup.dropdown).toBe(true);
 
     const ids = alignmentGroup.buttons.map((b) => b.id);
-    expect(ids).toContain("center");
-    expect(ids).toContain("right");
+    expect(ids).toContain("align-center");
+    expect(ids).toContain("align-right");
   });
 
   test("Columns group is a dropdown and contains column buttons", () => {

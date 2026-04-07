@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contact_forms",
+  "info": {
+    "singularName": "contact-form",
+    "pluralName": "contact-forms",
+    "displayName": "Contact Form",
+    "description": "A reusable contact form with configurable fields and a semantic action type, embeddable in WYSIWYG content via [ref:contact-form:id]"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "private": true
+    },
+    "action": {
+      "type": "enumeration",
+      "enum": ["contact", "consultation"],
+      "default": "contact",
+      "required": true
+    },
+    "fields": {
+      "type": "component",
+      "component": "form.input-field",
+      "repeatable": true,
+      "required": true,
+      "min": 1
+    },
+    "submit_label": {
+      "type": "string",
+      "default": "Send Message"
+    },
+    "success_message": {
+      "type": "string",
+      "default": "Thank you — we'll be in touch soon."
+    },
+    "layout": {
+      "type": "customField",
+      "customField": "plugin::form-layout-editor.form-layout-editor"
+    }
+  }
+}

@@ -58,9 +58,10 @@ export default function CmsPage({ page, relations = {} }) {
 export async function getStaticPaths() {
   try {
     const pages = await getPages();
-    const paths = pages.map((page) => ({
-      params: { slug: page.slug },
-    }));
+    // "home" is served at "/" via pages/index.jsx — exclude it here
+    const paths = pages
+      .filter((page) => page.slug !== "home")
+      .map((page) => ({ params: { slug: page.slug } }));
 
     return { paths, fallback: false };
   } catch (err) {
@@ -84,6 +85,7 @@ export async function getStaticProps({ params }) {
     const refs = extractAllRefs(page);
     const rawRelations = await fetchRelationData(refs);
     const relations = renderRelations(rawRelations);
+    console.log("meep", relations, rawRelations);
 
     return { props: { page, relations } };
   } catch (err) {

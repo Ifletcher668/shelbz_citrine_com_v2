@@ -109,6 +109,31 @@ jobs:
       - name: Build
         run: yarn workspace shelbz-citrine-frontend build
 
+  # ─── Frontend type-check ─────────────────────────────────────────────────────
+  frontend-typecheck:
+    name: Frontend type-check
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            frontend/node_modules
+            backend/node_modules
+            backend/src/plugins/wysiwyg-editor/node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Type-check
+        run: yarn workspace shelbz-citrine-frontend type-check
+
   # ─── Backend tests ────────────────────────────────────────────────────────────
   backend-test:
     name: Backend tests
@@ -158,6 +183,25 @@ jobs:
 
       - name: Test
         run: yarn workspace wysiwyg-editor test
+
+  # ─── Types in sync ───────────────────────────────────────────────────────────
+  types-in-sync:
+    name: Strapi types in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+
+      - name: Sync types from backend
+        run: node frontend/scripts/sync-strapi-types.js
+
+      - name: Assert no diff
+        run: |
+          git diff --exit-code frontend/types/strapi-generated/ || \
+            (echo "::error::frontend/types/strapi-generated/ is out of sync with backend/types/generated/. Run 'yarn workspace shelbz-citrine-frontend sync-types' locally and commit the result." && exit 1)
 
   # ─── Launcher UI type-check ───────────────────────────────────────────────────
   launcher-typecheck:

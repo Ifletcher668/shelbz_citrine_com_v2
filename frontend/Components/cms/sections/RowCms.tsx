@@ -2,13 +2,19 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Section, Container } from "@/Components/layout/Section";
 import RichContent from "@/Components/shared/RichContent";
+import type { StrapiRow } from "@/types/cms";
 
-export default function ColumnGroupCms({ data, sectionVariant = "default" }) {
-  const ref = useRef(null);
+interface RowCmsProps {
+  data: StrapiRow | undefined;
+  sectionVariant?: "hero" | "default";
+}
+
+export default function RowCms({ data, sectionVariant = "default" }: RowCmsProps) {
+  const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const { columns = [] } = data ?? {};
+  const columns = data?.columns ?? [];
 
-  if (!columns || columns.length === 0) return null;
+  if (columns.length === 0) return null;
 
   return (
     <Section
@@ -19,17 +25,10 @@ export default function ColumnGroupCms({ data, sectionVariant = "default" }) {
       overlay="vignette"
     >
       <Container>
-        <div
-          className={`grid grid-cols-1 md:grid-cols-${columns.length} gap-8`}
-        >
+        <div className={`grid grid-cols-1 md:grid-cols-${columns.length} gap-8`}>
           {columns.map((column, i) => (
             <motion.div
-              key={i}
-              style={
-                column.col_start
-                  ? { gridColumnStart: column.col_start }
-                  : undefined
-              }
+              key={column.id}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{

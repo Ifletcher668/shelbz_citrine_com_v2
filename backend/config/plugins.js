@@ -7,4 +7,8 @@ module.exports = ({ env }) => ({
     enabled: true,
     resolve: "./src/plugins/color-picker",
   },
+  "form-layout-editor": {
+    enabled: true,
+    resolve: "./src/plugins/form-layout-editor",
+  },
 });

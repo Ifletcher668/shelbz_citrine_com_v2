@@ -7,7 +7,8 @@
       "frontend",
       "backend",
       "backend/src/plugins/wysiwyg-editor",
-      "backend/src/plugins/color-picker"
+      "backend/src/plugins/color-picker",
+      "backend/src/plugins/form-layout-editor"
     ],
     "nohoist": [
       "**/sharp",

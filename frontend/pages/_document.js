@@ -13,6 +13,15 @@ export default function Document() {
         <link rel="stylesheet" href="/theme.css" />
       </Head>
       <body>
+        {/*
+          Hidden form for Netlify bot crawling.
+          All contact forms submit to the "contact-form" name.
+          The bot must see this in the static HTML to register the form.
+        */}
+        <form name="contact-form" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+          <input type="hidden" name="form-name" value="contact-form" />
+          <input type="text" name="_placeholder" />
+        </form>
         <Main />
         <NextScript />
       </body>

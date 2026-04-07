@@ -10,15 +10,30 @@ import "codemirror5/mode/markdown/markdown";
 import "codemirror5/addon/search/searchcursor";
 import "codemirror5/addon/edit/matchbrackets";
 import "codemirror5/keymap/sublime";
+import "./codemirror-mode";
 import Toolbar from "./Toolbar";
 import Preview from "./Preview";
 import { insertFile, markdownHandler, wysiwygWrap } from "./editor-handlers";
+import CommandPalette from "./CommandPalette";
+import { COMMANDS } from "./command-registry";
+import BlockEditPopover from "./BlockEditPopover";
+import {
+  applyBlockDecorations,
+  createDecorationScheduler,
+} from "./block-decorations";
 
 // ── Styled components ──────────────────────────────────────────────────────────
 
 // When the editor is expanded, Radix UI popper portals (used by SingleSelect)
 // render in document.body with z-index:auto which loses to our z-index:9999 overlay.
 // This global style lifts them above the overlay only while expanded.
+// Lifts Radix popper dropdowns (e.g. SingleSelect) above the BlockEditPopover overlay.
+const BlockEditPopoverPopperStyles = createGlobalStyle`
+  [data-radix-popper-content-wrapper] {
+    z-index: 10002 !important;
+  }
+`;
+
 const ExpandedPopperStyles = createGlobalStyle`
   [data-radix-popper-content-wrapper] {
     z-index: 10000 !important;
@@ -109,7 +124,132 @@ const EditorStylesContainer = styled.div`
   span {
     color: ${({ theme }) => theme.colors.neutral800} !important;
   }
+
+  /* ── Block decoration widgets ── */
+  .cm-md-block-open,
+  .cm-md-block-close,
+  .cm-md-block-self {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: ${({ theme }) => theme.fontWeights.semiBold};
+    cursor: default;
+    user-select: none;
+    vertical-align: middle;
+    line-height: 18px;
+  }
+
+  .cm-md-block-open,
+  .cm-md-block-self {
+    background: ${({ theme }) => theme.colors.primary100};
+    border: 1px solid ${({ theme }) => theme.colors.primary200};
+  }
+
+  .cm-md-block-close {
+    background: ${({ theme }) => theme.colors.neutral100};
+    border: 1px solid ${({ theme }) => theme.colors.neutral200};
+    font-weight: ${({ theme }) => theme.fontWeights.regular};
+  }
+
+  /* Override the broad span color rule for widget labels */
+  .cm-md-block-label {
+    color: inherit !important;
+  }
+
+  .cm-md-block-open .cm-md-block-label,
+  .cm-md-block-self .cm-md-block-label {
+    color: ${({ theme }) => theme.colors.primary600} !important;
+  }
+
+  .cm-md-block-close .cm-md-block-label {
+    color: ${({ theme }) => theme.colors.neutral500} !important;
+  }
+
+  .cm-md-block-btn {
+    background: none;
+    border: none;
+    padding: 0 2px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.5;
+    color: ${({ theme }) => theme.colors.neutral700};
+  }
+
+  .cm-md-block-btn:hover {
+    opacity: 1;
+  }
+
+  .cm-md-block-delete:hover {
+    color: ${({ theme }) => theme.colors.danger500};
+  }
 `;
+
+// ── Image alignment picker ─────────────────────────────────────────────────────
+
+const AlignPickerOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 10003;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+`;
+
+const AlignPickerBox = styled.div`
+  background: ${({ theme }) => theme.colors.neutral0};
+  border: 1px solid ${({ theme }) => theme.colors.neutral200};
+  border-radius: 8px;
+  padding: ${({ theme }) => theme.spaces[5]};
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaces[4]};
+`;
+
+const AlignButtonRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spaces[2]};
+  flex-wrap: wrap;
+`;
+
+const ALIGN_OPTIONS = [
+  { label: "None", value: "" },
+  { label: "Float Left", value: "float-left w-1/3" },
+  { label: "Float Right", value: "float-right w-1/3" },
+  { label: "Center", value: "mx-auto" },
+  { label: "Full Width", value: "w-full" },
+];
+
+function ImageAlignPicker({ count, onConfirm, onClose }) {
+  return (
+    <AlignPickerOverlay onClick={onClose}>
+      <AlignPickerBox onClick={(e) => e.stopPropagation()}>
+        <Typography variant="omega" fontWeight="semiBold" textColor="neutral800">
+          Choose alignment for {count === 1 ? "image" : `${count} images`}
+        </Typography>
+        <AlignButtonRow>
+          {ALIGN_OPTIONS.map(({ label, value }) => (
+            <Button
+              key={label}
+              variant={value === "" ? "tertiary" : "secondary"}
+              size="S"
+              type="button"
+              onClick={() => onConfirm(value)}
+            >
+              {label}
+            </Button>
+          ))}
+        </AlignButtonRow>
+      </AlignPickerBox>
+    </AlignPickerOverlay>
+  );
+}
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
@@ -138,6 +278,13 @@ const WYSIWYGEditor = React.forwardRef(
     // viewMode controls the expanded split-view state:
     // "editor" = full editor only, "split" = side-by-side, "preview" = full preview
     const [viewMode, setViewMode] = useState("editor");
+    const [paletteOpen, setPaletteOpen] = useState(false);
+    const [editRequest, setEditRequest] = useState(null);
+    const [pendingImageFiles, setPendingImageFiles] = useState(null);
+    const slashPosRef = useRef(null); // set when palette is opened via '/' trigger
+    const onEditRequestRef = useRef(null);
+    onEditRequestRef.current = (req) => setEditRequest(req);
+    const scheduleDecorationsRef = useRef(null);
 
     const components = useStrapiApp(
       "WYSIWYGEditorMediaLib",
@@ -159,7 +306,7 @@ const WYSIWYGEditor = React.forwardRef(
       if (editorRef.current) editorRef.current.toTextArea();
 
       const cm = CodeMirror.fromTextArea(textareaRef.current, {
-        mode: "markdown",
+        mode: "markdown-wysiwyg",
         lineWrapping: true,
         extraKeys: {
           Tab: false,
@@ -173,6 +320,11 @@ const WYSIWYGEditor = React.forwardRef(
           // Line moving (Alt+Up/Down, like Obsidian)
           "Alt-Up": "swapLineUp",
           "Alt-Down": "swapLineDown",
+          // Command palette
+          "Cmd-P": () => {
+            slashPosRef.current = null;
+            setPaletteOpen(true);
+          },
           // Multi-cursor (Sublime-style)
           "Cmd-D": "selectNextOccurrence",
           "Ctrl-Shift-Up": "addCursorToPrevLine",
@@ -187,6 +339,13 @@ const WYSIWYGEditor = React.forwardRef(
 
       cm.setValue(value || "");
 
+      const decoCallbacks = () => ({
+        onEditRequest: (req) => onEditRequestRef.current(req),
+      });
+
+      applyBlockDecorations(cm, decoCallbacks());
+      scheduleDecorationsRef.current = createDecorationScheduler();
+
       cm.on("change", (doc) => {
         onChangeRef.current({
           target: {
@@ -195,9 +354,21 @@ const WYSIWYGEditor = React.forwardRef(
             type: "text",
           },
         });
+        scheduleDecorationsRef.current(cm, decoCallbacks());
       });
 
       editorRef.current = cm;
+
+      cm.on("inputRead", (editor, change) => {
+        if (change.text[0] !== "/") return;
+        const cursor = editor.getCursor();
+        const lineContent = editor.getLine(cursor.line);
+        const beforeSlash = lineContent.slice(0, cursor.ch - 1).trim();
+        if (beforeSlash !== "") return;
+        // '/' at start of line — open palette and track slash position for cleanup
+        slashPosRef.current = { line: cursor.line, ch: cursor.ch - 1 };
+        setPaletteOpen(true);
+      });
 
       return () => {
         if (editorRef.current) {
@@ -241,6 +412,41 @@ const WYSIWYGEditor = React.forwardRef(
       setViewMode("editor");
     }, []);
 
+    const closePalette = useCallback(() => {
+      setPaletteOpen(false);
+      editorRef.current?.focus();
+    }, []);
+
+    const handlePaletteExecute = useCallback((cmd) => {
+      const cm = editorRef.current;
+      if (!cm) return;
+      if (slashPosRef.current) {
+        const { line, ch } = slashPosRef.current;
+        cm.replaceRange("", { line, ch }, { line, ch: ch + 1 });
+        slashPosRef.current = null;
+      }
+      cmd.action(cm);
+      cm.focus();
+    }, []);
+
+    // ── Block decoration edit confirm ─────────────────────────────────────────
+    const handleEditConfirm = useCallback(
+      (newAttrs) => {
+        const { tagName, line } = editRequest;
+        const attrStr = Object.entries(newAttrs)
+          .map(([k, v]) => `data-${k}="${v}"`)
+          .join(" ");
+        const newLine = attrStr ? `<${tagName} ${attrStr}>` : `<${tagName}>`;
+        const cm = editorRef.current;
+        cm.replaceRange(newLine, { line, ch: 0 }, { line, ch: cm.getLine(line).length });
+        setEditRequest(null);
+        applyBlockDecorations(cm, {
+          onEditRequest: (req) => onEditRequestRef.current(req),
+        });
+      },
+      [editRequest],
+    );
+
     // ── Preview mode toggle (non-expanded) ────────────────────────────────────
     const handleTogglePreviewMode = useCallback(
       () => setIsPreviewMode((v) => !v),
@@ -268,9 +474,17 @@ const WYSIWYGEditor = React.forwardRef(
         url: f.url,
         mime: f.mime,
       }));
-      insertFile(editorRef, formatted);
       setMediaLibVisible(false);
+      const images = formatted.filter((f) => f.mime.includes("image"));
+      const others = formatted.filter((f) => !f.mime.includes("image"));
+      if (others.length > 0) insertFile(editorRef, others);
+      if (images.length > 0) setPendingImageFiles(images);
     }, []);
+
+    const handleImageAlignConfirm = useCallback((alignClass) => {
+      if (pendingImageFiles) insertFile(editorRef, pendingImageFiles, alignClass || undefined);
+      setPendingImageFiles(null);
+    }, [pendingImageFiles]);
 
     // In expanded mode, viewMode drives visibility; otherwise isPreviewMode does
     const showEditor = isExpanded ? viewMode !== "preview" : !isPreviewMode;
@@ -390,6 +604,37 @@ const WYSIWYGEditor = React.forwardRef(
           <MediaLibraryDialog
             onClose={handleToggleMediaLib}
             onSelectAssets={handleSelectAssets}
+          />
+        )}
+
+        {/* Image alignment picker — shown after media library selection */}
+        {pendingImageFiles && (
+          <ImageAlignPicker
+            count={pendingImageFiles.length}
+            onConfirm={handleImageAlignConfirm}
+            onClose={() => setPendingImageFiles(null)}
+          />
+        )}
+
+        <CommandPalette
+          isOpen={paletteOpen}
+          onClose={closePalette}
+          onExecute={handlePaletteExecute}
+          commands={COMMANDS}
+        />
+
+        {editRequest && <BlockEditPopoverPopperStyles />}
+        {editRequest && (
+          <BlockEditPopover
+            tagName={editRequest.tagName}
+            currentAttrs={editRequest.attrs}
+            position={
+              editRequest.rect
+                ? { top: editRequest.rect.bottom, left: editRequest.rect.left }
+                : { top: 100, left: 100 }
+            }
+            onConfirm={handleEditConfirm}
+            onClose={() => setEditRequest(null)}
           />
         )}
       </Field.Root>

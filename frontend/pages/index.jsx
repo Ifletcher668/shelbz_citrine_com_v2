@@ -1,65 +1,68 @@
 import Head from "next/head";
 import PageLayout from "@/Components/layout/PageLayout";
-import HeroSection from "@/Components/pages/home/HeroSection";
-import ProblemSolutionSection from "@/Components/pages/home/ProblemSolutionSection";
-import ProcessSection from "@/Components/pages/home/ProcessSection";
-import GallerySection from "@/Components/pages/home/GallerySection";
-import FAQSection from "@/Components/pages/home/FAQSection";
-import CTASection from "@/Components/pages/home/CTASection";
+import DynamicZone from "@/Components/cms/DynamicZone";
+import { RelationsContext } from "@/lib/RelationsContext";
+import {
+  getPageBySlug,
+  extractAllRefs,
+  fetchRelationData,
+} from "@/lib/strapi";
+import { renderRelations } from "@/lib/relation-renderers";
 
 /**
- * Landing Page - "Digital Grimoire"
- *
- * High-conversion page optimized for consultation bookings
- * with dark academia / fantasy RPG aesthetic.
+ * Root page — always served at "/".
+ * Fetches the Strapi page with slug "home".
  */
-export default function Home() {
+export default function HomePage({ page, relations = {} }) {
+  if (!page) return null;
+
+  const overrideEntries =
+    page.theme_overrides && typeof page.theme_overrides === "object"
+      ? Object.entries(page.theme_overrides)
+      : [];
+
   return (
     <>
       <Head>
-        <title>Custom Black Spinel Engagement Rings | Heritage Jewelry</title>
-        <meta
-          name="description"
-          content="Bespoke black spinel engagement rings handcrafted by seventh-generational Indian artisans. Ethical sourcing, free consultation. Olympia, WA & nationwide via Zoom."
-        />
-
-        {/* Open Graph */}
+        <title>{page.title} | Shelbz Citrine</title>
+        {page.seo_description && (
+          <meta name="description" content={page.seo_description} />
+        )}
+        <meta property="og:title" content={`${page.title} | Shelbz Citrine`} />
+        {page.seo_description && (
+          <meta property="og:description" content={page.seo_description} />
+        )}
         <meta property="og:type" content="website" />
-        <meta
-          property="og:title"
-          content="Custom Black Spinel Engagement Rings | Heritage Jewelry"
-        />
-        <meta
-          property="og:description"
-          content="Bespoke black spinel rings handcrafted by Indian artisans. Ethical sourcing, multigenerational craft."
-        />
-        <meta property="og:image" content="/og-image.jpg" />
-        <meta property="og:url" content="https://heritagejewelry.com" />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="Custom Black Spinel Engagement Rings | Heritage Jewelry"
-        />
-        <meta
-          name="twitter:description"
-          content="Bespoke black spinel rings by seventh-generational Indian artisans."
-        />
-        <meta name="twitter:image" content="/og-image.jpg" />
-
-        {/* Canonical */}
-        <link rel="canonical" href="https://heritagejewelry.com" />
+        <link rel="canonical" href="https://shelbzcitrine.com/" />
+        {overrideEntries.length > 0 && (
+          <style>{`:root {\n${overrideEntries.map(([k, v]) => `  ${k}: ${v};`).join("\n")}\n}`}</style>
+        )}
       </Head>
 
-      <PageLayout>
-        <HeroSection />
-        <ProblemSolutionSection />
-        <ProcessSection />
-        <GallerySection />
-        <FAQSection />
-        <CTASection />
-      </PageLayout>
+      <RelationsContext.Provider value={relations}>
+        <PageLayout>
+          <DynamicZone sections={page.sections} />
+        </PageLayout>
+      </RelationsContext.Provider>
     </>
   );
+}
+
+export async function getStaticProps() {
+  try {
+    const page = await getPageBySlug("home");
+
+    if (!page) {
+      return { notFound: true };
+    }
+
+    const refs = extractAllRefs(page);
+    const rawRelations = await fetchRelationData(refs);
+    const relations = renderRelations(rawRelations);
+
+    return { props: { page, relations } };
+  } catch (err) {
+    console.error("[getStaticProps] Could not fetch home page:", err.message);
+    return { notFound: true };
+  }
 }
