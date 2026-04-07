@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "shelbz-launcher",
+  "productName": "Shelbz Web Manager",
   "version": "0.1.0",
   "identifier": "com.shelbzcitrine.launcher",
   "build": {
@@ -13,11 +13,12 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Shelbz Citrine Launcher",
+        "title": "Shelbz Web Manager",
         "width": 400,
         "height": 680,
         "resizable": true,
-        "visible": false,
+        "visible": true,
+        "maximized": true,
         "devtools": true
       }
     ]

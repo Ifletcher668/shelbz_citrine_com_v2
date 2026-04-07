@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { checkPrerequisites, getStoredProjectPath } from "./lib/tauri";
 import { useProcessStatus } from "./hooks/useProcessStatus";
-import { StatusPanel } from "./components/StatusPanel";
-import { ActionBar } from "./components/ActionBar";
-import { GitStatus } from "./components/GitStatus";
 import { LogViewer } from "./components/LogViewer";
+import type { Tab } from "./components/LogViewer";
+import { Sidebar } from "./components/Sidebar";
 import { PublishFlow } from "./components/PublishFlow";
 import { SetupScreen } from "./components/SetupScreen";
 import type { ProcessStatus } from "./lib/tauri";
@@ -14,6 +13,7 @@ type AppView = "loading" | "setup" | "dashboard";
 export default function App() {
   const [view, setView] = useState<AppView>("loading");
   const [showPublish, setShowPublish] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("frontend");
   const { status, refresh, setOptimistic } = useProcessStatus();
 
   useEffect(() => {
@@ -55,17 +55,26 @@ export default function App() {
   function handleOptimistic(key: keyof ProcessStatus, running: boolean) {
     setOptimistic(key, running);
     setTimeout(refresh, 1500);
+    // If the server being stopped is the one backing the active browser tab, switch away
+    if (!running) {
+      if (key === "frontend" && activeTab === "browser-frontend") setActiveTab("frontend");
+      if (key === "backend" && activeTab === "browser-backend") setActiveTab("backend");
+    }
   }
 
   return (
-    <div className="h-screen bg-zinc-950 text-zinc-100 flex flex-col select-none">
-      <GitStatus />
-      <StatusPanel status={status} onAction={handleOptimistic} />
-      <ActionBar
+    <div className="h-screen bg-zinc-950 text-zinc-100 flex select-none">
+      <Sidebar
+        active={activeTab}
+        onTabChange={setActiveTab}
+        status={status}
+        onAction={handleOptimistic}
         onPublish={() => setShowPublish(true)}
         onStarted={() => setTimeout(refresh, 1500)}
       />
-      <LogViewer />
+      <div className="flex-1 flex flex-col min-w-0">
+        <LogViewer active={activeTab} />
+      </div>
       {showPublish && (
         <PublishFlow status={status} onClose={() => setShowPublish(false)} />
       )}

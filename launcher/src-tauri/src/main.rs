@@ -8,7 +8,7 @@ mod tray;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tauri::{Manager, RunEvent};
-use commands::{deploy, git, icloud, logs, processes, system};
+use commands::{browser, deploy, git, icloud, logs, processes, system};
 use state::{AppState, PersistedConfig};
 
 const APP_SUPPORT_SUBDIR: &str = "com.shelbzcitrine.launcher";
@@ -62,8 +62,6 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .manage(app_state)
         .setup(|app| {
-            #[cfg(target_os = "macos")]
-            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
             tray::setup_tray(app)?;
             if let Some(state) = app.try_state::<Arc<AppState>>() {
                 let log_dir = state.log_dir();
@@ -74,6 +72,11 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            // browser
+            browser::show_browser,
+            browser::hide_browser,
+            browser::reload_browser,
+            browser::navigate_browser,
             // processes
             processes::start_frontend,
             processes::start_backend,
@@ -82,6 +85,7 @@ fn main() {
             processes::get_process_status,
             // git
             git::check_updates,
+            git::git_fetch,
             git::git_pull,
             // icloud
             icloud::icloud_save,
@@ -103,9 +107,18 @@ fn main() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(move |_app_handle, event| {
-            if let RunEvent::ExitRequested { .. } = event {
-                processes::kill_all_processes(&state_for_exit);
+        .run(move |app_handle, event| {
+            match event {
+                RunEvent::ExitRequested { .. } => {
+                    processes::kill_all_processes(&state_for_exit);
+                }
+                RunEvent::Reopen { .. } => {
+                    if let Some(window) = app_handle.get_webview_window("main") {
+                        let _ = window.show();
+                        let _ = window.set_focus();
+                    }
+                }
+                _ => {}
             }
         });
 }

@@ -43,6 +43,21 @@ pub async fn check_updates(state: State<'_, Arc<AppState>>) -> Result<GitInfo, S
 }
 
 #[tauri::command]
+pub async fn git_fetch(state: State<'_, Arc<AppState>>) -> Result<(), String> {
+    let root = state.root();
+    let output = Command::new("git")
+        .args(["fetch", "origin"])
+        .current_dir(&root)
+        .output()
+        .map_err(|e| e.to_string())?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        return Err(stderr);
+    }
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn git_pull(state: State<'_, Arc<AppState>>) -> Result<String, String> {
     let root = state.root();
     let output = Command::new("git")

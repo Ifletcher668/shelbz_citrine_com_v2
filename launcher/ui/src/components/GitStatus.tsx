@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { GitInfo, checkUpdates, gitPull } from "../lib/tauri";
+import { GitInfo, checkUpdates, gitFetch, gitPull } from "../lib/tauri";
 
 export function GitStatus() {
   const [info, setInfo] = useState<GitInfo | null>(null);
   const [checking, setChecking] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [pulling, setPulling] = useState(false);
   const [pullMsg, setPullMsg] = useState("");
 
@@ -19,6 +20,19 @@ export function GitStatus() {
   }
 
   useEffect(() => { refresh(); }, []);
+
+  async function handleFetch() {
+    setFetching(true);
+    setPullMsg("");
+    try {
+      await gitFetch();
+      await refresh();
+    } catch (e) {
+      setPullMsg(String(e));
+    } finally {
+      setFetching(false);
+    }
+  }
 
   async function handlePull() {
     setPulling(true);
@@ -61,6 +75,13 @@ export function GitStatus() {
             {pulling ? "Pulling…" : "Pull"}
           </button>
         )}
+        <button
+          onClick={handleFetch}
+          disabled={fetching || checking}
+          className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-400 px-2 py-0.5 rounded disabled:opacity-40"
+        >
+          {fetching ? "…" : "Fetch"}
+        </button>
         <button
           onClick={refresh}
           disabled={checking}
