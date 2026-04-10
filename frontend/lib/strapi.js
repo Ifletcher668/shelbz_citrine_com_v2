@@ -82,7 +82,29 @@ export async function getFooter() {
 export function getStrapiMediaUrl(url) {
   if (!url) return null;
   if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${STRAPI_URL}${url}`;
   return `${STRAPI_URL}${url}`;
+}
+
+/**
+ * Build a srcset string from a Strapi media object's format variants.
+ * Returns null if no format data is available.
+ */
+export function buildStrapiSrcSet(image) {
+  if (!image) return null;
+  const entries = [];
+  if (image.formats) {
+    for (const key of ["thumbnail", "small", "medium", "large"]) {
+      const fmt = image.formats[key];
+      if (fmt?.url && fmt?.width) {
+        entries.push(`${getStrapiMediaUrl(fmt.url)} ${fmt.width}w`);
+      }
+    }
+  }
+  if (image.url && image.width) {
+    entries.push(`${getStrapiMediaUrl(image.url)} ${image.width}w`);
+  }
+  return entries.length > 0 ? entries.join(", ") : null;
 }
 
 /**
@@ -106,6 +128,75 @@ export async function getActiveTheme() {
   }
 }
 
+// ─── Media helpers ────────────────────────────────────────────────────────────
+
+/**
+ * Walk any page-data object and collect all /uploads/ image URLs found in
+ * markdown image syntax (![...](url)). Returns a deduplicated array of URL strings.
+ */
+export function extractImageUrls(obj) {
+  const urls = new Set();
+  const re = /!\[[^\]]*\]\(([^)\s]+)/g;
+
+  function walk(val) {
+    if (typeof val === "string") {
+      re.lastIndex = 0;
+      let m;
+      while ((m = re.exec(val)) !== null) {
+        if (m[1].startsWith("/uploads/")) urls.add(m[1]);
+      }
+    } else if (Array.isArray(val)) {
+      val.forEach(walk);
+    } else if (val && typeof val === "object") {
+      Object.values(val).forEach(walk);
+    }
+  }
+
+  walk(obj);
+  return [...urls];
+}
+
+/**
+ * Fetch full Strapi media objects for a list of /uploads/ URLs.
+ * Returns a map of url → StrapiMedia. Silently returns {} on failure.
+ */
+export async function fetchMediaData(urls) {
+  if (!urls.length) return {};
+  const filterQs = urls
+    .map((url, i) => `filters[url][$in][${i}]=${encodeURIComponent(url)}`)
+    .join("&");
+
+  try {
+    const response = await strapiGet(
+      `/upload/files?${filterQs}&pagination[pageSize]=100`,
+    );
+    // Upload files API returns a plain array, not { data: [] }
+    const files = Array.isArray(response) ? response : (response.data ?? []);
+    return Object.fromEntries(
+      files.map((m) => {
+        const formats = {};
+        for (const key of ["thumbnail", "small", "medium", "large"]) {
+          if (m.formats?.[key]) {
+            formats[key] = { url: m.formats[key].url, width: m.formats[key].width };
+          }
+        }
+        return [
+          m.url,
+          {
+            url: m.url,
+            alternativeText: m.alternativeText ?? null,
+            width: m.width,
+            height: m.height,
+            formats,
+          },
+        ];
+      }),
+    );
+  } catch {
+    return {};
+  }
+}
+
 // ─── Relation embed helpers ────────────────────────────────────────────────────
 
 /**
@@ -114,9 +205,16 @@ export async function getActiveTheme() {
  */
 const RELATION_API_PATHS = {
   "bullet-list": "bullet-lists",
-  "faq": "faqs",
+  faq: "faqs",
   "step-group": "step-groups",
   "contact-form": "contact-forms",
+  button: "buttons",
+};
+
+// Per-type populate overrides. Types not listed here use the default "populate=*".
+// Needed when a type has nested component relations that populate=* won't deep-resolve.
+const RELATION_POPULATE = {
+  button: "populate[action]=*&populate[link][populate][page][fields][0]=slug",
 };
 
 /**
@@ -162,8 +260,9 @@ export async function fetchRelationData(refs) {
       const path = RELATION_API_PATHS[type];
       if (!path) return;
       try {
+        const populateQs = RELATION_POPULATE[type] ?? "populate=*";
         const { data } = await strapiGet(
-          `/${path}?filters[id][$eq]=${id}&pagination[pageSize]=1&populate=*`,
+          `/${path}?filters[id][$eq]=${id}&pagination[pageSize]=1&${populateQs}`,
         );
         if (data && data.length > 0) results[`${type}:${id}`] = data[0];
       } catch (error) {

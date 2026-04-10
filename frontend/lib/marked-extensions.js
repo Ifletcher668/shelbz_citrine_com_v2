@@ -44,6 +44,7 @@
  *                to collect refs for prefetching.
  */
 import { Marked } from "marked";
+import { buildStrapiSrcSet } from "./strapi";
 
 // ─── Security Whitelists ──────────────────────────────────────────────────────
 
@@ -227,7 +228,14 @@ const mdElementExtension = {
       const raw =
         selfCloseMatch[0] +
         (src[selfCloseMatch[0].length] === "\n" ? "\n" : "");
-      return { type: "mdElement", raw, tagName, attrs, selfClose: true, tokens: [] };
+      return {
+        type: "mdElement",
+        raw,
+        tagName,
+        attrs,
+        selfClose: true,
+        tokens: [],
+      };
     }
 
     // Paired: <md-tagname ...>body</md-tagname>
@@ -287,8 +295,10 @@ const mdElementExtension = {
       }
       if (tagName === "md-spacer") {
         const s = attrs.size;
-        if (s === "sm") return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
-        if (s === "lg") return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
+        if (s === "sm")
+          return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
+        if (s === "lg")
+          return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
         return `<div class="md-spacer" aria-hidden="true"></div>\n`;
       }
       return "";
@@ -491,7 +501,7 @@ const attributedImageExtension = {
       token.decoration.length > 0
         ? ` class="${token.decoration.join(" ")}"`
         : "";
-    return `<figure class="${figureClass}"><img src="${url}" alt="${token.alt}"${imgClassAttr} /></figure>`;
+    return `<figure class="${figureClass}"><img src="${url}" alt="${token.alt}"${imgClassAttr} data-strapi-img /></figure>`;
   },
 };
 
@@ -594,18 +604,40 @@ export function extractRelationRefs(markdown) {
 }
 
 /**
- * Parse markdown to HTML, then replace relation embed placeholders with
- * pre-rendered HTML strings from the relations map.
+ * Parse markdown to HTML, then:
+ * 1. Replace relation embed placeholders with pre-rendered HTML strings.
+ * 2. Inject srcset/sizes into Strapi image tags using the media map.
  *
  * @param {string} body - Markdown source
  * @param {Record<string, string>} relations - Map of "type:id" → HTML string
+ * @param {Record<string, object>} mediaMap - Map of "/uploads/..." URL → StrapiMedia object
  */
-export function parseWithRelations(body, relations = {}) {
-  const html = wysiwygMarked.parse(body);
-  return html.replace(
+export function parseWithRelations(body, relations = {}, mediaMap = {}) {
+  let html = wysiwygMarked.parse(body);
+
+  html = html.replace(
     /<div data-md-rel="([\w-]+)" data-md-rel-id="(\d+)"><\/div>/g,
     (_, type, id) => relations[`${type}:${id}`] ?? "",
   );
+
+  if (Object.keys(mediaMap).length > 0) {
+    html = html.replace(
+      /<img src="([^"]+)"([^>]*) data-strapi-img \/>/g,
+      (_match, url, rest) => {
+        const media = mediaMap[url];
+        if (!media) return `<img src="${url}"${rest} />`;
+        const srcset = buildStrapiSrcSet(media);
+        const extra = srcset
+          ? ` srcset="${srcset}" sizes="(max-width: 768px) 100vw, 66vw"`
+          : "";
+        return `<img src="${url}"${rest}${extra} />`;
+      },
+    );
+  }
+
+  html = html.replace(/<p>(\s*<figure[\s\S]*?<\/figure>\s*)<\/p>/g, "$1");
+
+  return html;
 }
 
 // ─── Configured Instance ──────────────────────────────────────────────────────
@@ -626,4 +658,12 @@ wysiwygMarked.use({
     coloredTextExtension,
     tooltipExtension,
   ],
+  renderer: {
+    // Plain ![alt](url) images (no {.class} suffix) — wrap in figure for consistency
+    image({ href, title, text }) {
+      const url = sanitizeUrl(href);
+      const titleAttr = title ? ` title="${title}"` : "";
+      return `<figure class="md-figure"><img src="${url}" alt="${text}"${titleAttr} data-strapi-img /></figure>`;
+    },
+  },
 });

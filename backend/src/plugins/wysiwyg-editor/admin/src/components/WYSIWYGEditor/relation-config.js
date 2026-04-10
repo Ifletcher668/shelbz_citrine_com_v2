@@ -35,6 +35,12 @@ export const RELATION_TYPES = [
     apiPath: "contact-forms",
     displayField: "title",
   },
+  {
+    type: "button",
+    label: "Button",
+    apiPath: "buttons",
+    displayField: "title",
+  },
   // Future component types go here:
   // { type: "modal", label: "Modal", apiPath: "modals", displayField: "title" },
 ];

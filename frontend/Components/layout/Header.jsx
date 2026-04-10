@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import BackgroundTexture from "@/Components/shared/BackgroundTexture";
 import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
-import { getStrapiMediaUrl } from "@/lib/strapi";
+import { getStrapiMediaUrl, buildStrapiSrcSet } from "@/lib/strapi";
 import { useHeaderData } from "@/lib/HeaderDataContext";
 
 /**
@@ -96,8 +95,10 @@ export default function Header() {
             >
               {primaryItem?.__component === "navigation.logo-image" &&
               primaryItem.image ? (
-                <Image
+                <img
                   src={getStrapiMediaUrl(primaryItem.image.url)}
+                  srcSet={buildStrapiSrcSet(primaryItem.image) ?? undefined}
+                  sizes="(max-width: 768px) 80px, 120px"
                   alt={primaryItem.image.alternativeText || "Logo"}
                   width={primaryItem.image.width || 120}
                   height={primaryItem.image.height || 40}

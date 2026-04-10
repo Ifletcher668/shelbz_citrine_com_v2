@@ -2,10 +2,13 @@ import Head from "next/head";
 import PageLayout from "@/Components/layout/PageLayout";
 import DynamicZone from "@/Components/cms/DynamicZone";
 import { RelationsContext } from "@/lib/RelationsContext";
+import { MediaContext } from "@/lib/MediaContext";
 import {
   getPageBySlug,
   extractAllRefs,
   fetchRelationData,
+  extractImageUrls,
+  fetchMediaData,
 } from "@/lib/strapi";
 import { renderRelations } from "@/lib/relation-renderers";
 
@@ -13,7 +16,7 @@ import { renderRelations } from "@/lib/relation-renderers";
  * Root page — always served at "/".
  * Fetches the Strapi page with slug "home".
  */
-export default function HomePage({ page, relations = {} }) {
+export default function HomePage({ page, relations = {}, mediaMap = {} }) {
   if (!page) return null;
 
   const overrideEntries =
@@ -39,11 +42,13 @@ export default function HomePage({ page, relations = {} }) {
         )}
       </Head>
 
-      <RelationsContext.Provider value={relations}>
-        <PageLayout>
-          <DynamicZone sections={page.sections} />
-        </PageLayout>
-      </RelationsContext.Provider>
+      <MediaContext.Provider value={mediaMap}>
+        <RelationsContext.Provider value={relations}>
+          <PageLayout>
+            <DynamicZone sections={page.sections} />
+          </PageLayout>
+        </RelationsContext.Provider>
+      </MediaContext.Provider>
     </>
   );
 }
@@ -60,7 +65,10 @@ export async function getStaticProps() {
     const rawRelations = await fetchRelationData(refs);
     const relations = renderRelations(rawRelations);
 
-    return { props: { page, relations } };
+    const imageUrls = extractImageUrls(page);
+    const mediaMap = await fetchMediaData(imageUrls);
+
+    return { props: { page, relations, mediaMap } };
   } catch (err) {
     console.error("[getStaticProps] Could not fetch home page:", err.message);
     return { notFound: true };

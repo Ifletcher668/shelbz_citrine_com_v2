@@ -185,25 +185,18 @@ export const WYSIWYG_GROUPS = [
     ],
   },
   /**
-   * Button — inline CTA button links.
+   * Button — insert a button embed reference.
    */
   {
     label: "Button",
     dropdown: true,
     buttons: [
       {
-        id: "btn-primary",
-        label: "Primary",
-        title: "Primary Button",
+        id: "button-embed",
+        label: "Button",
+        title: "Embed Button",
         action: "block",
-        template: "[${selection}](/url){.btn-primary}",
-      },
-      {
-        id: "btn-secondary",
-        label: "Secondary",
-        title: "Secondary Button",
-        action: "block",
-        template: "[${selection}](/url){.btn-secondary}",
+        template: "[ref:button:0]",
       },
     ],
   },

@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_ui_button_links",
+  "info": {
+    "displayName": "Button Link",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["internal", "external"],
+      "required": true,
+      "default": "external"
+    },
+    "page": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::page.page"
+    },
+    "url": {
+      "type": "string"
+    }
+  }
+}

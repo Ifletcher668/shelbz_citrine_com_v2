@@ -291,6 +291,21 @@ export interface ThemeTypography extends Struct.ComponentSchema {
   };
 }
 
+export interface UiButtonLink extends Struct.ComponentSchema {
+  collectionName: 'components_ui_button_links';
+  info: {
+    displayName: 'Button Link';
+    icon: 'link';
+  };
+  attributes: {
+    page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
+    type: Schema.Attribute.Enumeration<['internal', 'external']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'external'>;
+    url: Schema.Attribute.String;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
@@ -307,6 +322,7 @@ declare module '@strapi/strapi' {
       'theme.semantic-colors': ThemeSemanticColors;
       'theme.spacing': ThemeSpacing;
       'theme.typography': ThemeTypography;
+      'ui.button-link': UiButtonLink;
     }
   }
 }

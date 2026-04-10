@@ -34,6 +34,8 @@ export default function BlockEditPopover({
   useEffect(() => {
     function handle(e) {
       if (popoverRef.current && !popoverRef.current.contains(e.target)) {
+        // Don't close if the click is inside a portal dropdown (e.g. Strapi SingleSelect listbox)
+        if (e.target.closest('[role="listbox"],[role="option"],[data-radix-popper-content-wrapper]')) return;
         onClose();
       }
     }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { styled } from "styled-components";
 import {
   Box,
@@ -28,6 +28,7 @@ import {
   HeadingFour,
   HeadingFive,
   HeadingSix,
+  CaretDown,
 } from "@strapi/icons";
 import { WYSIWYG_GROUPS } from "./toolbar-config";
 import { RELATION_TYPES } from "./relation-config";
@@ -90,57 +91,236 @@ const CYCLE_LABELS = {
   preview: "Editor",
 };
 
+// Mirrors SingleSelect size="S" from the Strapi DS exactly.
+// Values sourced from @strapi/design-system/dist/index.mjs:
+//   height → min-height 2.4rem (medium: 2.2rem)
+//   padding-block → calc(spaces[2] - 1px) S size (medium: spaces[1])
+//   padding-inline → spaces[4] start, spaces[3] end
+//   font-size → omega variant: fontSizes[2] = 1.4rem (medium breakpoint)
+//   chevron → CaretDown at 1.2rem × 1.2rem, fill neutral500
+const ComponentsTrigger = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.spaces[2]};
+  min-height: 2.4rem;
+  padding-block: calc(${({ theme }) => theme.spaces[2]} - 1px);
+  padding-inline-start: ${({ theme }) => theme.spaces[4]};
+  padding-inline-end: ${({ theme }) => theme.spaces[3]};
+  background: ${({ theme, disabled }) =>
+    disabled ? theme.colors.neutral150 : theme.colors.neutral0};
+  border: 1px solid ${({ theme }) => theme.colors.neutral200};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  font-family: inherit;
+  font-size: ${({ theme }) => theme.fontSizes[3]};
+  color: ${({ theme, disabled }) =>
+    disabled ? theme.colors.neutral500 : theme.colors.neutral600};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  white-space: nowrap;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    min-height: 2.2rem;
+    padding-block: ${({ theme }) => theme.spaces[1]};
+    font-size: ${({ theme }) => theme.fontSizes[2]};
+  }
+
+  &:hover:not(:disabled) {
+    cursor: pointer;
+  }
+`;
+
+const ComponentsTriggerCaret = styled.span`
+  display: flex;
+  flex-shrink: 0;
+  & > svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: ${({ theme }) => theme.colors.neutral500};
+  }
+`;
+
+const ComponentsMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 9999;
+  display: flex;
+  background: ${({ theme }) => theme.colors.neutral0};
+  border: 1px solid ${({ theme }) => theme.colors.neutral150};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  box-shadow: ${({ theme }) => theme.shadows.filterShadow};
+`;
+
+const MenuTypeItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.spaces[2]};
+  padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+  white-space: nowrap;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.neutral800};
+  background: ${({ $active, theme }) =>
+    $active ? theme.colors.primary100 : theme.colors.neutral0};
+
+  &:first-child { border-radius: ${({ theme }) => theme.borderRadius} 0 0 0; }
+  &:last-child  { border-radius: 0 0 0 ${({ theme }) => theme.borderRadius}; }
+`;
+
+const MenuTypeChevron = styled.span`
+  color: ${({ theme }) => theme.colors.neutral500};
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+`;
+
+const MenuInstancePanel = styled.div`
+  min-width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+  border-left: 1px solid ${({ theme }) => theme.colors.neutral150};
+`;
+
+const MenuEmptyMsg = styled.div`
+  padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+  color: ${({ theme }) => theme.colors.neutral500};
+  white-space: nowrap;
+  font-style: italic;
+`;
+
+const MenuInstanceItem = styled.div`
+  padding: ${({ theme }) => `${theme.spaces[2]} ${theme.spaces[4]}`};
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+  white-space: nowrap;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.neutral800};
+  background: ${({ theme }) => theme.colors.neutral0};
+
+  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
+  &:first-child { border-radius: 0 ${({ theme }) => theme.borderRadius} 0 0; }
+  &:last-child  { border-radius: 0 0 ${({ theme }) => theme.borderRadius} 0; }
+`;
+
 /**
- * A unified "Components" dropdown that fetches all embeddable RELATION_TYPES
- * and presents them in a single picker. Selecting an entry inserts [ref:type:id].
+ * "Components" flyout menu — click to open, hover a type to reveal its instances.
+ * Selecting an instance inserts [ref:type:id] at the cursor.
  */
 function ComponentsDropdown({ editorRef, disabled }) {
   const { get } = useFetchClient();
-  const [options, setOptions] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [hoveredType, setHoveredType] = useState(null);
+  const [instancesCache, setInstancesCache] = useState({});
+  const containerRef = useRef(null);
+  const fetchedRef = useRef(false);
 
+  // Pre-fetch all types the first time the menu opens
   useEffect(() => {
-    Promise.all(
-      RELATION_TYPES.map((config) => {
-        const uid = `api::${config.type}.${config.type}`;
-        return get(
-          `/content-manager/collection-types/${uid}?fields[0]=id&fields[1]=${config.displayField}&pagination[pageSize]=100&sort=${config.displayField}:asc`,
-        )
-          .then(({ data }) =>
-            (data?.results ?? []).map((item) => ({
-              value: `${config.type}:${item.id}`,
-              label: `${config.label}: ${item[config.displayField] ?? `#${item.id}`}`,
-            })),
-          )
-          .catch(() => []);
-      }),
-    ).then((groups) => setOptions(groups.flat()));
-  }, []);
+    if (!open || fetchedRef.current) return;
+    fetchedRef.current = true;
 
-  const handleSelect = (value) => {
-    if (!value) return;
+    Promise.all(
+      RELATION_TYPES.map(async (config) => {
+        const uid = `api::${config.type}.${config.type}`;
+        try {
+          const { data } = await get(
+            `/content-manager/collection-types/${uid}?fields[0]=id&fields[1]=${config.displayField}&pagination[pageSize]=100&sort=${config.displayField}:asc`,
+          );
+          return {
+            type: config.type,
+            items: (data?.results ?? []).map((item) => ({
+              value: `${config.type}:${item.id}`,
+              label: item[config.displayField] ?? `#${item.id}`,
+            })),
+          };
+        } catch {
+          return { type: config.type, items: [] };
+        }
+      }),
+    ).then((results) => {
+      const cache = {};
+      for (const { type, items } of results) cache[type] = items;
+      setInstancesCache(cache);
+    });
+  }, [open]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    function onMouseDown(e) {
+      if (!containerRef.current?.contains(e.target)) {
+        setOpen(false);
+        setHoveredType(null);
+      }
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, [open]);
+
+  function handleInstanceClick(value) {
     const [type, id] = value.split(":");
     const cm = editorRef.current;
     if (!cm || disabled) return;
     cm.replaceSelection(`[ref:${type}:${id}]`);
     cm.focus();
-  };
+    setOpen(false);
+    setHoveredType(null);
+  }
+
+  const instances = hoveredType ? instancesCache[hoveredType.type] : undefined;
 
   return (
-    <Field.Root>
-      <SingleSelect
-        disabled={disabled || options.length === 0}
-        placeholder={options.length === 0 ? "Components…" : "Components"}
-        aria-label="Embed component"
-        onChange={handleSelect}
-        size="S"
+    <div ref={containerRef} style={{ position: "relative" }}>
+      <ComponentsTrigger
+        type="button"
+        disabled={disabled}
+        onClick={() => {
+          setOpen((o) => !o);
+          setHoveredType(null);
+        }}
       >
-        {options.map((opt) => (
-          <SingleSelectOption key={opt.value} value={opt.value}>
-            {opt.label}
-          </SingleSelectOption>
-        ))}
-      </SingleSelect>
-    </Field.Root>
+        Components
+        <ComponentsTriggerCaret>
+          <CaretDown aria-hidden />
+        </ComponentsTriggerCaret>
+      </ComponentsTrigger>
+
+      {open && (
+        <ComponentsMenu>
+          {/* Type list — left column */}
+          <div>
+            {RELATION_TYPES.map((config) => (
+              <MenuTypeItem
+                key={config.type}
+                $active={hoveredType?.type === config.type}
+                onMouseEnter={() => setHoveredType(config)}
+              >
+                {config.label}
+                <MenuTypeChevron>›</MenuTypeChevron>
+              </MenuTypeItem>
+            ))}
+          </div>
+
+          {/* Instance list — right column, shown on hover */}
+          {hoveredType && instances !== undefined && (
+            <MenuInstancePanel>
+              {instances.length === 0 ? (
+                <MenuEmptyMsg>No components found</MenuEmptyMsg>
+              ) : (
+                instances.map((opt) => (
+                  <MenuInstanceItem
+                    key={opt.value}
+                    onMouseDown={() => handleInstanceClick(opt.value)}
+                  >
+                    {opt.label}
+                  </MenuInstanceItem>
+                ))
+              )}
+            </MenuInstancePanel>
+          )}
+        </ComponentsMenu>
+      )}
+    </div>
   );
 }
 
@@ -445,11 +625,6 @@ export default function Toolbar({
             />
           ))}
         </Flex>
-
-        <Divider />
-
-        {/* Button — CTA button links */}
-        {renderGroup(GROUP_BY_LABEL["Button"])}
 
         <Divider />
 

@@ -29,12 +29,24 @@ function isBrowserTab(tab: Tab): tab is BrowserTab {
 
 function LogPane({ process }: { process: string }) {
   const { lines, clear } = useLogs(process);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+  const [pinned, setPinned] = useState(true);
 
+  // Auto-scroll only when pinned to bottom
   useEffect(() => {
+    if (!pinned) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [lines]);
+  }, [lines, pinned]);
+
+  // Re-pin when user scrolls back to the bottom
+  function handleScroll() {
+    const el = scrollRef.current;
+    if (!el) return;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+    setPinned(atBottom);
+  }
 
   async function copyAll() {
     if (lines.length === 0) return;
@@ -43,8 +55,13 @@ function LogPane({ process }: { process: string }) {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  function jumpToBottom() {
+    setPinned(true);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="relative flex flex-col h-full">
       <div className="flex justify-end gap-3 px-2 py-1 border-b border-zinc-800">
         <button
           onClick={copyAll}
@@ -60,7 +77,11 @@ function LogPane({ process }: { process: string }) {
           Clear
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-2 space-y-0.5 select-text cursor-text">
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto p-2 space-y-0.5 select-text cursor-text"
+      >
         {lines.length === 0 ? (
           <p className="text-xs text-zinc-600 italic select-none">No output yet.</p>
         ) : (
@@ -72,6 +93,14 @@ function LogPane({ process }: { process: string }) {
         )}
         <div ref={bottomRef} />
       </div>
+      {!pinned && (
+        <button
+          onClick={jumpToBottom}
+          className="absolute bottom-14 right-4 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-xs px-2 py-1 rounded shadow transition-colors"
+        >
+          ↓ Latest
+        </button>
+      )}
     </div>
   );
 }
