@@ -82,7 +82,7 @@ export async function getFooter() {
 export function getStrapiMediaUrl(url) {
   if (!url) return null;
   if (url.startsWith("http")) return url;
-  if (url.startsWith("/")) return url;
+  if (url.startsWith("/")) return `${STRAPI_URL}${url}`;
   return `${STRAPI_URL}${url}`;
 }
 

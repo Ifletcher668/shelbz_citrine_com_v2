@@ -185,6 +185,22 @@ export const WYSIWYG_GROUPS = [
     ],
   },
   /**
+   * Button — insert a button embed reference.
+   */
+  {
+    label: "Button",
+    dropdown: true,
+    buttons: [
+      {
+        id: "button-embed",
+        label: "Button",
+        title: "Embed Button",
+        action: "block",
+        template: "[ref:button:0]",
+      },
+    ],
+  },
+  /**
    * Block — typographic block styles.
    */
   {
