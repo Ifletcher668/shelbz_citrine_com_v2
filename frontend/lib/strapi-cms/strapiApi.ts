@@ -173,7 +173,7 @@ export async function getHeader(): Promise<FullHeader | null> {
       },
       header_cta: {
         populate: {
-          page: { fields: ["slug"] },
+          page: { fields: ["slug", "title"] },
         },
       },
     },

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Link from "next/link";
@@ -115,7 +115,7 @@ export default function GalleryCms({
 
           {/* Image grid */}
           {galleryItems.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+            <div className="columns-2 md:columns-3 gap-4">
               {galleryItems.map((item, index) => (
                 <GalleryImageTile
                   key={item.image?.id ?? index}
@@ -170,11 +170,11 @@ function GalleryImageTile({
   const srcSet = buildStrapiSrcSet(image);
 
   const tileClassName =
-    "group relative aspect-square bg-stone-deeper border border-fog/20 heavy-shadow overflow-hidden transition-all duration-700 hover:border-pale-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-pale-gold";
+    "group relative cursor-pointer overflow-hidden border border-fog/20 heavy-shadow transition-all duration-700 hover:border-pale-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-pale-gold break-inside-avoid mb-4 block";
 
   const motionProps = {
-    initial: { opacity: 0, scale: 0.9 },
-    animate: isInView ? { opacity: 1, scale: 1 } : {},
+    initial: { opacity: 0, y: 20 },
+    animate: isInView ? { opacity: 1, y: 0 } : {},
     transition: {
       duration: 0.7,
       delay: index * 0.08,
@@ -196,7 +196,7 @@ function GalleryImageTile({
           srcSet={srcSet ?? undefined}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
           alt={image.alternativeText || ""}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
       ) : null}
@@ -220,7 +220,6 @@ function GalleryImageTile({
       <motion.div {...motionProps} className={tileClassName}>
         <Link
           href={path}
-          className="absolute inset-0"
           aria-label={image.alternativeText || `Go to ${path}`}
         >
           {innerContent}
@@ -251,6 +250,14 @@ function GalleryLightbox({
   const src = getStrapiMediaUrl(image.url);
   const srcSet = buildStrapiSrcSet(image);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -260,23 +267,23 @@ function GalleryLightbox({
       className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-void/95 backdrop-blur-sm"
       onClick={onClose}
     >
-      <button
-        onClick={onClose}
-        className="absolute top-5 right-6 p-2 text-stone-grey hover:text-silver-white transition-colors duration-500 border border-fog/20 bg-stone-deeper"
-        aria-label="Close lightbox"
-      >
-        <X className="w-6 h-6" />
-      </button>
-
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className="max-w-4xl w-full"
+        className="max-w-[95vw] max-h-[95vh] w-full flex flex-col"
       >
-        <div className="bg-stone-dark border-2 border-fog/20 heavy-shadow relative">
+        <div className="bg-stone-dark border-2 border-fog/20 heavy-shadow relative flex flex-col max-h-[95vh]">
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 p-2 text-stone-grey hover:text-silver-white transition-colors duration-500 border border-fog/20 bg-stone-deeper z-20"
+            aria-label="Close lightbox"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           {/* Corner accents */}
           <div className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 border-pale-gold/40 z-10" />
           <div className="absolute top-0 right-0 w-16 h-16 border-r-2 border-t-2 border-pale-gold/40 z-10" />
@@ -284,18 +291,13 @@ function GalleryLightbox({
           <div className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 border-pale-gold/40 z-10" />
 
           {src ? (
-            <div
-              className="relative w-full"
-              style={{
-                aspectRatio: `${image.width ?? 4} / ${image.height ?? 3}`,
-              }}
-            >
+            <div className="min-h-0 flex-1 overflow-hidden">
               <img
                 src={src}
                 srcSet={srcSet ?? undefined}
                 sizes="(max-width: 1280px) 90vw, 1024px"
                 alt={image.alternativeText || ""}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain max-h-[calc(95vh-4rem)]"
               />
             </div>
           ) : (

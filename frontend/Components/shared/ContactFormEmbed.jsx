@@ -7,7 +7,11 @@ function FormField({ field, values, onChange }) {
     <div className="md-form-field">
       <label htmlFor={`cf-${field.name}`} className="md-form-label">
         {field.label}
-        {field.required && <span className="md-form-required" aria-hidden="true">*</span>}
+        {field.required && (
+          <span className="md-form-required" aria-hidden="true">
+            *
+          </span>
+        )}
       </label>
       {field.type === "textarea" ? (
         <textarea
@@ -41,7 +45,7 @@ export default function ContactFormEmbed({ config }) {
   const { action, submitLabel, successMessage, fields, layout } = config;
   const [status, setStatus] = useState("idle");
   const [values, setValues] = useState(() =>
-    Object.fromEntries(fields.map((f) => [f.name, ""]))
+    Object.fromEntries(fields.map((f) => [f.name, ""])),
   );
 
   const fieldMap = Object.fromEntries(fields.map((f) => [f.name, f]));
@@ -78,9 +82,9 @@ export default function ContactFormEmbed({ config }) {
   // _submit is a special cell that renders the submit button.
   // Falls back to stacking all fields + submit when no layout is stored.
   const rows = layout
-    ? layout.map((row) =>
-        row.map((cell) => ({ cell, size: cell.size ?? 12 }))
-      ).filter((row) => row.length > 0)
+    ? layout
+        .map((row) => row.map((cell) => ({ cell, size: cell.size ?? 12 })))
+        .filter((row) => row.length > 0)
     : [
         ...fields.map((f) => [{ cell: { name: f.name }, size: 12 }]),
         [{ cell: { name: SUBMIT_FIELD }, size: 12 }],
@@ -114,7 +118,9 @@ export default function ContactFormEmbed({ config }) {
                   style={{ "--cell-size": size }}
                 >
                   {status === "error" && (
-                    <p className="md-form-error">Something went wrong. Please try again.</p>
+                    <p className="md-form-error">
+                      Something went wrong. Please try again.
+                    </p>
                   )}
                   <button
                     type="submit"
@@ -134,7 +140,11 @@ export default function ContactFormEmbed({ config }) {
                 className="md-form-cell"
                 style={{ "--cell-size": size }}
               >
-                <FormField field={field} values={values} onChange={handleChange} />
+                <FormField
+                  field={field}
+                  values={values}
+                  onChange={handleChange}
+                />
               </div>
             );
           })}
