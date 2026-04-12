@@ -1,9 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import PageLayout from "@/Components/layout/PageLayout";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
-import { Section, Container } from "@/Components/layout/Section";
+import PageLayout from "../Components/layout/PageLayout";
+import OrnamentalDivider from "../Components/ornaments/OrnamentalDivider";
+import { Section, Container } from "../Components/layout/Section";
 import {
   Calendar,
   Gem,

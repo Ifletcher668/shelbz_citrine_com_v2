@@ -1,10 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
+import Header from "../../Components/layout/Header";
+import Footer from "../../Components/layout/Footer";
 import { BookOpen, Clock } from "lucide-react";
-import { Section, Container } from "@/Components/layout/Section";
+import { Section, Container } from "../../Components/layout/Section";
 
 /**
  * Blog Index - "Blog"

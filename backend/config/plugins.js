@@ -11,4 +11,11 @@ module.exports = ({ env }) => ({
     enabled: true,
     resolve: "./src/plugins/form-layout-editor",
   },
+  "strapi-typed-client": {
+    enabled: true,
+    resolve: "./src/plugins/strapi-typed-client",
+    config: {
+      requireAuth: false,
+    },
+  },
 });

@@ -1,16 +1,16 @@
 import Head from "next/head";
-import PageLayout from "@/Components/layout/PageLayout";
-import DynamicZone from "@/Components/cms/DynamicZone";
-import { RelationsContext } from "@/lib/RelationsContext";
-import { MediaContext } from "@/lib/MediaContext";
+import PageLayout from "../Components/layout/PageLayout";
+import DynamicZone from "../Components/cms/DynamicZone";
+import { RelationsContext } from "../lib/RelationsContext";
+import { MediaContext } from "../lib/MediaContext";
 import {
   getPageBySlug,
   extractAllRefs,
   fetchRelationData,
   extractImageUrls,
   fetchMediaData,
-} from "@/lib/strapi";
-import { renderRelations } from "@/lib/relation-renderers";
+} from "../lib/strapi-cms/strapiApi";
+import { renderRelations } from "../lib/relation-renderers";
 
 /**
  * Root page — always served at "/".
@@ -27,7 +27,7 @@ export default function HomePage({ page, relations = {}, mediaMap = {} }) {
   return (
     <>
       <Head>
-        <title>{page.title} | Shelbz Citrine</title>
+        <title>{`${page.title} | Shelbz Citrine`}</title>
         {page.seo_description && (
           <meta name="description" content={page.seo_description} />
         )}
@@ -67,7 +67,7 @@ export async function getStaticProps() {
 
     const imageUrls = extractImageUrls(page);
     const mediaMap = await fetchMediaData(imageUrls);
-
+    console.log({ props: { page, relations, mediaMap } });
     return { props: { page, relations, mediaMap } };
   } catch (err) {
     console.error("[getStaticProps] Could not fetch home page:", err.message);

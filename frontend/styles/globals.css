@@ -30,6 +30,17 @@
   --color-danger: #4a1a1a; /* destructive actions, warnings */
   --color-success: #2d3a2e; /* success states */
 
+  /* Aesthetic color aliases — used throughout components as Tailwind utilities.
+     Must live in @theme (not :root) for Tailwind v4 to generate utilities. */
+  --color-void: #000000;
+  --color-stone-dark: #0a0a0a;
+  --color-stone-deeper: #141414;
+  --color-fog: #5a5a5a;
+  --color-stone-grey: #8c8273;
+  --color-silver-white: #e5e0d8;
+  --color-pale-gold: #b4aa96;
+  --color-aged-gold: #7a6a4a;
+
   /* shadcn/ui compatibility aliases */
   --color-border: rgb(60 60 60 / 0.2);
   --color-input: #0a0a0a;
@@ -491,6 +502,14 @@
       inset 0 0 20px rgba(180, 170, 150, 0.05);
   }
 
+  /* Ensure button content renders above ::before/::after decorative layers (z-index 1 and 2) */
+  .btn-primary > *,
+  .btn-secondary > *,
+  .btn-tertiary > * {
+    position: relative;
+    z-index: 3;
+  }
+
   /* Secondary Button */
   .btn-secondary {
     background-color: transparent;
@@ -715,6 +734,12 @@
 
   .section.section-hero {
     padding-top: calc(
+      var(--header-height, var(--spacing-10)) + var(--spacing-10)
+    );
+  }
+
+  .section.section-last {
+    padding-bottom: calc(
       var(--header-height, var(--spacing-10)) + var(--spacing-10)
     );
   }
@@ -1393,17 +1418,13 @@
 
 /* ============================================
    WYSIWYG Color Backward Compatibility
-   Maps legacy aesthetic color names to the closest semantic equivalents.
-   Allows old content using {color:pale-gold} to continue rendering.
+   Maps legacy WYSIWYG-only color names (not component tokens) to semantic values.
+   pale-gold, silver-white, fog, stone-grey are now in @theme — no aliases needed.
    ============================================ */
 :root {
-  --color-pale-gold: var(--color-accent);
-  --color-silver-white: var(--color-text-heading);
   --color-frost-blue: var(--color-info);
   --color-deep-crimson: var(--color-danger);
   --color-moss-green: var(--color-success);
-  --color-fog: var(--color-neutral);
-  --color-stone-grey: var(--color-text-body);
 }
 
 /* ── Contact Form ─────────────────────────────────────────────────────────── */

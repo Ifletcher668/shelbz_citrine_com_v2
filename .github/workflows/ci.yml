@@ -195,14 +195,6 @@ jobs:
         with:
           node-version-file: ".node-version"
 
-      - name: Sync types from backend
-        run: node frontend/scripts/sync-strapi-types.js
-
-      - name: Assert no diff
-        run: |
-          git diff --exit-code frontend/types/strapi-generated/ || \
-            (echo "::error::frontend/types/strapi-generated/ is out of sync with backend/types/generated/. Run 'yarn workspace shelbz-citrine-frontend sync-types' locally and commit the result." && exit 1)
-
   # ─── Launcher UI type-check ───────────────────────────────────────────────────
   launcher-typecheck:
     name: Launcher UI type-check

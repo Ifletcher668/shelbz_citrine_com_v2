@@ -1,15 +1,15 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Section, Container } from "@/Components/layout/Section";
-import RichContent from "@/Components/shared/RichContent";
-import type { StrapiRow } from "@/types/cms";
+import { Section, Container } from "../../layout/Section";
+import RichContent from "../../shared/RichContent";
+import type { StrapiCms } from "../../../lib/types";
 
 interface RowCmsProps {
-  data: StrapiRow | undefined;
-  sectionVariant?: "hero" | "default";
+  data: StrapiCms.Row | undefined;
+  className?: string;
 }
 
-export default function RowCms({ data, sectionVariant = "default" }: RowCmsProps) {
+export default function RowCms({ data, className }: RowCmsProps) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const columns = data?.columns ?? [];
@@ -19,13 +19,15 @@ export default function RowCms({ data, sectionVariant = "default" }: RowCmsProps
   return (
     <Section
       ref={ref}
-      variant={sectionVariant}
+      className={className}
       background="stone-dark"
       texture={{ variant: "stone", opacity: 0.05 }}
       overlay="vignette"
     >
       <Container>
-        <div className={`grid grid-cols-1 md:grid-cols-${columns.length} gap-8`}>
+        <div
+          className={`grid grid-cols-1 md:grid-cols-${columns.length} gap-8`}
+        >
           {columns.map((column, i) => (
             <motion.div
               key={column.id}

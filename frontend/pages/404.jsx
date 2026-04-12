@@ -1,9 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import PageLayout from "@/Components/layout/PageLayout";
-import { Section, Container } from "@/Components/layout/Section";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import PageLayout from "../Components/layout/PageLayout";
+import { Section, Container } from "../Components/layout/Section";
+import OrnamentalDivider from "../Components/ornaments/OrnamentalDivider";
 
 export default function NotFound() {
   return (
@@ -14,9 +14,11 @@ export default function NotFound() {
       </Head>
 
       <PageLayout>
-        <Section background="stone-dark" variant="hero" className="relative">
+        <Section
+          background="stone-dark"
+          className="relative section-hero section-last"
+        >
           <div className="absolute inset-0 bg-linear-to-b from-void/60 via-transparent to-void/60 opacity-70" />
-
           <Container size="narrow" className="relative z-10 text-center">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -30,8 +32,8 @@ export default function NotFound() {
                 </p>
                 <h1>Lost in the Stone</h1>
                 <p className="text-lg text-fog max-w-prose mx-auto">
-                  The page you're looking for has either moved or never existed —
-                  much like an uncut gemstone before the miners find it.
+                  The page you're looking for has either moved or never existed
+                  — much like an uncut gemstone before the miners find it.
                 </p>
               </div>
 

@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { parseWithRelations } from "@/lib/marked-extensions";
-import { useRelations } from "@/lib/RelationsContext";
-import { useMediaMap } from "@/lib/MediaContext";
-import ContactFormEmbed from "@/Components/shared/ContactFormEmbed";
+import { parseWithRelations } from "../../lib/marked-extensions";
+import { useRelations } from "../../lib/RelationsContext";
+import { useMediaMap } from "../../lib/MediaContext";
+import ContactFormEmbed from "./ContactFormEmbed";
 
-export default function RichContent({ body, className = undefined, as: Tag = "div" }) {
+export default function RichContent({
+  body,
+  className = undefined,
+  as: Tag = "div",
+}) {
   const relations = useRelations();
   const mediaMap = useMediaMap();
   const containerRef = useRef(null);
@@ -26,10 +30,7 @@ export default function RichContent({ body, className = undefined, as: Tag = "di
       Array.from(slots).map((slot) => {
         const config = JSON.parse(decodeURIComponent(slot.dataset.config));
         slot.innerHTML = ""; // hand ownership to React
-        return createPortal(
-          <ContactFormEmbed config={config} />,
-          slot,
-        );
+        return createPortal(<ContactFormEmbed config={config} />, slot);
       }),
     );
   }, [html]);

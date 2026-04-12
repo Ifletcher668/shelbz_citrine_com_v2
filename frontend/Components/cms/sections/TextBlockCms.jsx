@@ -1,9 +1,9 @@
 "use client";
-import { wysiwygMarked } from "@/lib/marked-extensions";
-import Reveal from "@/Components/layout/Motion";
-import { Section, Container } from "@/Components/layout/Section";
-import InnerSection from "@/Components/layout/InnerSection";
-import { cn } from "@/lib/utils";
+import { wysiwygMarked } from "../../../lib/marked-extensions";
+import Reveal from "../../layout/Motion";
+import { Section, Container } from "../../layout/Section";
+import InnerSection from "../../layout/InnerSection";
+import { cn } from "../../../lib/utils";
 
 export default function TextBlockCms({ data }) {
   const {

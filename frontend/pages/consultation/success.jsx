@@ -1,9 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
-import { Section, Container } from "@/Components/layout/Section";
+import Header from "../../Components/layout/Header";
+import Footer from "../../Components/layout/Footer";
+import { Section, Container } from "../../Components/layout/Section";
 import { Check, Sparkles } from "lucide-react";
 
 /**

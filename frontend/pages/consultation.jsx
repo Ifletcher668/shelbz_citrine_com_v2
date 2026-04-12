@@ -2,11 +2,11 @@ import Head from "next/head";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
-import { Section, Container } from "@/Components/layout/Section";
+import Header from "../Components/layout/Header";
+import Footer from "../Components/layout/Footer";
+import { Section } from "../Components/layout/Section";
 import { ChevronRight, ChevronLeft, Loader2 } from "lucide-react";
-import { FourCornerFlourish } from "@/Components/ornaments/CornerFlourish";
+import { FourCornerFlourish } from "../Components/ornaments/CornerFlourish";
 
 /**
  * Consultation Booking Page

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Eye, Crown, Gem, Circle, Sparkles, Watch, Dices, Sword, Shirt } from 'lucide-react';
-import { collections } from '@/data/products';
+import { collections } from '../../data/products';
 
 const categoryIcons = {
   rings: Circle,

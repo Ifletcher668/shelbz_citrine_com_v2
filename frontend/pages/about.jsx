@@ -1,9 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import PageLayout from "@/Components/layout/PageLayout";
-import { Section, Container } from "@/Components/layout/Section";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import PageLayout from "../Components/layout/PageLayout";
+import { Section, Container } from "../Components/layout/Section";
+import OrnamentalDivider from "../Components/ornaments/OrnamentalDivider";
 import {
   Shield,
   Users,

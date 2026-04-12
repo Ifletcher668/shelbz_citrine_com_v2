@@ -5,7 +5,7 @@
  * Souls-like design philosophy: precise, fast, deliberate.
  *
  * @example
- * import { fadeInUp, SOULS_TIMING } from '@/lib/animations';
+ * import { fadeInUp, SOULS_TIMING } from './animations';
  *
  * <motion.div {...fadeInUp(0.2)}>Content</motion.div>
  */

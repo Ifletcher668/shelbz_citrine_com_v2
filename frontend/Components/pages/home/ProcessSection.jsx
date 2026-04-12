@@ -3,7 +3,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
 import { Calendar, Gem, PenTool, Hammer, Package } from "lucide-react";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import OrnamentalDivider from "../../ornaments/OrnamentalDivider";
 
 /**
  * Process Section - "The Artisan's Journey"

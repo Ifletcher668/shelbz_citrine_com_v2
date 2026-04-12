@@ -2,14 +2,14 @@ import { render, screen } from "@testing-library/react";
 import TextBlockCms from "../TextBlockCms";
 import { makeTextBlock } from "../../__tests__/fixtures";
 
-jest.mock("@/lib/marked-extensions", () => ({
+jest.mock("../../../../lib/marked-extensions", () => ({
   wysiwygMarked: {
     parse: jest.fn().mockReturnValue("<p>Parsed body</p>"),
   },
 }));
 
 // Pull the mock reference so individual tests can re-configure it
-const { wysiwygMarked } = require("@/lib/marked-extensions");
+const { wysiwygMarked } = require("../../../../lib/marked-extensions");
 
 describe("TextBlockCms", () => {
   beforeEach(() => {

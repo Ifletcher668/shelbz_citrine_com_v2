@@ -18,7 +18,7 @@
  *   <Reveal><p>Content</p></Reveal>
  * </InnerSection>
  */
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 const gapClasses = {
   tight: "gap-6",

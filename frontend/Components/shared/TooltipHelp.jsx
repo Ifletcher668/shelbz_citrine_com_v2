@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/Components/ui/tooltip";
+} from "../ui/tooltip";
 
 /**
  * TooltipHelp - Inline help tooltip component

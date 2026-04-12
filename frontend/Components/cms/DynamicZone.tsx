@@ -1,35 +1,51 @@
-import RowCms from "@/Components/cms/sections/RowCms";
-import type { StrapiPageSection } from "@/types/cms";
+import type { StrapiCms } from "../../lib/types";
+import RowCms from "./sections/RowCms";
+import GalleryCms from "./sections/GalleryCms";
 
-interface DynamicZoneProps {
-  sections: StrapiPageSection[] | null | undefined;
-}
+type Props = {
+  sections: StrapiCms.Page["sections"];
+};
 
-export default function DynamicZone({ sections }: DynamicZoneProps) {
+export default function DynamicZone(props: Props) {
+  const { sections } = props;
+
   if (!sections || sections.length === 0) return null;
+
+  const lastIndex = sections.length - 1;
 
   return (
     <>
       {sections.map((section, index) => {
         const key = `${section.__component}-${section.id}`;
-        const sectionVariant = index === 0 ? "hero" : "default";
+        const isFirst = index === 0;
+        const isLast = index === lastIndex;
+        const positionClass =
+          isFirst && isLast
+            ? "section-hero section-last"
+            : isFirst
+              ? "section-hero"
+              : isLast
+                ? "section-last"
+                : undefined;
 
         switch (section.__component) {
           case "sections.row":
             return (
-              <RowCms
-                key={key}
-                data={section}
-                sectionVariant={sectionVariant}
-              />
+              <RowCms key={key} data={section} className={positionClass} />
             );
-          default:
+          case "sections.media-gallery":
+            return (
+              <GalleryCms key={key} data={section} className={positionClass} />
+            );
+          default: {
+            const _exhaustive: never = section;
             if (process.env.NODE_ENV === "development") {
               console.warn(
-                `DynamicZone: unknown component type "${section.__component}"`,
+                `DynamicZone: unknown component type "${(_exhaustive as { __component: string }).__component}"`,
               );
             }
             return null;
+          }
         }
       })}
     </>

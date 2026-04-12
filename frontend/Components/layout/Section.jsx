@@ -21,9 +21,9 @@
  * </Section>
  */
 import { forwardRef } from "react";
-import { cn } from "@/lib/utils";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
-import { FourCornerFlourish } from "@/Components/ornaments/CornerFlourish";
+import { cn } from "../../lib/utils";
+import BackgroundTexture from "../shared/BackgroundTexture";
+import { FourCornerFlourish } from "../ornaments/CornerFlourish";
 
 function CornerAccents({ size = 16, color = "pale-gold" }) {
   const colorMap = {
@@ -53,7 +53,6 @@ function CornerAccents({ size = 16, color = "pale-gold" }) {
  * @type {React.ForwardRefExoticComponent<{
  *   children?: React.ReactNode;
  *   className?: string;
- *   variant?: "default" | "hero";
  *   background?: string;
  *   overlay?: string;
  *   texture?: { variant: string; opacity: number } | false;
@@ -69,7 +68,6 @@ export const Section = forwardRef(
     {
       children,
       className,
-      variant = "default",
       background = "void",
       overlay = "none",
       texture = false,
@@ -81,11 +79,6 @@ export const Section = forwardRef(
     },
     ref,
   ) => {
-    const variantClasses = {
-      default: "section",
-      hero: "section section-hero",
-    };
-
     const bgClasses = {
       void: "bg-void",
       "stone-dark": "bg-stone-dark",
@@ -106,7 +99,7 @@ export const Section = forwardRef(
       <section
         ref={ref}
         className={cn(
-          variantClasses[variant],
+          "section",
           bgClasses[background],
           "relative",
           className,

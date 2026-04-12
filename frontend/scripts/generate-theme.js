@@ -14,8 +14,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
 
 const OUTPUT_PATH = path.join(__dirname, "..", "public", "theme.css");
 
@@ -80,48 +79,48 @@ const THEME_VARIABLE_MAP = [
 
   // Font families
   ["typography.font_display", "--font-display"],
-  ["typography.font_body",    "--font-body"],
-  ["typography.font_ui",      "--font-ui"],
-  ["typography.font_mono",    "--font-mono"],
-  ["typography.font_serif",   "--font-serif"],
-  ["typography.font_sans",    "--font-sans"],
+  ["typography.font_body", "--font-body"],
+  ["typography.font_ui", "--font-ui"],
+  ["typography.font_mono", "--font-mono"],
+  ["typography.font_serif", "--font-serif"],
+  ["typography.font_sans", "--font-sans"],
 
   // Type scale
-  ["typography.text_6xl",  "--text-6xl"],
-  ["typography.text_5xl",  "--text-5xl"],
-  ["typography.text_4xl",  "--text-4xl"],
-  ["typography.text_3xl",  "--text-3xl"],
-  ["typography.text_2xl",  "--text-2xl"],
-  ["typography.text_xl",   "--text-xl"],
-  ["typography.text_lg",   "--text-lg"],
-  ["typography.text_md",   "--text-md"],
+  ["typography.text_6xl", "--text-6xl"],
+  ["typography.text_5xl", "--text-5xl"],
+  ["typography.text_4xl", "--text-4xl"],
+  ["typography.text_3xl", "--text-3xl"],
+  ["typography.text_2xl", "--text-2xl"],
+  ["typography.text_xl", "--text-xl"],
+  ["typography.text_lg", "--text-lg"],
+  ["typography.text_md", "--text-md"],
   ["typography.text_base", "--text-base"],
-  ["typography.text_sm",   "--text-sm"],
-  ["typography.text_xs",   "--text-xs"],
+  ["typography.text_sm", "--text-sm"],
+  ["typography.text_xs", "--text-xs"],
 
   // Spacing
-  ["spacing.spacing_1",  "--spacing-1"],
-  ["spacing.spacing_2",  "--spacing-2"],
-  ["spacing.spacing_3",  "--spacing-3"],
-  ["spacing.spacing_4",  "--spacing-4"],
-  ["spacing.spacing_5",  "--spacing-5"],
-  ["spacing.spacing_6",  "--spacing-6"],
-  ["spacing.spacing_8",  "--spacing-8"],
+  ["spacing.spacing_1", "--spacing-1"],
+  ["spacing.spacing_2", "--spacing-2"],
+  ["spacing.spacing_3", "--spacing-3"],
+  ["spacing.spacing_4", "--spacing-4"],
+  ["spacing.spacing_5", "--spacing-5"],
+  ["spacing.spacing_6", "--spacing-6"],
+  ["spacing.spacing_8", "--spacing-8"],
   ["spacing.spacing_10", "--spacing-10"],
   ["spacing.spacing_12", "--spacing-12"],
   ["spacing.spacing_16", "--spacing-16"],
   ["spacing.spacing_20", "--spacing-20"],
 
   // Layout
-  ["layout.container_narrow",  "--max-width-container-narrow"],
+  ["layout.container_narrow", "--max-width-container-narrow"],
   ["layout.container_reading", "--max-width-container-reading"],
-  ["layout.container_wide",    "--max-width-container-wide"],
-  ["layout.radius_lg",         "--radius-lg"],
-  ["layout.radius_md",         "--radius-md"],
-  ["layout.radius_sm",         "--radius-sm"],
-  ["layout.timing_souls",      "--transition-timing-function-souls"],
-  ["layout.timing_sharp",      "--transition-timing-function-sharp"],
-  ["layout.timing_smooth",     "--transition-timing-function-smooth"],
+  ["layout.container_wide", "--max-width-container-wide"],
+  ["layout.radius_lg", "--radius-lg"],
+  ["layout.radius_md", "--radius-md"],
+  ["layout.radius_sm", "--radius-sm"],
+  ["layout.timing_souls", "--transition-timing-function-souls"],
+  ["layout.timing_sharp", "--transition-timing-function-sharp"],
+  ["layout.timing_smooth", "--transition-timing-function-smooth"],
 ];
 
 function get(obj, path) {
@@ -173,15 +172,17 @@ async function main() {
     const theme = await fetchActiveTheme();
     if (!theme) {
       console.warn(
-        "[generate-theme] No active theme found — writing empty theme.css (globals.css fallbacks will apply)."
+        "[generate-theme] No active theme found — writing empty theme.css (globals.css fallbacks will apply).",
       );
     } else {
       css = themeToCSS(theme);
-      console.log(`[generate-theme] Active theme: "${theme.name}" — writing theme.css`);
+      console.log(
+        `[generate-theme] Active theme: "${theme.name}" — writing theme.css`,
+      );
     }
   } catch (err) {
     console.warn(
-      `[generate-theme] Could not reach Strapi (${err.message}) — writing empty theme.css.`
+      `[generate-theme] Could not reach Strapi (${err.message}) — writing empty theme.css.`,
     );
   }
 

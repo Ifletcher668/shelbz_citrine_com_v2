@@ -7,7 +7,7 @@
  *
  * To add a new embeddable type:
  *   1. Create the Strapi content type
- *   2. Add its plural API path to RELATION_API_PATHS in lib/strapi.js
+ *   2. Add its plural API path to RELATION_API_PATHS in lib/strapi.ts
  *   3. Add a renderer function here and register it in RENDERERS
  */
 
@@ -86,7 +86,8 @@ function renderContactForm(data) {
   const config = {
     action: data.action ?? "contact",
     submitLabel: data.submit_label || "Send Message",
-    successMessage: data.success_message || "Thank you — we'll be in touch soon.",
+    successMessage:
+      data.success_message || "Thank you — we'll be in touch soon.",
     fields: (data.fields || []).map((f) => ({
       name: f.name,
       type: f.type || "text",
@@ -126,10 +127,10 @@ function renderButton(data) {
 
 const RENDERERS = {
   "bullet-list": renderBulletList,
-  "faq": renderFaq,
+  faq: renderFaq,
   "step-group": renderStepGroup,
   "contact-form": renderContactForm,
-  "button": renderButton,
+  button: renderButton,
 };
 
 /**

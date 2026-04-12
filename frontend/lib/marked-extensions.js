@@ -44,7 +44,7 @@
  *                to collect refs for prefetching.
  */
 import { Marked } from "marked";
-import { buildStrapiSrcSet } from "./strapi";
+import { buildStrapiSrcSet } from "./strapi-cms/strapiApi";
 
 // ─── Security Whitelists ──────────────────────────────────────────────────────
 

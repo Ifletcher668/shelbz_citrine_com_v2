@@ -11,16 +11,31 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
-      "type": "string",
-      "private": true,
-      "default": "Footer",
-      "required": true,
-      "unique": true
+    "navigation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::navigation.navigation"
     },
-    "footer_content": {
-      "type": "customField",
-      "customField": "plugin::wysiwyg-editor.wysiwyg-editor"
+    "brand_heading": {
+      "type": "string"
+    },
+    "brand_tagline": {
+      "type": "string"
+    },
+    "brand_description": {
+      "type": "text"
+    },
+    "contact_email": {
+      "type": "email"
+    },
+    "contact_location": {
+      "type": "string"
+    },
+    "contact_service_area": {
+      "type": "string"
+    },
+    "copyright_company_name": {
+      "type": "string"
     }
   }
 }
