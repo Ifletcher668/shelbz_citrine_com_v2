@@ -6,7 +6,10 @@
  * - extractAllRefs
  */
 
-import { getStrapiMediaUrl, extractAllRefs } from "../../lib/strapi.js";
+import {
+  getStrapiMediaUrl,
+  extractAllRefs,
+} from "../../lib/strapi-cms/strapiApi";
 
 // ─── getStrapiMediaUrl ───────────────────────────────────────────────────────
 
@@ -55,23 +58,25 @@ test("extractAllRefs finds a ref in a string property", () => {
 });
 
 test("extractAllRefs finds multiple different refs", () => {
-  const refs = extractAllRefs({ body: "[ref:bullet-list:1] and [ref:bullet-list:2]" });
+  const refs = extractAllRefs({
+    body: "[ref:bullet-list:1] and [ref:bullet-list:2]",
+  });
   expect(refs).toHaveLength(2);
   expect(refs).toContainEqual({ type: "bullet-list", id: 1 });
   expect(refs).toContainEqual({ type: "bullet-list", id: 2 });
 });
 
 test("extractAllRefs deduplicates identical refs", () => {
-  const refs = extractAllRefs({ body: "[ref:bullet-list:42] [ref:bullet-list:42]" });
+  const refs = extractAllRefs({
+    body: "[ref:bullet-list:42] [ref:bullet-list:42]",
+  });
   expect(refs).toHaveLength(1);
   expect(refs[0]).toEqual({ type: "bullet-list", id: 42 });
 });
 
 test("extractAllRefs finds refs in nested objects", () => {
   const data = {
-    sections: [
-      { type: "text", content: "[ref:bullet-list:5]" },
-    ],
+    sections: [{ type: "text", content: "[ref:bullet-list:5]" }],
   };
   const refs = extractAllRefs(data);
   expect(refs).toContainEqual({ type: "bullet-list", id: 5 });

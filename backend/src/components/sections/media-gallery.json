@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_media_galleries",
+  "info": {
+    "displayName": "Media Gallery",
+    "icon": "landscape",
+    "description": "A paginated or filterable image gallery, sourced from the Strapi Media Library"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "Images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ]
+    }
+  }
+}

@@ -2,7 +2,7 @@
  * Components Barrel Export
  *
  * Central export file for all reusable components.
- * Allows clean imports: import { Section, Header } from '@/Components';
+ * Allows clean imports: import { Section, Header } from './';
  *
  * Organized by category for better discoverability.
  */

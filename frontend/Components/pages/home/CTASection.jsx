@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
+import BackgroundTexture from "../../shared/BackgroundTexture";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";

@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
+import BackgroundTexture from "../../shared/BackgroundTexture";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { X, Check } from "lucide-react";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import OrnamentalDivider from "../../ornaments/OrnamentalDivider";
 
 /**
  * Problem/Solution Section - "The Industry vs. The Craft"

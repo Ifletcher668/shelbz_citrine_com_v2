@@ -5,7 +5,7 @@
  * user input, and data validation throughout the application.
  *
  * @example
- * import { isValidEmail, EMAIL_REGEX } from '@/lib/validation';
+ * import { isValidEmail, EMAIL_REGEX } from './validation';
  *
  * if (!isValidEmail(email)) {
  *   setError("Invalid email address");

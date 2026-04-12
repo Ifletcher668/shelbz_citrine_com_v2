@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Section, Container } from "@/Components/layout/Section";
-import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
+import { Section, Container } from "../../layout/Section";
+import { SimpleDivider } from "../../ornaments/OrnamentalDivider";
 
 export default function HeroCms({ data }) {
   const { headline, subheadline, cta_text, cta_link } = data ?? {};
 
   return (
-    <Section variant="hero" className="relative overflow-hidden">
+    <Section className="section-hero relative overflow-hidden">
       <div className="absolute inset-0 bg-linear-to-b from-transparent via-void/60 to-void" />
       <Container className="relative z-10 text-center">
         <div className="flex flex-col items-center gap-12">

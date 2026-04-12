@@ -1,10 +1,24 @@
 import { render, screen } from '@testing-library/react';
 import DynamicZone from '../DynamicZone';
-import { makeRow } from './fixtures';
+import { makeRow, makeGallery } from './fixtures';
 
 jest.mock('../sections/RowCms', () =>
-  function RowCms({ data, sectionVariant }) {
-    return <div data-testid="row-cms" data-variant={sectionVariant}>{JSON.stringify(data)}</div>;
+  function RowCms({ data, className }) {
+    return <div data-testid="row-cms" data-class={className}>{JSON.stringify(data)}</div>;
+  }
+);
+
+jest.mock('../sections/GalleryCms', () =>
+  function GalleryCms({ data, galleries, className }) {
+    return (
+      <div
+        data-testid="gallery-cms"
+        data-class={className}
+        data-mode={galleries ? 'tabs' : 'single'}
+      >
+        {galleries ? `galleries:${galleries.length}` : JSON.stringify(data)}
+      </div>
+    );
   }
 );
 
@@ -29,15 +43,24 @@ describe('DynamicZone', () => {
     expect(screen.getByTestId('row-cms')).toBeInTheDocument();
   });
 
-  it('passes sectionVariant="hero" to first RowCms', () => {
-    render(<DynamicZone sections={[makeRow()]} />);
-    expect(screen.getByTestId('row-cms')).toHaveAttribute('data-variant', 'hero');
+  it('passes section-hero class to first section', () => {
+    render(<DynamicZone sections={[makeRow({ id: 1 }), makeRow({ id: 2 })]} />);
+    expect(screen.getAllByTestId('row-cms')[0]).toHaveAttribute('data-class', 'section-hero');
   });
 
-  it('passes sectionVariant="default" to non-first RowCms', () => {
+  it('passes section-last class to last section', () => {
     render(<DynamicZone sections={[makeRow({ id: 1 }), makeRow({ id: 2 })]} />);
-    const sections = screen.getAllByTestId('row-cms');
-    expect(sections[1]).toHaveAttribute('data-variant', 'default');
+    expect(screen.getAllByTestId('row-cms')[1]).toHaveAttribute('data-class', 'section-last');
+  });
+
+  it('passes no position class to middle sections', () => {
+    render(<DynamicZone sections={[makeRow({ id: 1 }), makeRow({ id: 2 }), makeRow({ id: 3 })]} />);
+    expect(screen.getAllByTestId('row-cms')[1]).not.toHaveAttribute('data-class');
+  });
+
+  it('passes both section-hero and section-last to single section', () => {
+    render(<DynamicZone sections={[makeRow()]} />);
+    expect(screen.getByTestId('row-cms')).toHaveAttribute('data-class', 'section-hero section-last');
   });
 
   it('renders multiple sections in correct DOM order', () => {
@@ -75,6 +98,36 @@ describe('DynamicZone', () => {
 
     spy.mockRestore();
     Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, configurable: true });
+  });
+
+  it('renders GalleryCms in single mode for sections.media-gallery with use_new_page_pagination=true', () => {
+    const section = makeGallery({ id: 5, use_new_page_pagination: true, pagination_id: '2023' });
+    render(<DynamicZone sections={[section]} />);
+    const el = screen.getByTestId('gallery-cms');
+    expect(el).toBeInTheDocument();
+    expect(el).toHaveAttribute('data-mode', 'single');
+  });
+
+  it('groups consecutive client-paginated galleries into tab mode', () => {
+    const sections = [
+      makeGallery({ id: 10, pagination_id: '2023', use_new_page_pagination: false }),
+      makeGallery({ id: 11, pagination_id: '2024', use_new_page_pagination: false }),
+    ];
+    render(<DynamicZone sections={sections} />);
+    const galleries = screen.getAllByTestId('gallery-cms');
+    // Two client-paginated galleries → grouped into one GalleryCms in tabs mode
+    expect(galleries).toHaveLength(1);
+    expect(galleries[0]).toHaveAttribute('data-mode', 'tabs');
+    expect(galleries[0]).toHaveTextContent('galleries:2');
+  });
+
+  it('does not group route-paginated gallery with client-paginated gallery', () => {
+    const sections = [
+      makeGallery({ id: 10, pagination_id: '2023', use_new_page_pagination: false }),
+      makeGallery({ id: 11, pagination_id: '2024', use_new_page_pagination: true }),
+    ];
+    render(<DynamicZone sections={sections} />);
+    expect(screen.getAllByTestId('gallery-cms')).toHaveLength(2);
   });
 
   it('renders known sections and omits unknown ones', () => {

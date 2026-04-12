@@ -9,8 +9,6 @@ const customConfig = {
   // Monorepo: root node_modules are hoisted — Jest must look there too
   moduleDirectories: ['node_modules', '<rootDir>/../node_modules'],
   moduleNameMapper: {
-    // Resolve @/* path alias (next/jest only passes this to SWC, not the module resolver)
-    '^@/(.*)$': '<rootDir>/$1',
     // marked@17 ships ESM-only in frontend/node_modules; force the UMD build
     '^marked$': '<rootDir>/node_modules/marked/lib/marked.umd.js',
     // Always use our manual framer-motion mock (avoids jsdom layout API issues)

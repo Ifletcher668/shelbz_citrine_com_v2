@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "navigations",
+  "info": {
+    "singularName": "navigation",
+    "pluralName": "navigations",
+    "displayName": "Navigation",
+    "description": "A named set of nav links, optionally with sub-navigations"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "links": {
+      "type": "component",
+      "component": "navigation.nav-link",
+      "repeatable": true
+    }
+  }
+}

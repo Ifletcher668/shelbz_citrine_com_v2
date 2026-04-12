@@ -30,7 +30,7 @@
  * </Reveal>
  */
 import { motion } from "framer-motion";
-import { ANIMATIONS } from "@/lib/constants";
+import { ANIMATIONS } from "../../lib/constants";
 
 const buildPreset = (effect, distance) => {
   switch (effect) {

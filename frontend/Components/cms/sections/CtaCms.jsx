@@ -2,8 +2,8 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
-import { Section, Container } from "@/Components/layout/Section";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
+import { Section, Container } from "../../layout/Section";
+import BackgroundTexture from "../../shared/BackgroundTexture";
 
 export default function CtaCms({ data }) {
   const ref = useRef(null);

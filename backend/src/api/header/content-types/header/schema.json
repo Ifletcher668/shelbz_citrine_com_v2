@@ -19,16 +19,10 @@
       ],
       "max": 1
     },
-    "nav_links": {
-      "type": "component",
-      "component": "navigation.nav-link",
-      "repeatable": true
-    },
-    "cta_text": {
-      "type": "string"
-    },
-    "cta_link": {
-      "type": "string"
+    "navigation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::navigation.navigation"
     },
     "title": {
       "type": "string",
@@ -36,6 +30,11 @@
       "default": "Header",
       "required": true,
       "unique": true
+    },
+    "header_cta": {
+      "type": "component",
+      "component": "ui.button-link",
+      "repeatable": false
     }
   }
 }

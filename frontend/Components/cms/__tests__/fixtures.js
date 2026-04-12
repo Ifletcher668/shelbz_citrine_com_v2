@@ -33,28 +33,58 @@ export function makeTextBlock(overrides = {}) {
   };
 }
 
+export function makeGalleryItem(overrides = {}) {
+  return {
+    id: 1,
+    image: {
+      id: 10,
+      url: '/uploads/image1.jpg',
+      alternativeText: 'Image one',
+      width: 800,
+      height: 600,
+      formats: null,
+    },
+    path: null,
+    ...overrides,
+  };
+}
+
 export function makeGallery(overrides = {}) {
   return {
-    __component: 'sections.gallery',
+    __component: 'sections.media-gallery',
+    id: 1,
     title: 'Our Gallery',
-    images: [
+    Images: [
       {
-        documentId: 'doc1',
         id: 1,
         url: '/uploads/image1.jpg',
         alternativeText: 'Image one',
-        name: 'image1.jpg',
+        width: 800,
+        height: 600,
+        formats: null,
       },
       {
-        documentId: 'doc2',
         id: 2,
         url: '/uploads/image2.jpg',
         alternativeText: null,
-        name: 'image2.jpg',
+        width: 800,
+        height: 600,
+        formats: null,
       },
     ],
+    pagination_id: null,
+    use_new_page_pagination: false,
     ...overrides,
   };
+}
+
+export function makeGalleryGroup(galleries = []) {
+  return galleries.length
+    ? galleries
+    : [
+        makeGallery({ id: 10, title: '2023', pagination_id: '2023' }),
+        makeGallery({ id: 11, title: '2024', pagination_id: '2024' }),
+      ];
 }
 
 export function makeFaq(overrides = {}) {

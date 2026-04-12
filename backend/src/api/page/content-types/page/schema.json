@@ -29,11 +29,24 @@
     "sections": {
       "type": "dynamiczone",
       "components": [
-        "sections.row"
+        "sections.row",
+        "sections.media-gallery"
       ]
     },
     "theme_overrides": {
       "type": "json"
+    },
+    "sub_page": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::page.page",
+      "inversedBy": "parent_pages"
+    },
+    "parent_pages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::page.page",
+      "mappedBy": "sub_page"
     }
   }
 }

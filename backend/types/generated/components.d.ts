@@ -98,7 +98,25 @@ export interface NavigationNavLink extends Struct.ComponentSchema {
   attributes: {
     label: Schema.Attribute.String;
     page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
+    path: Schema.Attribute.String;
+    sub_navigation: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::navigation.navigation'
+    >;
     url: Schema.Attribute.String;
+  };
+}
+
+export interface SectionsMediaGallery extends Struct.ComponentSchema {
+  collectionName: 'components_sections_media_galleries';
+  info: {
+    description: 'A paginated or filterable image gallery, sourced from the Strapi Media Library';
+    displayName: 'Media Gallery';
+    icon: 'landscape';
+  };
+  attributes: {
+    Images: Schema.Attribute.Media<'images' | 'videos', true>;
+    title: Schema.Attribute.String;
   };
 }
 
@@ -316,6 +334,7 @@ declare module '@strapi/strapi' {
       'navigation.logo-image': NavigationLogoImage;
       'navigation.logo-text': NavigationLogoText;
       'navigation.nav-link': NavigationNavLink;
+      'sections.media-gallery': SectionsMediaGallery;
       'sections.row': SectionsRow;
       'step.step': StepStep;
       'theme.layout': ThemeLayout;

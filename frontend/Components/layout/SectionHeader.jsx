@@ -19,8 +19,8 @@
  *   divider
  * />
  */
-import { cn } from "@/lib/utils";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import { cn } from "../../lib/utils";
+import OrnamentalDivider from "../ornaments/OrnamentalDivider";
 
 const widthClasses = {
   narrow: "max-w-4xl mx-auto",

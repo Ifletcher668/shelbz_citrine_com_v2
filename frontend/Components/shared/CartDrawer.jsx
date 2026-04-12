@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "../../context/CartContext";
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getSubtotal } =

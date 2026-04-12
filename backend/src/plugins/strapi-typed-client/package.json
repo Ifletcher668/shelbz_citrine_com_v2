@@ -1,0 +1,10 @@
+{
+  "name": "strapi-typed-client-local",
+  "version": "1.0.0",
+  "strapi": {
+    "kind": "plugin",
+    "name": "strapi-typed-client",
+    "displayName": "Strapi Typed Client",
+    "description": "Exposes Strapi schema for TypeScript type generation"
+  }
+}

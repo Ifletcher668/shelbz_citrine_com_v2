@@ -631,23 +631,27 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    brand_description: Schema.Attribute.Text;
+    brand_heading: Schema.Attribute.String;
+    brand_tagline: Schema.Attribute.String;
+    contact_email: Schema.Attribute.Email;
+    contact_location: Schema.Attribute.String;
+    contact_service_area: Schema.Attribute.String;
+    copyright_company_name: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    footer_content: Schema.Attribute.RichText &
-      Schema.Attribute.CustomField<'plugin::wysiwyg-editor.wysiwyg-editor'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::footer.footer'
     > &
       Schema.Attribute.Private;
+    navigation: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::navigation.navigation'
+    >;
     publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Private &
-      Schema.Attribute.Unique &
-      Schema.Attribute.DefaultTo<'Footer'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -668,15 +672,17 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    cta_link: Schema.Attribute.String;
-    cta_text: Schema.Attribute.String;
+    header_cta: Schema.Attribute.Component<'ui.button-link', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::header.header'
     > &
       Schema.Attribute.Private;
-    nav_links: Schema.Attribute.Component<'navigation.nav-link', true>;
+    navigation: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::navigation.navigation'
+    >;
     primary: Schema.Attribute.DynamicZone<
       ['navigation.logo-image', 'navigation.logo-text']
     > &
@@ -692,6 +698,38 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
       Schema.Attribute.Private &
       Schema.Attribute.Unique &
       Schema.Attribute.DefaultTo<'Header'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiNavigationNavigation extends Struct.CollectionTypeSchema {
+  collectionName: 'navigations';
+  info: {
+    description: 'A named set of nav links, optionally with sub-navigations';
+    displayName: 'Navigation';
+    pluralName: 'navigations';
+    singularName: 'navigation';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    links: Schema.Attribute.Component<'navigation.nav-link', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::navigation.navigation'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -716,13 +754,17 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
+    parent_pages: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
     publishedAt: Schema.Attribute.DateTime;
-    sections: Schema.Attribute.DynamicZone<['sections.row']>;
+    sections: Schema.Attribute.DynamicZone<
+      ['sections.row', 'sections.media-gallery']
+    >;
     seo_description: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 320;
       }>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    sub_page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
     theme_overrides: Schema.Attribute.JSON;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -1331,6 +1373,7 @@ declare module '@strapi/strapi' {
       'api::faq.faq': ApiFaqFaq;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
+      'api::navigation.navigation': ApiNavigationNavigation;
       'api::page.page': ApiPagePage;
       'api::step-group.step-group': ApiStepGroupStepGroup;
       'api::theme.theme': ApiThemeTheme;

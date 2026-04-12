@@ -1,10 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Header from "@/Components/layout/Header";
-import Footer from "@/Components/layout/Footer";
-import { Container } from "@/Components/layout/Section";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+import Header from "../../Components/layout/Header";
+import Footer from "../../Components/layout/Footer";
+import { Container } from "../../Components/layout/Section";
+import OrnamentalDivider from "../../Components/ornaments/OrnamentalDivider";
 import { Clock, ArrowLeft } from "lucide-react";
 
 /**
@@ -23,7 +23,7 @@ export default function BlogPost() {
   return (
     <>
       <Head>
-        <title>{post.title} | Heritage Jewelry</title>
+        <title>{post.title} | Shelbz Citrine</title>
         <meta
           name="description"
           content="Harder than diamond, rarer than rubies. Black spinel has been mistaken for onyx for centuries."

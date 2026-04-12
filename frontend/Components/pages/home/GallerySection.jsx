@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X, Gem } from "lucide-react";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
-import BackgroundTexture from "@/Components/shared/BackgroundTexture";
+import OrnamentalDivider from "../../ornaments/OrnamentalDivider";
+import BackgroundTexture from "../../shared/BackgroundTexture";
 
 /**
  * Gallery Section - "Crafted Examples"

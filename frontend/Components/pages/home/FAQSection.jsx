@@ -5,8 +5,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/Components/ui/accordion";
-import OrnamentalDivider from "@/Components/ornaments/OrnamentalDivider";
+} from "../../ui/accordion";
+import OrnamentalDivider from "../../ornaments/OrnamentalDivider";
 
 /**
  * FAQ Section - "Questions & Answers"

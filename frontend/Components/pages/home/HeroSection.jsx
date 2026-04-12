@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { SimpleDivider } from "@/Components/ornaments/OrnamentalDivider";
-import TooltipHelp from "@/Components/shared/TooltipHelp";
-import { Section, Container } from "@/Components/layout/Section";
+import { SimpleDivider } from "../../ornaments/OrnamentalDivider";
+import TooltipHelp from "../../shared/TooltipHelp";
+import { Section, Container } from "../../layout/Section";
 
 /**
  * Hero Section - "Grimoire Opening"

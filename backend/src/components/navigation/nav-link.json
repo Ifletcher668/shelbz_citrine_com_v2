@@ -12,13 +12,31 @@
         "description": "Leave blank to use the linked page's title"
       }
     },
+    "path": {
+      "type": "string",
+      "metadatas": {
+        "label": "Internal Path",
+        "placeholder": "/gallery/2023",
+        "description": "Use for internal routes that aren't a Strapi Page (e.g. /gallery/2023). Takes priority over External URL."
+      }
+    },
     "url": {
-      "type": "string"
+      "type": "string",
+      "metadatas": {
+        "label": "External URL",
+        "placeholder": "https://",
+        "description": "Opens in a new tab. Only use for off-site links. For same-site paths, use Internal Path or the Page relation above."
+      }
     },
     "page": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::page.page"
+    },
+    "sub_navigation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::navigation.navigation"
     }
   }
 }

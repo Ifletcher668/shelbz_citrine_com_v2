@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ContactFormEmbed from "@/Components/shared/ContactFormEmbed";
+import ContactFormEmbed from "../ContactFormEmbed";
 
 const config = {
   action: "contact",
