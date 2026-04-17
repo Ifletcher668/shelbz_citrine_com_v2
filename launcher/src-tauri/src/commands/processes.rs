@@ -1,8 +1,10 @@
 use std::fs::{self, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
+use std::net::TcpStream;
 use std::os::unix::process::CommandExt;
 use std::process::{Child, Command, Stdio};
 use std::sync::Arc;
+use std::time::Duration;
 use tauri::{AppHandle, Emitter, State};
 use crate::commands::util::launcher_log;
 use crate::state::AppState;
@@ -283,4 +285,43 @@ pub fn kill_all_processes(state: &Arc<AppState>) {
     if let Some(mut child) = handles.frontend.take() { kill_child(&mut child); }
     if let Some(mut child) = handles.backend.take() { kill_child(&mut child); }
     if let Some(mut child) = handles.storybook.take() { kill_child(&mut child); }
+}
+
+/// Stop only the backend process. Used internally by the deploy pipeline.
+/// Returns true if the backend was running and was stopped, false if it wasn't running.
+pub(crate) fn stop_backend_internal(state: &Arc<AppState>, app: &AppHandle) -> bool {
+    let log_dir = state.log_dir();
+    let mut handles = state.handles.lock().unwrap();
+    if let Some(mut child) = handles.backend.take() {
+        launcher_log(app, &log_dir, "[process] Stopping backend for deploy pipeline…");
+        kill_child(&mut child);
+        true
+    } else {
+        false
+    }
+}
+
+/// Single-shot TCP check: is Strapi accepting connections on port 1337?
+/// Used by the UI to know when the backend is truly ready, not just spawned.
+#[tauri::command]
+pub async fn check_backend_health() -> bool {
+    tokio::task::spawn_blocking(|| {
+        TcpStream::connect_timeout(
+            &"127.0.0.1:1337".parse().unwrap(),
+            Duration::from_millis(500),
+        ).is_ok()
+    }).await.unwrap_or(false)
+}
+
+/// Start only the backend process. Used internally by the deploy pipeline.
+pub(crate) fn start_backend_internal(state: &Arc<AppState>, app: AppHandle) -> Result<(), String> {
+    let mut handles = state.handles.lock().unwrap();
+    if handles.backend.is_some() {
+        return Ok(());
+    }
+    let root = state.root();
+    let log_path = state.log_dir().join("backend.log");
+    let child = spawn_yarn_process("backend", &root, &log_path, app, "log:backend".to_string())?;
+    handles.backend = Some(child);
+    Ok(())
 }

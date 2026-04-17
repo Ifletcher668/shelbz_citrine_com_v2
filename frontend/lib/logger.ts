@@ -5,19 +5,19 @@
  * Client-side (browser): stores to a localStorage ring-buffer (cap 500 entries).
  */
 
+import type { Logger } from "pino";
+
 const isServer = typeof window === "undefined";
 
 /* ─── Server logger (pino) ─────────────────────────────────────────────── */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let serverLogger: any = null;
+let serverLogger: Logger | null = null;
 
-function getServerLogger() {
+function getServerLogger(): Logger {
   if (!serverLogger) {
     // Dynamic require so pino is never bundled into client JS.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pino = require("pino");
-    serverLogger = pino({ name: "shelbz-frontend", level: "info" });
+    serverLogger = pino({ name: "shelbz-frontend", level: "info" }) as Logger;
   }
   return serverLogger;
 }

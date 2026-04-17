@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import RowCms from "../../Components/cms/sections/RowCms";
-import type { CmsRow } from "../../lib/strapi-cms/strapiApi";
+import type { GetPageBySlugRowSection } from "../../lib/strapi-cms/strapiApi";
 
 const meta: Meta<typeof RowCms> = {
   title: "CMS/RowCms",
@@ -45,14 +45,14 @@ From first conversation to finished piece: sketch, stone selection, metalwork, a
 Each step requires decisions that **cannot be rushed** — the hand that wears the ring must shape its making.
 `;
 
-const mockOneColumn: CmsRow = {
+const mockOneColumn: GetPageBySlugRowSection = {
   id: 1,
   __component: "sections.row",
   section_id: null,
   columns: [{ id: 1, __component: "column.column", body: RICH_BODY_1 }],
 };
 
-const mockTwoColumn: CmsRow = {
+const mockTwoColumn: GetPageBySlugRowSection = {
   id: 2,
   __component: "sections.row",
   section_id: null,
@@ -62,7 +62,7 @@ const mockTwoColumn: CmsRow = {
   ],
 };
 
-const mockThreeColumn: CmsRow = {
+const mockThreeColumn: GetPageBySlugRowSection = {
   id: 3,
   __component: "sections.row",
   section_id: null,

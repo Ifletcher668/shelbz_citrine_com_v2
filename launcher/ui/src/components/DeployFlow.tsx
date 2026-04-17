@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { deploy, onDeployStep, onDeployCiLog, getDeployStatus, ProcessStatus } from "../lib/tauri";
+import {
+  deploy,
+  onDeployStep,
+  onDeployCiLog,
+  getDeployStatus,
+  startBackend,
+  checkBackendHealth,
+} from "../lib/tauri";
+import type { ProcessStatus } from "../lib/tauri";
 
 interface Props {
   status: ProcessStatus;
@@ -32,26 +40,64 @@ export function DeployFlow({ status, onClose }: Props) {
   const startTimeRef = useRef<number>(0);
   const [elapsed, setElapsed] = useState(0);
 
+  // Backend health tracking — separate from "process alive" (status.backend).
+  // Strapi needs time after the process starts before it accepts connections.
+  const [backendHealthy, setBackendHealthy] = useState(false);
+  const [backendStarting, setBackendStarting] = useState(false);
+  const healthPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function stopHealthPoll() {
+    if (healthPollRef.current !== null) {
+      clearInterval(healthPollRef.current);
+      healthPollRef.current = null;
+    }
+  }
+
+  // When the backend process comes up, poll until the TCP port accepts connections.
+  useEffect(() => {
+    if (!status.backend) {
+      setBackendHealthy(false);
+      setBackendStarting(false);
+      stopHealthPoll();
+      return;
+    }
+
+    if (backendHealthy) return; // already confirmed, nothing to do
+
+    // Process is alive but we haven't confirmed health yet — start polling.
+    setBackendStarting(true);
+    stopHealthPoll();
+    healthPollRef.current = setInterval(async () => {
+      const healthy = await checkBackendHealth();
+      if (healthy) {
+        setBackendHealthy(true);
+        setBackendStarting(false);
+        stopHealthPoll();
+      }
+    }, 2000);
+
+    return stopHealthPoll;
+  }, [status.backend]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     getDeployStatus()
       .then((s) => setLastDeployed(formatLastDeployed(s.last_deployed_at)))
       .catch(() => {});
 
-    onDeployStep((msg) => {
-      setSteps((prev) => [...prev, msg]);
-    }).then((u) => { unlistenStepRef.current = u; });
+    onDeployStep((msg) => setSteps((prev) => [...prev, msg]))
+      .then((u) => { unlistenStepRef.current = u; });
 
-    onDeployCiLog((line) => {
-      setCiLogs((prev) => [...prev, line]);
-    }).then((u) => { unlistenCiRef.current = u; });
+    onDeployCiLog((line) => setCiLogs((prev) => [...prev, line]))
+      .then((u) => { unlistenCiRef.current = u; });
 
     return () => {
       unlistenStepRef.current?.();
       unlistenCiRef.current?.();
+      stopHealthPoll();
     };
   }, []);
 
-  // Elapsed timer while running
+  // Elapsed timer while deploying
   useEffect(() => {
     if (!running) { setElapsed(0); return; }
     startTimeRef.current = Date.now();
@@ -60,6 +106,19 @@ export function DeployFlow({ status, onClose }: Props) {
     }, 1000);
     return () => clearInterval(id);
   }, [running]);
+
+  async function handleStartBackend() {
+    setError("");
+    try {
+      await startBackend();
+      // Health polling kicks in automatically via the status.backend effect once
+      // useProcessStatus detects the new process (within ~3 s).
+      // Set starting state immediately so the UI reflects intent.
+      setBackendStarting(true);
+    } catch (e) {
+      setError(String(e));
+    }
+  }
 
   async function handleDeploy() {
     setRunning(true);
@@ -77,6 +136,7 @@ export function DeployFlow({ status, onClose }: Props) {
   }
 
   const backendRunning = status.backend;
+  const deployReady = backendHealthy && !running;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -88,20 +148,43 @@ export function DeployFlow({ status, onClose }: Props) {
 
         <p className="text-[10px] text-zinc-500">Last deployed: {lastDeployed}</p>
 
+        {/* Backend status banner */}
         {!backendRunning && !running && !done && (
-          <div className="text-xs text-amber-400 bg-amber-950 rounded px-3 py-2">
-            Start the CMS backend before deploying.
+          <div className="space-y-2">
+            <div className="text-xs text-amber-400 bg-amber-950 rounded px-3 py-2">
+              The CMS backend must be running. Netlify fetches all page content from Strapi during its build.
+            </div>
+            <button
+              onClick={handleStartBackend}
+              className="w-full text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-200 py-1.5 rounded transition-colors"
+            >
+              Start Backend
+            </button>
+          </div>
+        )}
+
+        {backendRunning && backendStarting && !done && (
+          <div className="text-xs text-zinc-400 bg-zinc-800 rounded px-3 py-2 flex items-center gap-2">
+            <span className="animate-pulse">⬤</span>
+            Waiting for backend to be ready…
+          </div>
+        )}
+
+        {backendRunning && backendHealthy && !running && !done && (
+          <div className="text-xs text-emerald-400 bg-emerald-950/40 rounded px-3 py-2">
+            Backend is ready.
           </div>
         )}
 
         <div className="text-xs text-zinc-400 space-y-1">
           <p>This will:</p>
           <ol className="list-decimal list-inside space-y-0.5 text-zinc-500">
-            <li>Run frontend tests</li>
             <li>Run a build smoke test</li>
-            <li>Save Strapi data to iCloud</li>
-            <li>Trigger a Netlify deploy</li>
+            <li>Stop backend → publish images → save to iCloud</li>
+            <li>Restart backend and confirm it's healthy</li>
+            <li>Trigger the Netlify deploy</li>
           </ol>
+          <p className="text-zinc-600 pt-1">Keep the backend running after — Netlify needs it.</p>
         </div>
 
         {steps.length > 0 && (
@@ -139,7 +222,7 @@ export function DeployFlow({ status, onClose }: Props) {
 
         {done && (
           <p className="text-xs text-emerald-400 bg-emerald-950 rounded px-3 py-2">
-            Deployed successfully!
+            Netlify build triggered! Keep the backend running — Netlify is fetching content from it now.
           </p>
         )}
 
@@ -147,16 +230,20 @@ export function DeployFlow({ status, onClose }: Props) {
           {!done && (
             <button
               onClick={handleDeploy}
-              disabled={running || !backendRunning}
-              title={!backendRunning ? "Start CMS backend before deploying" : undefined}
-              className="flex-1 text-sm bg-emerald-700 hover:bg-emerald-600 text-white py-1.5 rounded disabled:opacity-40"
+              disabled={!deployReady}
+              title={
+                !backendRunning ? "Start the CMS backend first" :
+                backendStarting ? "Waiting for backend to be ready…" :
+                undefined
+              }
+              className="flex-1 text-sm bg-emerald-700 hover:bg-emerald-600 text-white py-1.5 rounded disabled:opacity-40 transition-colors"
             >
               {running ? "Deploying…" : "Deploy"}
             </button>
           )}
           <button
             onClick={onClose}
-            className="flex-1 text-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-1.5 rounded"
+            className="flex-1 text-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-1.5 rounded transition-colors"
           >
             {done ? "Done" : "Cancel"}
           </button>

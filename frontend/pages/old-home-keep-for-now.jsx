@@ -4,7 +4,6 @@ import HeroSection from "../Components/pages/home/HeroSection";
 import ProblemSolutionSection from "../Components/pages/home/ProblemSolutionSection";
 import ProcessSection from "../Components/pages/home/ProcessSection";
 import GallerySection from "../Components/pages/home/GallerySection";
-import FAQSection from "../Components/pages/home/FAQSection";
 import CTASection from "../Components/pages/home/CTASection";
 
 /**
@@ -57,7 +56,6 @@ export default function Home() {
         <ProblemSolutionSection />
         <ProcessSection />
         <GallerySection />
-        <FAQSection />
         <CTASection />
       </PageLayout>
     </>

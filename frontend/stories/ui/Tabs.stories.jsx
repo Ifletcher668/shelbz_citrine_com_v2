@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import {
   Tabs,
   TabsContent,
@@ -6,14 +5,15 @@ import {
   TabsTrigger,
 } from "../../Components/ui/tabs";
 
-const meta: Meta = {
+const meta = {
   title: "UI/Tabs",
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
     docs: {
       description: {
-        component: "Radix UI Tabs — accessible tab navigation with panel content.",
+        component:
+          "Radix UI Tabs — accessible tab navigation with panel content.",
       },
     },
   },
@@ -21,7 +21,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const Default: StoryObj = {
+export const Default = {
   render: () => (
     <Tabs defaultValue="rings">
       <TabsList>
@@ -49,17 +49,15 @@ export const Default: StoryObj = {
   ),
 };
 
-export const WithThemeOverride: StoryObj = {
+export const WithThemeOverride = {
   name: "With Theme Override",
   render: () => (
     <div
-      style={
-        {
-          "--color-accent": "#d4a020",
-          "--color-bg-base": "#1a0f05",
-          "--color-text-heading": "#f0e8d0",
-        } as React.CSSProperties
-      }
+      style={{
+        "--color-accent": "#d4a020",
+        "--color-bg-base": "#1a0f05",
+        "--color-text-heading": "#f0e8d0",
+      }}
     >
       <Tabs defaultValue="overview">
         <TabsList>

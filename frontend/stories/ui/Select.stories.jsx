@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import {
   Select,
   SelectContent,
@@ -9,14 +8,15 @@ import {
   SelectValue,
 } from "../../Components/ui/select";
 
-const meta: Meta = {
+const meta = {
   title: "UI/Select",
   tags: ["autodocs"],
   parameters: {
     layout: "centered",
     docs: {
       description: {
-        component: "Radix UI Select — dropdown selection with keyboard navigation.",
+        component:
+          "Radix UI Select — dropdown selection with keyboard navigation.",
       },
     },
   },
@@ -24,7 +24,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const Default: StoryObj = {
+export const Default = {
   render: () => (
     <div className="w-64">
       <Select>
@@ -45,7 +45,7 @@ export const Default: StoryObj = {
   ),
 };
 
-export const WithGroupedOptions: StoryObj = {
+export const WithGroupedOptions = {
   name: "Grouped Options",
   render: () => (
     <div className="w-72">
@@ -71,7 +71,7 @@ export const WithGroupedOptions: StoryObj = {
   ),
 };
 
-export const Disabled: StoryObj = {
+export const Disabled = {
   render: () => (
     <div className="w-64">
       <Select disabled>

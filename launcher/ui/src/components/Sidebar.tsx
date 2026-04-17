@@ -34,6 +34,7 @@ interface Props {
   status: ProcessStatus;
   onAction: (key: keyof ProcessStatus, running: boolean) => void;
   onDeploy: () => void;
+  onPublishImages: () => void;
   onStarted: () => void;
 }
 
@@ -115,6 +116,7 @@ export function Sidebar({
   status,
   onAction,
   onDeploy,
+  onPublishImages,
   onStarted,
 }: Props) {
   const [hovered, setHovered] = useState(false);
@@ -175,7 +177,7 @@ export function Sidebar({
 
         <SectionHeading>Actions</SectionHeading>
         <StatusPanel status={status} onAction={onAction} />
-        <ActionBar onDeploy={onDeploy} onStarted={onStarted} />
+        <ActionBar onDeploy={onDeploy} onPublishImages={onPublishImages} onStarted={onStarted} />
 
         <SectionHeading>iCloud</SectionHeading>
         <ICloudPanel />

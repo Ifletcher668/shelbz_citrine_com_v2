@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import GalleryCms from "../../Components/cms/sections/GalleryCms";
+import type { GetPageBySlugMediaGallerySection } from "../../lib/strapi-cms/strapiApi";
 import type { MediaFile } from "strapi-typed-client";
-import type { CmsMediaGallery } from "../../lib/strapi-cms/strapiApi";
 
 const meta: Meta<typeof GalleryCms> = {
   title: "CMS/GalleryCms",
@@ -12,7 +12,7 @@ const meta: Meta<typeof GalleryCms> = {
     docs: {
       description: {
         component:
-          "CMS-driven image gallery. Supports single gallery (`data`) or tabbed multi-gallery (`galleries`). Images open in a lightbox. When no images are available, a placeholder message is shown.",
+          "CMS-driven image gallery. Images open in a lightbox. When no images are available, a placeholder message is shown.",
       },
     },
   },
@@ -76,35 +76,19 @@ const mockImages = [
   },
 ];
 
-const mockGallery: CmsMediaGallery = {
+const mockGallery: GetPageBySlugMediaGallerySection = {
   id: 1,
   __component: "sections.media-gallery",
   title: "Recent Commissions",
   Images: mockImages as unknown as MediaFile[],
-};
-
-const mockGallery2023: CmsMediaGallery = {
-  id: 2,
-  __component: "sections.media-gallery",
-  title: "2023",
-  Images: mockImages.slice(0, 3) as unknown as MediaFile[],
-};
-
-const mockGallery2024: CmsMediaGallery = {
-  id: 3,
-  __component: "sections.media-gallery",
-  title: "2024",
-  Images: mockImages.slice(3, 6) as unknown as MediaFile[],
+  pagination_count: null,
+  pagination_filter: null,
+  use_pagination: false,
 };
 
 export const SingleGallery: Story = {
   name: "Single Gallery",
   args: { data: mockGallery },
-};
-
-export const TabbedGalleries: Story = {
-  name: "Tabbed Galleries",
-  args: { galleries: [mockGallery2023, mockGallery2024] },
 };
 
 export const EmptyGallery: Story = {
@@ -114,8 +98,11 @@ export const EmptyGallery: Story = {
       id: 4,
       __component: "sections.media-gallery",
       title: "Upcoming Work",
-      Images: undefined,
-    },
+      Images: [],
+      pagination_count: null,
+      pagination_filter: null,
+      use_pagination: false,
+    } as GetPageBySlugMediaGallerySection,
   },
 };
 

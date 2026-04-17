@@ -45,19 +45,7 @@ export default function CmsPage(props: Props) {
 
   if (!page) return null;
 
-  let ComponentByPageTemplate;
-
-  switch (page.page_template?.slug) {
-    case "gallery_page":
-      ComponentByPageTemplate = () => (
-        <GalleryPage page={page} mediaMetadata={mediaMetadata} />
-      );
-    case "blog_page":
-      ComponentByPageTemplate = () => <BlogPage page={page} />;
-    case "default_page":
-    default:
-      ComponentByPageTemplate = () => <DefaultPage page={page} />;
-  }
+  const template = page.page_template?.slug;
 
   return (
     <>
@@ -81,7 +69,13 @@ export default function CmsPage(props: Props) {
       <MediaContext.Provider value={{ mediaMap }}>
         <RelationsContext.Provider value={relations}>
           <PageLayout className="">
-            <ComponentByPageTemplate />
+            {template === "gallery_page" ? (
+              <GalleryPage page={page} mediaMetadata={mediaMetadata} />
+            ) : template === "blog_page" ? (
+              <BlogPage page={page} />
+            ) : (
+              <DefaultPage page={page} />
+            )}
           </PageLayout>
         </RelationsContext.Provider>
       </MediaContext.Provider>
@@ -104,9 +98,12 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>;
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
     const pages = await getPages();
+
+    const EXCLUDED_PATHS = ["home", "test"];
+    // "test" is a dedicated page served at /test, but with its own config
     // "home" is served at "/" via pages/index.jsx — exclude it here
     const paths = pages
-      .filter((page) => page.slug !== "home")
+      .filter((page) => !EXCLUDED_PATHS.includes(page.slug))
       .map((page) => ({ params: { slug: buildPagePath(page).split("/") } }));
 
     return { paths, fallback: false };

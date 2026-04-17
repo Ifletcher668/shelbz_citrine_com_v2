@@ -1,9 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { Input } from "../../Components/ui/input";
 import { Label } from "../../Components/ui/label";
 import React from "react";
 
-const meta: Meta<typeof Input> = {
+const meta = {
   title: "UI/Input",
   component: Input,
   tags: ["autodocs"],
@@ -19,9 +18,8 @@ const meta: Meta<typeof Input> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Input>;
 
-export const Default: Story = {
+export const Default = {
   args: { placeholder: "Your name", type: "text" },
   render: (args) => (
     <div className="w-72 p-8" style={{ background: "var(--color-bg-base)" }}>
@@ -30,7 +28,7 @@ export const Default: Story = {
   ),
 };
 
-export const AllStates: Story = {
+export const AllStates = {
   name: "All States",
   render: () => (
     <div

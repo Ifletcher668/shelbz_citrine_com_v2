@@ -5,6 +5,7 @@ import { LogViewer } from "./components/LogViewer";
 import type { Tab } from "./components/LogViewer";
 import { Sidebar } from "./components/Sidebar";
 import { DeployFlow } from "./components/DeployFlow";
+import { PublishImagesFlow } from "./components/PublishImagesFlow";
 import { SetupScreen } from "./components/SetupScreen";
 import type { ProcessStatus } from "./lib/tauri";
 
@@ -13,6 +14,7 @@ type AppView = "loading" | "setup" | "dashboard";
 export default function App() {
   const [view, setView] = useState<AppView>("loading");
   const [showDeploy, setShowDeploy] = useState(false);
+  const [showPublishImages, setShowPublishImages] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("frontend");
   const { status, refresh, setOptimistic } = useProcessStatus();
 
@@ -71,6 +73,7 @@ export default function App() {
         status={status}
         onAction={handleOptimistic}
         onDeploy={() => setShowDeploy(true)}
+        onPublishImages={() => setShowPublishImages(true)}
         onStarted={() => setTimeout(refresh, 1500)}
       />
       <div className="flex-1 flex flex-col min-w-0">
@@ -78,6 +81,9 @@ export default function App() {
       </div>
       {showDeploy && (
         <DeployFlow status={status} onClose={() => setShowDeploy(false)} />
+      )}
+      {showPublishImages && (
+        <PublishImagesFlow status={status} onClose={() => setShowPublishImages(false)} />
       )}
     </div>
   );

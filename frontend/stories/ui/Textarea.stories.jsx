@@ -1,8 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { Textarea } from "../../Components/ui/textarea";
 import { Label } from "../../Components/ui/label";
 
-const meta: Meta<typeof Textarea> = {
+const meta = {
   title: "UI/Textarea",
   component: Textarea,
   tags: ["autodocs"],
@@ -17,9 +16,8 @@ const meta: Meta<typeof Textarea> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Textarea>;
 
-export const Default: Story = {
+export const Default = {
   args: { placeholder: "Describe your vision..." },
   render: (args) => (
     <div className="w-80 flex flex-col gap-2">
@@ -29,7 +27,7 @@ export const Default: Story = {
   ),
 };
 
-export const WithCharacterCount: Story = {
+export const WithCharacterCount = {
   name: "With Character Count",
   render: () => {
     // Using a wrapper component to manage state
@@ -49,7 +47,7 @@ export const WithCharacterCount: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const Disabled = {
   args: {
     placeholder: "This field is disabled.",
     disabled: true,

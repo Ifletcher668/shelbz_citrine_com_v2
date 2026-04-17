@@ -35,7 +35,7 @@ export default function SectionHeader({
   headingSize = "text-4xl md:text-5xl",
   width = "narrow",
   divider = false,
-  className,
+  className = "",
   ...props
 }) {
   return (

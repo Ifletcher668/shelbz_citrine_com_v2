@@ -105,6 +105,7 @@ fn main() {
             processes::start_storybook,
             processes::stop_process,
             processes::get_process_status,
+            processes::check_backend_health,
             // git
             git::check_updates,
             git::git_fetch,
@@ -116,6 +117,7 @@ fn main() {
             // deploy
             deploy::deploy,
             deploy::get_deploy_status,
+            deploy::publish_images,
             // logs
             logs::get_log,
             logs::clear_log,

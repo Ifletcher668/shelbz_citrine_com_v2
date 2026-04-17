@@ -9,19 +9,15 @@ import {
   buildStrapiSrcSet,
 } from "../../../lib/strapi-cms/strapiApi";
 import { logger } from "../../../lib/logger";
-import { MediaFile } from "strapi-typed-client";
+import type { MediaFile } from "strapi-typed-client";
 
 interface GalleryCmsProps {
-  data: Exclude<GetPageBySlugMediaGallerySection, "Images"> & {
-    Images: NonNullable<GetPageBySlugMediaGallerySection["Images"]>;
-  };
+  data: GetPageBySlugMediaGallerySection;
   className?: string;
 }
 
 export default function GalleryCms(props: GalleryCmsProps) {
   const { data, className } = props;
-
-  if (!data) return null;
 
   const {
     pagination_count,
@@ -35,6 +31,8 @@ export default function GalleryCms(props: GalleryCmsProps) {
     message: "pagination_filter feature is not implemented.",
   });
 
+  const images: MediaFile[] = Images ?? [];
+
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [selectedImage, setSelectedImage] = useState<MediaFile | null>(null);
@@ -42,15 +40,15 @@ export default function GalleryCms(props: GalleryCmsProps) {
   // Using state to augment if use_pagination is true, varied by pagination_count or pagination_filter
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [imageData, setImageData] = useState(Images);
+  const [imageData, setImageData] = useState(images);
 
   // Set state based on pagination count
   const usePaginationCount = use_pagination && pagination_count;
   useEffect(() => {
     if (usePaginationCount) {
-      const paginatedImages = paginateImages(Images, pagination_count);
+      const paginatedImages = paginateImages(images, pagination_count);
 
-      setTotalPages(paginateImages.length);
+      setTotalPages(paginatedImages.length);
       setImageData(paginatedImages[currentPage]);
     }
   }, [currentPage]);
@@ -80,7 +78,9 @@ export default function GalleryCms(props: GalleryCmsProps) {
           <OrnamentalDivider />
 
           {imageData.length === 0 ? (
-            <p className="text-center text-stone-grey italic text-sm">No images available.</p>
+            <p className="text-center text-stone-grey italic text-sm">
+              No images available.
+            </p>
           ) : (
             <div className="columns-2 md:columns-3 gap-4">
               {imageData.map((item, index) => (
@@ -151,10 +151,7 @@ export default function GalleryCms(props: GalleryCmsProps) {
   );
 }
 
-function paginateImages(
-  array: GalleryCmsProps["data"]["Images"],
-  size: number,
-) {
+function paginateImages(array: MediaFile[], size: number) {
   const matrix = [];
   for (let i = 0; i < array.length; i += size) {
     matrix.push(array.slice(i, i + size));

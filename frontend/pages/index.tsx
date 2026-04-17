@@ -31,20 +31,7 @@ export default function HomePage(props: Props) {
   const { page, relations, mediaMap, mediaMetadata } = props;
   if (!page) return null;
 
-  let ComponentByPageTemplate;
-
-  switch (page.page_template?.slug) {
-    case "gallery_page":
-      ComponentByPageTemplate = () => (
-        <GalleryPage page={page} mediaMetadata={mediaMetadata} />
-      );
-    case "blog_page":
-      ComponentByPageTemplate = () => <BlogPage page={page} />;
-    case "default_page":
-    default:
-      ComponentByPageTemplate = () => <DefaultPage page={page} />;
-  }
-
+  const template = page.page_template?.slug;
   const sanitizedCss = sanitizeCSS(page.custom_css);
 
   return (
@@ -66,7 +53,13 @@ export default function HomePage(props: Props) {
       <MediaContext.Provider value={{ mediaMap }}>
         <RelationsContext.Provider value={relations}>
           <PageLayout className="">
-            <ComponentByPageTemplate />
+            {template === "gallery_page" ? (
+              <GalleryPage page={page} mediaMetadata={mediaMetadata} />
+            ) : template === "blog_page" ? (
+              <BlogPage page={page} />
+            ) : (
+              <DefaultPage page={page} />
+            )}
           </PageLayout>
         </RelationsContext.Provider>
       </MediaContext.Provider>

@@ -130,138 +130,134 @@ export default function Process() {
       </Head>
 
       <PageLayout>
-          {/* Hero */}
-          <Section variant="hero" className="relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-transparent to-void/60 opacity-70" />
+        {/* Hero */}
+        <Section variant="hero" className="relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-transparent to-void/60 opacity-70" />
 
-            <Container className="relative z-10 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="flex flex-col items-center gap-6">
-                  <h1>
-                    Vision to Heirloom{" "}
-                    <span className="text-metallic-cold">in Five Steps</span>
-                  </h1>
-                  <p className="text-xl max-w-4xl">
-                    From first conversation to finished piece: how a commission
-                    moves through sketch, stone selection, metalwork, and
-                    setting. The process takes weeks because each step requires
-                    decisions that can't be rushed—the hand that wears the ring
-                    must shape its making.
-                  </p>
-                </div>
-              </motion.div>
-            </Container>
-          </Section>
+          <Container className="relative z-10 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex flex-col items-center gap-6">
+                <h1>
+                  Vision to Heirloom{" "}
+                  <span className="text-metallic-cold">in Five Steps</span>
+                </h1>
+                <p className="text-xl max-w-4xl">
+                  From first conversation to finished piece: how a commission
+                  moves through sketch, stone selection, metalwork, and setting.
+                  The process takes weeks because each step requires decisions
+                  that can't be rushed—the hand that wears the ring must shape
+                  its making.
+                </p>
+              </div>
+            </motion.div>
+          </Container>
+        </Section>
 
-          {/* Process Steps - Detailed */}
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            const isEven = index % 2 === 0;
+        {/* Process Steps - Detailed */}
+        {steps.map((step, index) => {
+          const Icon = step.icon;
+          const isEven = index % 2 === 0;
 
-            return (
-              <Section
-                key={index}
-                background={isEven ? "void" : "stone-dark"}
-                className="relative"
-              >
-                <Container className="relative z-10">
-                  <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    {/* Step Header */}
-                    <div className="flex gap-6 items-start mb-10">
-                      <div className="shrink-0">
-                        <div className="relative">
-                          <div className="w-24 h-24 bg-stone-deeper border border-fog/20 heavy-shadow flex items-center justify-center">
-                            <Icon className="w-10 h-10 text-pale-gold" />
-                          </div>
-                          <div className="absolute -top-2 -right-3 w-12 h-12 bg-deep-body border-2 border-pale-gold text-silver-white font-mono font-medium shadow-lg text-lg flex items-center justify-center">
-                            {step.number}
-                          </div>
+          return (
+            <Section
+              key={index}
+              background={isEven ? "void" : "stone-dark"}
+              className="relative"
+            >
+              <Container className="relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {/* Step Header */}
+                  <div className="flex gap-6 items-start mb-10">
+                    <div className="shrink-0">
+                      <div className="relative">
+                        <div className="w-24 h-24 bg-stone-deeper border border-fog/20 heavy-shadow flex items-center justify-center">
+                          <Icon className="w-10 h-10 text-pale-gold" />
                         </div>
-                      </div>
-
-                      <div className="flex flex-col gap-4 flex-1 pt-1">
-                        <h2 className="text-4xl">{step.title}</h2>
-                        <p className="text-xl text-pale-gold italic">
-                          {step.subtitle}
-                        </p>
-                        <p className="font-mono text-sm text-fog uppercase tracking-wider">
-                          Duration: {step.duration}
-                        </p>
+                        <div className="absolute -top-2 -right-3 w-12 h-12 bg-deep-body border-2 border-pale-gold text-silver-white font-mono font-medium shadow-lg text-lg flex items-center justify-center">
+                          {step.number}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Step Content */}
-                    <div className="flex flex-col gap-6 ml-32">
-                      <p className="text-lg">{step.description}</p>
+                    <div className="flex flex-col gap-4 flex-1 pt-1">
+                      <h2 className="text-4xl">{step.title}</h2>
+                      <p className="text-xl text-pale-gold italic">
+                        {step.subtitle}
+                      </p>
+                      <p className="font-mono text-sm text-fog uppercase tracking-wider">
+                        Duration: {step.duration}
+                      </p>
+                    </div>
+                  </div>
 
-                      {/* Details List */}
-                      <div className="bg-stone-deeper border border-fog/20 p-6">
-                        <div className="flex flex-col gap-6">
-                          <h3 className="font-mono text-sm text-pale-gold uppercase tracking-wider">
-                            What Happens:
-                          </h3>
-                          <ul className="flex flex-col gap-4">
-                            {step.details.map((detail, idx) => (
-                              <li
-                                key={idx}
-                                className="flex gap-4 items-baseline"
-                              >
-                                <ArrowRight className="w-5 h-5 text-pale-gold/60 flex-shrink-0 mt-1" />
-                                <span className="text-md">{detail}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
+                  {/* Step Content */}
+                  <div className="flex flex-col gap-6 ml-32">
+                    <p className="text-lg">{step.description}</p>
 
-                      {/* Context - no "why it matters" label */}
-                      <div className="border-l-2 border-pale-gold/30 pl-6">
-                        <p className="text-md italic">{step.whyItMatters}</p>
+                    {/* Details List */}
+                    <div className="bg-stone-deeper border border-fog/20 p-6">
+                      <div className="flex flex-col gap-6">
+                        <h3 className="font-mono text-sm text-pale-gold uppercase tracking-wider">
+                          What Happens:
+                        </h3>
+                        <ul className="flex flex-col gap-4">
+                          {step.details.map((detail, idx) => (
+                            <li key={idx} className="flex gap-4 items-baseline">
+                              <ArrowRight className="w-5 h-5 text-pale-gold/60 flex-shrink-0 mt-1" />
+                              <span className="text-md">{detail}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
 
-                    {index < steps.length - 1 && (
-                      <OrnamentalDivider className="mt-12" />
-                    )}
-                  </motion.div>
-                </Container>
-              </Section>
-            );
-          })}
+                    {/* Context - no "why it matters" label */}
+                    <div className="border-l-2 border-pale-gold/30 pl-6">
+                      <p className="text-md italic">{step.whyItMatters}</p>
+                    </div>
+                  </div>
 
-          {/* Final CTA */}
-          <Section background="stone-dark" className="relative">
-            <Container size="narrow" className="relative z-10 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="flex flex-col items-center gap-12">
-                  <h2 className="text-4xl">Ready to Begin?</h2>
-                  <p className="text-lg max-w-2xl">
-                    The first step is a consultation. We talk about what you
-                    want, what's possible, and whether commissioning from
-                    artisans 8,000 miles away makes sense for your specific
-                    needs.
-                  </p>
-                  <Link href="/consultation" className="btn-primary text-lg">
-                    Book a Free Consultation
-                  </Link>
-                </div>
-              </motion.div>
-            </Container>
-          </Section>
+                  {index < steps.length - 1 && (
+                    <OrnamentalDivider className="mt-12" />
+                  )}
+                </motion.div>
+              </Container>
+            </Section>
+          );
+        })}
+
+        {/* Final CTA */}
+        <Section background="stone-dark" className="relative">
+          <Container size="narrow" className="relative z-10 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex flex-col items-center gap-12">
+                <h2 className="text-4xl">Ready to Begin?</h2>
+                <p className="text-lg max-w-2xl">
+                  The first step is a consultation. We talk about what you want,
+                  what's possible, and whether commissioning from artisans 8,000
+                  miles away makes sense for your specific needs.
+                </p>
+                <Link href="/consultation" className="btn-primary text-lg">
+                  Book a Free Consultation
+                </Link>
+              </div>
+            </motion.div>
+          </Container>
+        </Section>
       </PageLayout>
     </>
   );

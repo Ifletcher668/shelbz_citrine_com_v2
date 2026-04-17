@@ -31,6 +31,8 @@ export const startBackend = () => invoke("start_backend");
 export const startStorybook = () => invoke("start_storybook");
 export const stopProcess = (process: string) => invoke("stop_process", { process });
 export const getProcessStatus = () => invoke<ProcessStatus>("get_process_status");
+/** Single-shot TCP ping — true when Strapi is actually accepting connections. */
+export const checkBackendHealth = () => invoke<boolean>("check_backend_health");
 
 // Git
 export const checkUpdates = () => invoke<GitInfo>("check_updates");
@@ -49,6 +51,7 @@ export interface DeployStatus {
 }
 export const deploy = () => invoke("deploy");
 export const getDeployStatus = () => invoke<DeployStatus>("get_deploy_status");
+export const publishImages = () => invoke("publish_images");
 
 // Logs
 export const getLog = (name: string) => invoke<string[]>("get_log", { name });
@@ -82,6 +85,12 @@ export const onDeployStep = (cb: (msg: string) => void): Promise<UnlistenFn> =>
 
 export const onDeployCiLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
   listen<string>("deploy:ci:log", (e) => cb(e.payload));
+
+export const onPublishImagesStep = (cb: (msg: string) => void): Promise<UnlistenFn> =>
+  listen<string>("images:publish:step", (e) => cb(e.payload));
+
+export const onPublishImagesLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
+  listen<string>("images:publish:log", (e) => cb(e.payload));
 
 export const onInstallLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
   listen<string>("install:log", (e) => cb(e.payload));

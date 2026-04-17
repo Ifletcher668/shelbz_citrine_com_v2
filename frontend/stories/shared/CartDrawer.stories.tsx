@@ -59,7 +59,7 @@ export const Empty: Story = {
       </CartProvider>
     ),
   ],
-  render: () => null,
+  render: () => <></>,
 };
 
 export const WithItems: Story = {
@@ -71,5 +71,5 @@ export const WithItems: Story = {
       </CartProvider>
     ),
   ],
-  render: () => null,
+  render: () => <></>,
 };
