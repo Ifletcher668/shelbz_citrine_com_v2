@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { publish, onPublishStep, onPublishCiLog, getDeployStatus, ProcessStatus } from "../lib/tauri";
+import { deploy, onDeployStep, onDeployCiLog, getDeployStatus, ProcessStatus } from "../lib/tauri";
 
 interface Props {
   status: ProcessStatus;
@@ -19,7 +19,7 @@ function formatLastDeployed(iso: string | null): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export function PublishFlow({ status, onClose }: Props) {
+export function DeployFlow({ status, onClose }: Props) {
   const [steps, setSteps] = useState<string[]>([]);
   const [ciLogs, setCiLogs] = useState<string[]>([]);
   const [ciExpanded, setCiExpanded] = useState(false);
@@ -37,11 +37,11 @@ export function PublishFlow({ status, onClose }: Props) {
       .then((s) => setLastDeployed(formatLastDeployed(s.last_deployed_at)))
       .catch(() => {});
 
-    onPublishStep((msg) => {
+    onDeployStep((msg) => {
       setSteps((prev) => [...prev, msg]);
     }).then((u) => { unlistenStepRef.current = u; });
 
-    onPublishCiLog((line) => {
+    onDeployCiLog((line) => {
       setCiLogs((prev) => [...prev, line]);
     }).then((u) => { unlistenCiRef.current = u; });
 
@@ -61,13 +61,13 @@ export function PublishFlow({ status, onClose }: Props) {
     return () => clearInterval(id);
   }, [running]);
 
-  async function handlePublish() {
+  async function handleDeploy() {
     setRunning(true);
     setError("");
     setSteps([]);
     setCiLogs([]);
     try {
-      await publish();
+      await deploy();
       setDone(true);
     } catch (e) {
       setError(String(e));
@@ -82,15 +82,15 @@ export function PublishFlow({ status, onClose }: Props) {
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="bg-zinc-900 border border-zinc-700 rounded-lg w-80 p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-100">Publish</h2>
+          <h2 className="text-sm font-semibold text-zinc-100">Deploy to Netlify</h2>
           <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 text-lg leading-none">×</button>
         </div>
 
         <p className="text-[10px] text-zinc-500">Last deployed: {lastDeployed}</p>
 
-        {backendRunning && !running && !done && (
+        {!backendRunning && !running && !done && (
           <div className="text-xs text-amber-400 bg-amber-950 rounded px-3 py-2">
-            Stop the CMS Admin before publishing.
+            Start the CMS backend before deploying.
           </div>
         )}
 
@@ -139,19 +139,19 @@ export function PublishFlow({ status, onClose }: Props) {
 
         {done && (
           <p className="text-xs text-emerald-400 bg-emerald-950 rounded px-3 py-2">
-            Published successfully!
+            Deployed successfully!
           </p>
         )}
 
         <div className="flex gap-2">
           {!done && (
             <button
-              onClick={handlePublish}
-              disabled={running || backendRunning}
-              title={backendRunning ? "Stop CMS Admin before publishing" : undefined}
+              onClick={handleDeploy}
+              disabled={running || !backendRunning}
+              title={!backendRunning ? "Start CMS backend before deploying" : undefined}
               className="flex-1 text-sm bg-emerald-700 hover:bg-emerald-600 text-white py-1.5 rounded disabled:opacity-40"
             >
-              {running ? "Publishing…" : "Publish"}
+              {running ? "Deploying…" : "Deploy"}
             </button>
           )}
           <button

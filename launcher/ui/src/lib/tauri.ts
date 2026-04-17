@@ -47,7 +47,7 @@ export interface DeployStatus {
   last_deployed_at: string | null;
   hook_configured: boolean;
 }
-export const publish = () => invoke("publish");
+export const deploy = () => invoke("deploy");
 export const getDeployStatus = () => invoke<DeployStatus>("get_deploy_status");
 
 // Logs
@@ -77,11 +77,11 @@ export const getWebviewUrl = (label: string) => invoke<string>("get_webview_url"
 export const onLog = (process: string, cb: (line: string) => void): Promise<UnlistenFn> =>
   listen<string>(`log:${process}`, (e) => cb(e.payload));
 
-export const onPublishStep = (cb: (msg: string) => void): Promise<UnlistenFn> =>
-  listen<string>("publish:step", (e) => cb(e.payload));
+export const onDeployStep = (cb: (msg: string) => void): Promise<UnlistenFn> =>
+  listen<string>("deploy:step", (e) => cb(e.payload));
 
-export const onPublishCiLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
-  listen<string>("publish:ci:log", (e) => cb(e.payload));
+export const onDeployCiLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
+  listen<string>("deploy:ci:log", (e) => cb(e.payload));
 
 export const onInstallLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
   listen<string>("install:log", (e) => cb(e.payload));

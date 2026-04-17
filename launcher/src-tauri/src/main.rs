@@ -114,7 +114,7 @@ fn main() {
             icloud::icloud_restore,
             icloud::icloud_status,
             // deploy
-            deploy::publish,
+            deploy::deploy,
             deploy::get_deploy_status,
             // logs
             logs::get_log,

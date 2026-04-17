@@ -1,14 +1,14 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import GalleryCms from '../GalleryCms';
-import { makeGallery, makeGalleryItem, makeGalleryGroup } from '../../__tests__/fixtures';
+import { makeGallery } from '../../__tests__/fixtures';
 
-jest.mock('../../../../lib/strapi', () => ({
+jest.mock('../../../../lib/strapi-cms/strapiApi', () => ({
   getStrapiMediaUrl: (url) => (url ? `http://localhost:1337${url}` : null),
   buildStrapiSrcSet: () => null,
 }));
 
 describe('GalleryCms', () => {
-  it('returns null when neither data nor galleries provided', () => {
+  it('returns null when data is not provided', () => {
     const { container } = render(<GalleryCms />);
     expect(container.firstChild).toBeNull();
   });
@@ -39,27 +39,6 @@ describe('GalleryCms', () => {
     expect(img).toHaveAttribute('src', 'http://localhost:1337/uploads/image1.jpg');
   });
 
-  it('does not render tab bar for a single gallery', () => {
-    render(<GalleryCms data={makeGallery({ pagination_id: '2023' })} />);
-    expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
-  });
-
-  it('renders tab bar when multiple galleries provided', () => {
-    render(<GalleryCms galleries={makeGalleryGroup()} />);
-    expect(screen.getByRole('tablist')).toBeInTheDocument();
-  });
-
-  it('renders a tab for each gallery in the group', () => {
-    render(<GalleryCms galleries={makeGalleryGroup()} />);
-    expect(screen.getAllByRole('tab')).toHaveLength(2);
-  });
-
-  it('shows the first gallery images by default', () => {
-    const galleries = makeGalleryGroup();
-    const { container } = render(<GalleryCms galleries={galleries} />);
-    expect(container.querySelectorAll('img')).toHaveLength(2);
-  });
-
   it('shows empty state message when Images array is empty', () => {
     render(<GalleryCms data={makeGallery({ Images: [] })} />);
     expect(screen.getByText(/no images/i)).toBeInTheDocument();
@@ -77,7 +56,7 @@ describe('GalleryCms', () => {
     expect(() => render(<GalleryCms data={gallery} />)).not.toThrow();
   });
 
-  it('renders a button tile (lightbox) for flat Images entries', () => {
+  it('renders a button tile (lightbox) for each image', () => {
     render(<GalleryCms data={makeGallery()} />);
     expect(screen.getAllByRole('button').length).toBeGreaterThan(0);
   });

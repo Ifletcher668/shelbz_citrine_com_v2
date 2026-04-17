@@ -33,7 +33,7 @@ interface Props {
   onTabChange: (tab: Tab) => void;
   status: ProcessStatus;
   onAction: (key: keyof ProcessStatus, running: boolean) => void;
-  onPublish: () => void;
+  onDeploy: () => void;
   onStarted: () => void;
 }
 
@@ -114,7 +114,7 @@ export function Sidebar({
   onTabChange,
   status,
   onAction,
-  onPublish,
+  onDeploy,
   onStarted,
 }: Props) {
   const [hovered, setHovered] = useState(false);
@@ -175,7 +175,7 @@ export function Sidebar({
 
         <SectionHeading>Actions</SectionHeading>
         <StatusPanel status={status} onAction={onAction} />
-        <ActionBar onPublish={onPublish} onStarted={onStarted} />
+        <ActionBar onDeploy={onDeploy} onStarted={onStarted} />
 
         <SectionHeading>iCloud</SectionHeading>
         <ICloudPanel />

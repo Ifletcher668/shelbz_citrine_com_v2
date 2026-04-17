@@ -2,12 +2,12 @@ import { useState } from "react";
 import { startFrontend, startBackend, stopProcess } from "../lib/tauri";
 
 interface Props {
-  onPublish: () => void;
+  onDeploy: () => void;
   onStarted: () => void;
   disabled?: boolean;
 }
 
-export function ActionBar({ onPublish, onStarted, disabled }: Props) {
+export function ActionBar({ onDeploy, onStarted, disabled }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   async function handleStartBoth() {
@@ -50,10 +50,10 @@ export function ActionBar({ onPublish, onStarted, disabled }: Props) {
         </button>
         <button
           disabled={disabled}
-          onClick={onPublish}
+          onClick={onDeploy}
           className="w-full text-sm bg-emerald-700 hover:bg-emerald-600 text-white py-1.5 rounded transition-colors disabled:opacity-40"
         >
-          Publish
+          Deploy
         </button>
       </div>
       {error && (

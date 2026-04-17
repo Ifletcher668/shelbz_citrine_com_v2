@@ -1,7 +1,6 @@
 import type { GetPageBySlugReturn } from "../../lib/strapi-cms/strapiApi";
 import RowCms from "./sections/RowCms";
 import GalleryCms from "./sections/GalleryCms";
-import { logger } from "../../lib/logger";
 
 type Props = {
   sections: GetPageBySlugReturn["sections"];
@@ -40,15 +39,11 @@ export default function DynamicZone(props: Props) {
               <GalleryCms key={key} data={section} className={positionClass} />
             );
           default: {
-            // Safe to ignore. Only here as a fallback in development
             // @ts-ignore
             const _exhaustive: never = section;
             if (process.env.NODE_ENV === "development") {
-              logger.error(
-                "DynamicZone",
-                new Error(
-                  `DynamicZone: unknown component type "${(_exhaustive as { __component: string }).__component}"`,
-                ),
+              console.warn(
+                `DynamicZone: unknown component type "${(_exhaustive as { __component: string }).__component}"`,
               );
             }
             return null;

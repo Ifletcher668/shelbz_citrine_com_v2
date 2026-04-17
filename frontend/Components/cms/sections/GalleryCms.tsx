@@ -20,6 +20,9 @@ interface GalleryCmsProps {
 
 export default function GalleryCms(props: GalleryCmsProps) {
   const { data, className } = props;
+
+  if (!data) return null;
+
   const {
     pagination_count,
     pagination_filter: _not_implemented,
@@ -76,17 +79,21 @@ export default function GalleryCms(props: GalleryCmsProps) {
 
           <OrnamentalDivider />
 
-          <div className="columns-2 md:columns-3 gap-4">
-            {imageData.map((item, index) => (
-              <GalleryImageTile
-                key={item.id ?? index}
-                image={item}
-                index={index}
-                isInView={isInView}
-                onOpenLightbox={() => setSelectedImage(item)}
-              />
-            ))}
-          </div>
+          {imageData.length === 0 ? (
+            <p className="text-center text-stone-grey italic text-sm">No images available.</p>
+          ) : (
+            <div className="columns-2 md:columns-3 gap-4">
+              {imageData.map((item, index) => (
+                <GalleryImageTile
+                  key={item.id ?? index}
+                  image={item}
+                  index={index}
+                  isInView={isInView}
+                  onOpenLightbox={() => setSelectedImage(item)}
+                />
+              ))}
+            </div>
+          )}
 
           {use_pagination && (
             <motion.div

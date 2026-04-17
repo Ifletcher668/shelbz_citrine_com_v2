@@ -43,26 +43,26 @@ fn read_netlify_hook_url(project_root: &std::path::Path) -> Result<String, Strin
 }
 
 #[tauri::command]
-pub async fn publish(
+pub async fn deploy(
     app: AppHandle,
     state: State<'_, Arc<AppState>>,
 ) -> Result<(), String> {
     let log_dir = state.log_dir();
 
-    // Step 1: ensure backend is stopped
+    // Step 1: ensure backend is running (needed for content access during build)
     let status = get_process_status(state.clone()).await?;
-    if status.backend {
-        return Err("Please stop the backend before publishing.".to_string());
+    if !status.backend {
+        return Err("Please start the CMS backend before deploying.".to_string());
     }
 
     let root = state.root();
 
     let step = |msg: &str| {
-        let _ = app.emit("publish:step", msg);
+        let _ = app.emit("deploy:step", msg);
         launcher_log(&app, &log_dir, &format!("[deploy] {msg}"));
     };
 
-    launcher_log(&app, &log_dir, "[deploy] Starting publish pipeline…");
+    launcher_log(&app, &log_dir, "[deploy] Starting deploy pipeline…");
 
     // Step 2: run frontend tests
     step("Running tests…");
@@ -70,7 +70,7 @@ pub async fn publish(
         &["workspace", "shelbz-citrine-frontend", "test", "--passWithNoTests", "--ci", "--watchAll=false"],
         &root,
         &app,
-        "publish:ci:log",
+        "deploy:ci:log",
         &log_dir,
     ).await.map_err(|e| { launcher_log(&app, &log_dir, &format!("[deploy] Tests failed: {e}")); e })?;
 
@@ -80,7 +80,7 @@ pub async fn publish(
         &["workspace", "shelbz-citrine-frontend", "build"],
         &root,
         &app,
-        "publish:ci:log",
+        "deploy:ci:log",
         &log_dir,
     ).await.map_err(|e| { launcher_log(&app, &log_dir, &format!("[deploy] Build failed: {e}")); e })?;
 
@@ -115,6 +115,6 @@ pub async fn publish(
     );
 
     step("Deploy triggered successfully!");
-    launcher_log(&app, &log_dir, "[deploy] Publish pipeline complete");
+    launcher_log(&app, &log_dir, "[deploy] Deploy pipeline complete");
     Ok(())
 }
