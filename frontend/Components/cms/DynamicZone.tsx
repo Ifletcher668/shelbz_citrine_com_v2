@@ -3,7 +3,7 @@ import RowCms from "./sections/RowCms";
 import GalleryCms from "./sections/GalleryCms";
 
 type Props = {
-  sections: GetPageBySlugReturn["sections"];
+  sections: NonNullable<GetPageBySlugReturn>["sections"];
 };
 
 export default function DynamicZone(props: Props) {

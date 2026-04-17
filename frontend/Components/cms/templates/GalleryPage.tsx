@@ -12,6 +12,8 @@ type Props = {
 };
 
 export default function GalleryPage({ page, mediaMetadata }: Props) {
+  if (!page) return null;
+
   const yearMedia =
     mediaMetadata?.filter((m) => String(m.metadata?.year) === page.title) ?? [];
 
