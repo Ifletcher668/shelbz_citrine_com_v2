@@ -7,22 +7,20 @@
 
 @theme {
   /* ============================================
-       12 Semantic Color Roles
-       Named by purpose, not appearance.
-       Each drives multiple CSS variables via theme.css.
+       Default/fallback theme in case Strapi theme doesn't populate
        ============================================ */
-  /* --color-bg-base: #000000;  */
-  /* --color-bg-raised: #0a0a0a;  */
-  /* --color-bg-inset: #141414;  */
-  /* --color-text-muted: #5a5a5a;  */
-  /* --color-text-body: #8c8273;  */
-  /* --color-text-heading: #e5e0d8;  */
-  /* --color-accent: #b4aa96;  */
-  /* --color-interactive: #291d0466;  */
-  /* --color-neutral: #424852;  */
-  /* --color-info: #b8c5d6;  */
-  /* --color-danger: #4a1a1a;  */
-  /* --color-success: #2d3a2e;  */
+  --color-bg-base: #000000;
+  --color-bg-raised: #0a0a0a;
+  --color-bg-inset: #141414;
+  --color-text-muted: #5a5a5a;
+  --color-text-body: #8c8273;
+  --color-text-heading: #e5e0d8;
+  --color-accent: #b4aa96;
+  --color-interactive: #291d0466;
+  --color-neutral: #424852;
+  --color-info: #b8c5d6;
+  --color-danger: #4a1a1a;
+  --color-success: #2d3a2e;
 
   /* Aesthetic color aliases — used throughout components as Tailwind utilities.
      Must live in @theme (not :root) for Tailwind v4 to generate utilities. */
@@ -35,7 +33,7 @@
   --color-pale-gold: #b4aa96;
   --color-aged-gold: #7a6a4a;
 
-  /* shadcn/ui compatibility aliases */
+  /* TODO: Not really fully implemented. */
   --color-border: rgb(60 60 60 / 0.2);
   --color-input: #0a0a0a;
   --color-ring: #b4aa96;
@@ -62,8 +60,6 @@
   --font-body: "Crimson Text", Georgia, serif;
   --font-ui: "Cinzel", serif;
   --font-mono: "IBM Plex Mono", "Courier New", monospace;
-  --font-serif: "Crimson Text", Georgia, serif;
-  --font-sans: "Cinzel", serif;
 
   /* Fluid Typography - Tailwind v4 format */
   /* Font sizes with sensible defaults - can override with leading-* or text-size/spacing */
@@ -329,35 +325,35 @@
   h1 {
     font-family: var(--font-display);
     font-size: var(--text-6xl);
-    line-height: var(--leading-none);
+    line-height: var(--text-6xl--line-height);
     font-weight: 300;
   }
 
   h2 {
     font-family: var(--font-display);
     font-size: var(--text-4xl);
-    line-height: var(--leading-tight);
+    line-height: var(--text-4xl--line-height);
     font-weight: 400;
   }
 
   h3 {
     font-family: var(--font-display);
     font-size: var(--text-3xl);
-    line-height: var(--leading-tight);
+    line-height: var(--text-3xl--line-height);
     font-weight: 500;
   }
 
   h4 {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
-    line-height: var(--leading-snug);
+    line-height: var(--text-2xl--line-height);
     font-weight: 500;
   }
 
   p {
     font-family: var(--font-body);
     font-size: var(--text-lg);
-    line-height: var(--leading-relaxed);
+    line-height: var(--text-lg--line-height);
     font-weight: 400;
     color: var(--color-text-body);
     overflow-wrap: break-word;

@@ -27,14 +27,6 @@
       "type": "string",
       "default": "\"IBM Plex Mono\", \"Courier New\", monospace"
     },
-    "font_serif": {
-      "type": "string",
-      "default": "\"Crimson Text\", Georgia, serif"
-    },
-    "font_sans": {
-      "type": "string",
-      "default": "\"Cinzel\", serif"
-    },
     "text_6xl": {
       "type": "string",
       "default": "clamp(3.5rem, 8vw, 5.5rem)"

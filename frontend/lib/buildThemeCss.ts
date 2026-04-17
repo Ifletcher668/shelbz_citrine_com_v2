@@ -33,8 +33,6 @@ export function buildThemeCss(theme: ActiveTheme): string {
       ["font_body", "--font-body"],
       ["font_ui", "--font-ui"],
       ["font_mono", "--font-mono"],
-      ["font_serif", "--font-serif"],
-      ["font_sans", "--font-sans"],
     ];
     for (const [field, cssVar] of fontEntries) {
       const val = typography[field];

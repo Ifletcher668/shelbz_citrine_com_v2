@@ -304,10 +304,6 @@ export interface ThemeTypography extends Struct.ComponentSchema {
       Schema.Attribute.DefaultTo<'"Cinzel", serif'>;
     font_mono: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'"IBM Plex Mono", "Courier New", monospace'>;
-    font_sans: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'"Cinzel", serif'>;
-    font_serif: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'"Crimson Text", Georgia, serif'>;
     font_ui: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'"Cinzel", serif'>;
     google_fonts_url: Schema.Attribute.String &

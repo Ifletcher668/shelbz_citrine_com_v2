@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
-import OrnamentalDivider, {
-  DividerLine,
-} from "../ornaments/OrnamentalDivider";
+import OrnamentalDivider, { DividerLine } from "../ornaments/OrnamentalDivider";
 import BackgroundTexture from "../shared/BackgroundTexture";
 import { useFooterData } from "../../lib/FooterDataContext";
 
@@ -117,7 +115,7 @@ export default function Footer() {
         {/* Bottom Row */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-5">
           <p className="font-mono text-xs text-fog/90 tracking-wide">
-            &copy; {currentYear} {copyrightCompanyName}. All rights reserved.
+            &copy; {currentYear} {copyrightCompanyName} All rights reserved.
           </p>
 
           {/* TODO: Still hardcoded */}
