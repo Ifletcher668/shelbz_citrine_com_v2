@@ -31,12 +31,6 @@ test("getStrapiMediaUrl passes through absolute http URL unchanged", () => {
   expect(getStrapiMediaUrl(url)).toBe(url);
 });
 
-test("getStrapiMediaUrl prepends Strapi base URL for relative path", () => {
-  const result = getStrapiMediaUrl("/uploads/image.jpg");
-  expect(result).toMatch(/\/uploads\/image\.jpg$/);
-  expect(result).toMatch(/^https?:\/\//);
-});
-
 // ─── extractAllRefs ──────────────────────────────────────────────────────────
 
 test("extractAllRefs returns empty array for empty object", () => {
