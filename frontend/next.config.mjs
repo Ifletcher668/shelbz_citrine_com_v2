@@ -32,33 +32,25 @@ function bootstrapTypes() {
     execFileSync("node", args, { stdio: "inherit" });
   } else {
     // Strapi will be offline — fall back to committed schema snapshot
-    const committed = path.resolve(__dirname, "strapi-schema", "types.d.ts");
-    const dest = path.join(getStrapiDist(), "types.d.ts");
-
-    if (fs.existsSync(committed)) {
-      fs.copyFileSync(committed, dest);
-    }
-  }
-}
-
-// client.js dynamically imports schema-meta.js (for validateSchema only).
-// The generator writes types.d.ts but not .js, causing a webpack warning.
-// Copy it once so the module resolver can find it.
-function ensureSchemaMetaJs() {
-  try {
     const distDir = getStrapiDist();
-    const metaTs = path.join(distDir, "types.d.ts");
-    const metaJs = path.join(distDir, "schema-meta.js");
-    if (fs.existsSync(metaTs) && !fs.existsSync(metaJs)) {
-      fs.writeFileSync(metaJs, fs.readFileSync(metaTs, "utf-8"), "utf-8");
+    const schemaDir = path.resolve(__dirname, "strapi-schema");
+    const filesToCopy = [
+      "types.d.ts",
+      "index.js",
+      "client.js",
+      "types.js",
+      "schema-meta.js",
+    ];
+    for (const file of filesToCopy) {
+      const src = path.join(schemaDir, file);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, path.join(distDir, file));
+      }
     }
-  } catch {
-    /* non-fatal */
   }
 }
 
 bootstrapTypes();
-ensureSchemaMetaJs();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
