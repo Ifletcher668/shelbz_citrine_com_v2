@@ -1,7 +1,7 @@
 [build]
   base = "frontend"
   publish = "out"
-  command = "npm run build"
+  command = "yarn build"
   ignore = "exit 0"  # Skip git-triggered builds; deploys must be triggered via deploy hook
 
 [build.environment]

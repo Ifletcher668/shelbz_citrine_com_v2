@@ -1,4 +1,8 @@
 module.exports = ({ env }) => ({
+  "css-editor": {
+    enabled: true,
+    resolve: "./src/plugins/css-editor",
+  },
   "wysiwyg-editor": {
     enabled: true,
     resolve: "./src/plugins/wysiwyg-editor",

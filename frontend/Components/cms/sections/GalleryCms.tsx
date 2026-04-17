@@ -1,58 +1,57 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import Link from "next/link";
-import { Section, Container } from "../../layout/Section";
 import OrnamentalDivider from "../../ornaments/OrnamentalDivider";
 import BackgroundTexture from "../../shared/BackgroundTexture";
-import type { StrapiCms } from "../../../lib/types";
+import type { GetPageBySlugMediaGallerySection } from "../../../lib/strapi-cms/strapiApi";
 import {
   getStrapiMediaUrl,
   buildStrapiSrcSet,
 } from "../../../lib/strapi-cms/strapiApi";
+import { logger } from "../../../lib/logger";
+import type { MediaFile } from "strapi-typed-client";
 
 interface GalleryCmsProps {
-  data?: StrapiCms.MediaGallery;
-  galleries?: StrapiCms.MediaGallery[];
+  data: GetPageBySlugMediaGallerySection;
   className?: string;
 }
 
-interface GalleryItem {
-  image: StrapiCms.MediaFile;
-  path: string | null;
-}
+export default function GalleryCms(props: GalleryCmsProps) {
+  const { data, className } = props;
 
-/**
- * GalleryCms — CMS-driven image gallery with optional tab-based or route-based pagination.
- *
- * Props (two modes):
- *   data       — Single StrapiMediaGallery entry (route-paginated page or solo gallery)
- *   galleries  — Array of StrapiMediaGallery entries (tab mode; grouped by DynamicZone)
- *   className  — Optional positioning class from DynamicZone
- */
-export default function GalleryCms({
-  data,
-  galleries,
-  className,
-}: GalleryCmsProps) {
+  const {
+    pagination_count,
+    pagination_filter: _not_implemented,
+    title,
+    use_pagination,
+    Images,
+  } = data;
+
+  logger.warn({
+    message: "pagination_filter feature is not implemented.",
+  });
+
+  const images: MediaFile[] = Images ?? [];
+
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [selectedImage, setSelectedImage] =
-    useState<StrapiCms.MediaFile | null>(null);
-  const [activeTab, setActiveTab] = useState(0);
+  const [selectedImage, setSelectedImage] = useState<MediaFile | null>(null);
 
-  // Normalise to an array so the rest of the component has one path
-  const galleryList = galleries?.length ? galleries : data ? [data] : [];
-  const activeGallery = galleryList[activeTab] ?? null;
-  const hasMultipleTabs = galleryList.length > 1;
+  // Using state to augment if use_pagination is true, varied by pagination_count or pagination_filter
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [imageData, setImageData] = useState(images);
 
-  if (!activeGallery) return null;
+  // Set state based on pagination count
+  const usePaginationCount = use_pagination && pagination_count;
+  useEffect(() => {
+    if (usePaginationCount) {
+      const paginatedImages = paginateImages(images, pagination_count);
 
-  const { title, Images } = activeGallery;
-  const galleryItems: GalleryItem[] = (Images ?? []).map((image) => ({
-    image,
-    path: null,
-  }));
+      setTotalPages(paginatedImages.length);
+      setImageData(paginatedImages[currentPage]);
+    }
+  }, [currentPage]);
 
   return (
     <section
@@ -60,7 +59,7 @@ export default function GalleryCms({
       className={`section bg-stone-dark relative ${className ?? ""}`}
     >
       <BackgroundTexture variant="gallery" opacity={0.04} />
-      <div className="absolute inset-0 bg-gradient-to-b from-void/40 via-transparent to-void/40" />
+      <div className="absolute inset-0 bg-linear-to-b from-void/40 via-transparent to-void/40" />
 
       <div className="section-container relative z-10">
         <div className="flex flex-col gap-12">
@@ -76,65 +75,65 @@ export default function GalleryCms({
             </motion.div>
           )}
 
-          {/* Tab bar — only shown when multiple galleries are present */}
-          {hasMultipleTabs && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.8,
-                delay: 0.2,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="flex flex-wrap justify-center gap-1 border border-fog/20"
-              role="tablist"
-              aria-label="Gallery years"
-            >
-              {galleryList.map((gallery, i) => {
-                const tabLabel = gallery.title ?? `Group ${i + 1}`;
-                return (
-                  <button
-                    key={gallery.id ?? i}
-                    role="tab"
-                    aria-selected={i === activeTab}
-                    onClick={() => setActiveTab(i)}
-                    className={`font-mono text-xs uppercase tracking-wider px-5 py-2 transition-all duration-300 ${
-                      i === activeTab
-                        ? "bg-pale-gold/15 text-pale-gold border-b border-pale-gold"
-                        : "text-stone-grey hover:text-silver-white hover:bg-fog/5"
-                    }`}
-                  >
-                    {tabLabel}
-                  </button>
-                );
-              })}
-            </motion.div>
-          )}
-
           <OrnamentalDivider />
 
-          {/* Image grid */}
-          {galleryItems.length > 0 ? (
+          {imageData.length === 0 ? (
+            <p className="text-center text-stone-grey italic text-sm">
+              No images available.
+            </p>
+          ) : (
             <div className="columns-2 md:columns-3 gap-4">
-              {galleryItems.map((item, index) => (
+              {imageData.map((item, index) => (
                 <GalleryImageTile
-                  key={item.image?.id ?? index}
-                  item={item}
+                  key={item.id ?? index}
+                  image={item}
                   index={index}
                   isInView={isInView}
-                  onOpenLightbox={() => setSelectedImage(item.image)}
+                  onOpenLightbox={() => setSelectedImage(item)}
                 />
               ))}
             </div>
-          ) : (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.8 }}
-              className="text-center text-fog italic text-sm"
+          )}
+
+          {use_pagination && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex items-center justify-center gap-6"
             >
-              No images in this gallery yet.
-            </motion.p>
+              <button
+                onClick={() => {
+                  // use requestAnimationFrame to trigger the scroll on the very next frame after setCurrentPage causes React to re-render.
+                  requestAnimationFrame(() => {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  });
+
+                  return setCurrentPage((p) => Math.max(0, p - 1));
+                }}
+                disabled={currentPage === 0}
+                className="font-mono text-xs uppercase tracking-wider px-5 py-2 border border-fog/20 text-stone-grey hover:text-silver-white hover:border-pale-gold/40 transition-all duration-300 disabled:opacity-40 disabled:pointer-events-none"
+              >
+                ← Previous
+              </button>
+              <span className="font-mono text-xs text-stone-grey uppercase tracking-wider">
+                {currentPage + 1} / {totalPages}
+              </span>
+              <button
+                onClick={() => {
+                  // use requestAnimationFrame to trigger the scroll on the very next frame after setCurrentPage causes React to re-render.
+                  requestAnimationFrame(() => {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  });
+
+                  return setCurrentPage((p) => Math.min(totalPages - 1, p + 1));
+                }}
+                disabled={currentPage === totalPages - 1}
+                className="font-mono text-xs uppercase tracking-wider px-5 py-2 border border-fog/20 text-stone-grey hover:text-silver-white hover:border-pale-gold/40 transition-all duration-300 disabled:opacity-40 disabled:pointer-events-none"
+              >
+                Next →
+              </button>
+            </motion.div>
           )}
         </div>
       </div>
@@ -152,22 +151,33 @@ export default function GalleryCms({
   );
 }
 
+function paginateImages(array: MediaFile[], size: number) {
+  const matrix = [];
+  for (let i = 0; i < array.length; i += size) {
+    matrix.push(array.slice(i, i + size));
+  }
+  return matrix;
+}
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
 function GalleryImageTile({
-  item,
+  image,
   index,
   isInView,
   onOpenLightbox,
 }: {
-  item: GalleryItem;
+  image: MediaFile;
   index: number;
   isInView: boolean;
   onOpenLightbox: () => void;
 }) {
-  const { image, path } = item;
   const src = getStrapiMediaUrl(image.url);
   const srcSet = buildStrapiSrcSet(image);
+  const [loaded, setLoaded] = useState(false);
+
+  // Derive aspect ratio from Strapi metadata to prevent layout shifts
+  const aspectRatio =
+    image.width && image.height ? image.width / image.height : null;
 
   const tileClassName =
     "group relative cursor-pointer overflow-hidden border border-fog/20 heavy-shadow transition-all duration-700 hover:border-pale-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-pale-gold break-inside-avoid mb-4 block";
@@ -191,14 +201,32 @@ function GalleryImageTile({
       <div className="absolute bottom-0 right-0 w-8 h-8 border-r border-b border-pale-gold/20 group-hover:border-pale-gold/60 transition-colors duration-700 z-10" />
 
       {src ? (
-        <img
-          src={src}
-          srcSet={srcSet ?? undefined}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
-          alt={image.alternativeText || ""}
-          className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
-          loading="lazy"
-        />
+        <div
+          className="relative w-full overflow-hidden"
+          style={aspectRatio ? { aspectRatio: String(aspectRatio) } : undefined}
+        >
+          {/* Skeleton — visible until image loads */}
+          {!loaded && (
+            <div className="absolute inset-0 z-5">
+              <div className="w-full h-full bg-stone-deeper animate-pulse" />
+              {/* Shimmer sweep */}
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.8s_ease-in-out_infinite] bg-linear-to-r from-transparent via-pale-gold/5 to-transparent" />
+              {/* Subtle inner border echo */}
+              <div className="absolute inset-3 border border-fog/10" />
+            </div>
+          )}
+          <img
+            src={src}
+            srcSet={srcSet ?? undefined}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
+            alt={image.alternativeText || ""}
+            onLoad={() => setLoaded(true)}
+            className={`w-full h-auto block transition-all duration-700 group-hover:scale-105 ${
+              loaded ? "opacity-100" : "opacity-0"
+            }`}
+            loading="lazy"
+          />
+        </div>
       ) : null}
 
       {/* Hover overlay */}
@@ -214,19 +242,6 @@ function GalleryImageTile({
       )}
     </>
   );
-
-  if (path) {
-    return (
-      <motion.div {...motionProps} className={tileClassName}>
-        <Link
-          href={path}
-          aria-label={image.alternativeText || `Go to ${path}`}
-        >
-          {innerContent}
-        </Link>
-      </motion.div>
-    );
-  }
 
   return (
     <motion.button
@@ -244,7 +259,7 @@ function GalleryLightbox({
   image,
   onClose,
 }: {
-  image: StrapiCms.MediaFile;
+  image: MediaFile;
   onClose: () => void;
 }) {
   const src = getStrapiMediaUrl(image.url);

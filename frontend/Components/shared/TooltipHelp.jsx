@@ -8,18 +8,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 
-/**
- * TooltipHelp - Inline help tooltip component
- *
- * Wraps text with a subtle help icon that shows additional information on hover.
- * Icon scales automatically with font size for consistent inline appearance.
- *
- * @param {string} children - The text to display inline
- * @param {string|React.ReactNode} tooltip - The tooltip content to show on hover
- * @param {number} delayDuration - Delay before tooltip appears in ms (default: 200)
- * @param {number} sideOffset - Distance from trigger element in px (default: 8)
- * @param {string} className - Additional classes for the wrapper span
- */
 export default function TooltipHelp({
   children,
   tooltip,

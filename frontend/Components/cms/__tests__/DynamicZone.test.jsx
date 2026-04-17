@@ -108,17 +108,13 @@ describe('DynamicZone', () => {
     expect(el).toHaveAttribute('data-mode', 'single');
   });
 
-  it('groups consecutive client-paginated galleries into tab mode', () => {
+  it('renders multiple galleries as separate elements', () => {
     const sections = [
-      makeGallery({ id: 10, pagination_id: '2023', use_new_page_pagination: false }),
-      makeGallery({ id: 11, pagination_id: '2024', use_new_page_pagination: false }),
+      makeGallery({ id: 10, pagination_id: '2023' }),
+      makeGallery({ id: 11, pagination_id: '2024' }),
     ];
     render(<DynamicZone sections={sections} />);
-    const galleries = screen.getAllByTestId('gallery-cms');
-    // Two client-paginated galleries → grouped into one GalleryCms in tabs mode
-    expect(galleries).toHaveLength(1);
-    expect(galleries[0]).toHaveAttribute('data-mode', 'tabs');
-    expect(galleries[0]).toHaveTextContent('galleries:2');
+    expect(screen.getAllByTestId('gallery-cms')).toHaveLength(2);
   });
 
   it('does not group route-paginated gallery with client-paginated gallery', () => {

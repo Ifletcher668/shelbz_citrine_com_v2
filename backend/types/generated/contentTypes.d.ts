@@ -704,6 +704,37 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMediaMetadataMediaMetadata
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'medias_metadata';
+  info: {
+    displayName: 'MediaMetadata';
+    pluralName: 'medias-metadata';
+    singularName: 'media-metadata';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::media-metadata.media-metadata'
+    > &
+      Schema.Attribute.Private;
+    Media: Schema.Attribute.Media<'images' | 'videos' | 'audios' | 'files'> &
+      Schema.Attribute.Required;
+    metadata: Schema.Attribute.JSON & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiNavigationNavigation extends Struct.CollectionTypeSchema {
   collectionName: 'navigations';
   info: {
@@ -736,6 +767,43 @@ export interface ApiNavigationNavigation extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiPageTemplatePageTemplate
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'page_templates';
+  info: {
+    displayName: 'Page Template';
+    pluralName: 'page-templates';
+    singularName: 'page-template';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::page-template.page-template'
+    > &
+      Schema.Attribute.Private;
+    pages: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.Enumeration<
+      ['default_page', 'gallery_page', 'blog_page']
+    >;
+    Template: Schema.Attribute.Enumeration<
+      ['Default', 'Gallery Page', 'Blog Page']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Default'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
@@ -751,10 +819,16 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    custom_css: Schema.Attribute.Text &
+      Schema.Attribute.CustomField<'plugin::css-editor.css-editor'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::page.page'> &
       Schema.Attribute.Private;
-    parent_pages: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
+    page_template: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::page-template.page-template'
+    >;
+    parent_page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
     publishedAt: Schema.Attribute.DateTime;
     sections: Schema.Attribute.DynamicZone<
       ['sections.row', 'sections.media-gallery']
@@ -764,8 +838,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         maxLength: 320;
       }>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
-    sub_page: Schema.Attribute.Relation<'manyToOne', 'api::page.page'>;
-    theme_overrides: Schema.Attribute.JSON;
+    sub_pages: Schema.Attribute.Relation<'oneToMany', 'api::page.page'>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -1373,7 +1446,9 @@ declare module '@strapi/strapi' {
       'api::faq.faq': ApiFaqFaq;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
+      'api::media-metadata.media-metadata': ApiMediaMetadataMediaMetadata;
       'api::navigation.navigation': ApiNavigationNavigation;
+      'api::page-template.page-template': ApiPageTemplatePageTemplate;
       'api::page.page': ApiPagePage;
       'api::step-group.step-group': ApiStepGroupStepGroup;
       'api::theme.theme': ApiThemeTheme;

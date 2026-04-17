@@ -6,6 +6,7 @@ import { cn } from "../../lib/utils";
 
 const Accordion = AccordionPrimitive.Root;
 
+/** @type {React.ForwardRefExoticComponent<import("@radix-ui/react-accordion").AccordionItemProps & React.RefAttributes<HTMLDivElement>>} */
 const AccordionItem = React.forwardRef(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
@@ -15,6 +16,7 @@ const AccordionItem = React.forwardRef(({ className, ...props }, ref) => (
 ));
 AccordionItem.displayName = "AccordionItem";
 
+/** @type {React.ForwardRefExoticComponent<import("@radix-ui/react-accordion").AccordionTriggerProps & React.RefAttributes<HTMLButtonElement>>} */
 const AccordionTrigger = React.forwardRef(
   ({ className, children, ...props }, ref) => (
     <AccordionPrimitive.Header className="flex">
@@ -34,6 +36,7 @@ const AccordionTrigger = React.forwardRef(
 );
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
+/** @type {React.ForwardRefExoticComponent<import("@radix-ui/react-accordion").AccordionContentProps & React.RefAttributes<HTMLDivElement>>} */
 const AccordionContent = React.forwardRef(
   ({ className, children, ...props }, ref) => (
     <AccordionPrimitive.Content

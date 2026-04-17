@@ -1,0 +1,11 @@
+{
+  "name": "css-editor",
+  "version": "1.0.0",
+  "description": "Custom CSS editor field for Strapi",
+  "strapi": {
+    "name": "css-editor",
+    "displayName": "CSS Editor",
+    "description": "CSS editor with syntax highlighting, auto-paired brackets, and autocomplete",
+    "kind": "plugin"
+  }
+}

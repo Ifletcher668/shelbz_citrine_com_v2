@@ -9,6 +9,7 @@ import {
   buildStrapiSrcSet,
 } from "../../lib/strapi-cms/strapiApi";
 import { useNavigation } from "../../lib/NavigationContext";
+import { FourCornerFlourish } from "../ornaments/CornerFlourish";
 
 /**
  * Header Component
@@ -59,32 +60,6 @@ const navLinkVariants = {
     transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
   },
 };
-
-/**
- * Resolve a nav-link to { href, label, subNavigation, isExternal }.
- * Priority: page relation → path (internal) → url (external)
- * isExternal=true means it should open in a new tab.
- */
-function resolveLink(link) {
-  const href = link.page
-    ? link.page.slug === "home"
-      ? "/"
-      : `/${link.page.slug}`
-    : link.path
-      ? link.path
-      : (link.url ?? "#");
-  const isExternal = !link.page && !link.path && !!link.url;
-  return {
-    href,
-    label: link.label || link.page?.title || "",
-    subNavigation: link.sub_navigation ?? null,
-    isExternal,
-  };
-}
-
-function resolveLinks(links) {
-  return (links ?? []).map(resolveLink);
-}
 
 function LogoContent({ primaryItem }) {
   if (
@@ -168,8 +143,7 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleMouseDown);
   }, [openSubNav]);
 
-  const navigationEntry = cmsData?.navigation ?? null;
-  const navLinks = resolveLinks(navigationEntry?.links);
+  const navLinks = cmsData?.navLinks ?? [];
 
   const primaryItem = cmsData?.primary?.[0] ?? null;
   const logoLink = primaryItem?.link || FALLBACK_PRIMARY.link;
@@ -197,6 +171,7 @@ export default function Header() {
         }`}
       >
         <BackgroundTexture variant="rune" opacity={0.0032} />
+        <FourCornerFlourish />
         <div className="px-6 lg:px-10">
           <motion.nav
             variants={headerRowVariants}
@@ -241,54 +216,49 @@ export default function Header() {
                     <button
                       onClick={() =>
                         setOpenSubNav(
-                          openSubNav === link.subNavigation.id
-                            ? null
-                            : link.subNavigation.id,
+                          openSubNav === link.href ? null : link.href,
                         )
                       }
                       className="group flex items-center gap-1 font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500"
-                      aria-expanded={openSubNav === link.subNavigation.id}
+                      aria-expanded={openSubNav === link.href}
                       aria-haspopup="true"
                     >
                       {link.label}
                       <ChevronDown
                         className={`w-3 h-3 transition-transform duration-300 ${
-                          openSubNav === link.subNavigation.id
-                            ? "rotate-180"
-                            : ""
+                          openSubNav === link.href ? "rotate-180" : ""
                         }`}
                       />
                     </button>
                     <div
                       className={`absolute top-full left-0 mt-2 min-w-[160px] bg-stone-dark border border-fog/20 shadow-lg z-50 transition-all duration-300 origin-top ${
-                        openSubNav === link.subNavigation.id
+                        openSubNav === link.href
                           ? "opacity-100 scale-y-100 pointer-events-auto"
                           : "opacity-0 scale-y-95 pointer-events-none"
                       }`}
                     >
-                      {resolveLinks(link.subNavigation.links).map(
-                        (subLink, j) =>
-                          subLink.isExternal ? (
-                            <a
-                              key={j}
-                              href={subLink.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => setOpenSubNav(null)}
-                              className="block px-4 py-2 font-mono text-sm text-stone-grey hover:text-silver-white hover:bg-fog/5 uppercase tracking-wider transition-colors duration-300 no-underline"
-                            >
-                              {subLink.label}
-                            </a>
-                          ) : (
-                            <Link
-                              key={j}
-                              href={subLink.href}
-                              onClick={() => setOpenSubNav(null)}
-                              className="block px-4 py-2 font-mono text-sm text-stone-grey hover:text-silver-white hover:bg-fog/5 uppercase tracking-wider transition-colors duration-300 no-underline"
-                            >
-                              {subLink.label}
-                            </Link>
-                          ),
+                      {(link.subNavigation ?? []).map((subLink, j) =>
+                        subLink.isExternal ? (
+                          <a
+                            key={j}
+                            href={subLink.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setOpenSubNav(null)}
+                            className="block px-4 py-2 font-mono text-sm text-stone-grey hover:text-silver-white hover:bg-fog/5 uppercase tracking-wider transition-colors duration-300 no-underline"
+                          >
+                            {subLink.label}
+                          </a>
+                        ) : (
+                          <Link
+                            key={j}
+                            href={subLink.href}
+                            onClick={() => setOpenSubNav(null)}
+                            className="block px-4 py-2 font-mono text-sm text-stone-grey hover:text-silver-white hover:bg-fog/5 uppercase tracking-wider transition-colors duration-300 no-underline"
+                          >
+                            {subLink.label}
+                          </Link>
+                        ),
                       )}
                     </div>
                   </motion.div>
@@ -430,9 +400,7 @@ export default function Header() {
                           <button
                             onClick={() =>
                               setOpenSubNav(
-                                openSubNav === link.subNavigation.id
-                                  ? null
-                                  : link.subNavigation.id,
+                                openSubNav === link.href ? null : link.href,
                               )
                             }
                             className="flex items-center justify-between w-full font-mono text-lg text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 py-1"
@@ -440,9 +408,7 @@ export default function Header() {
                             {link.label}
                             <ChevronDown
                               className={`w-4 h-4 transition-transform duration-300 ${
-                                openSubNav === link.subNavigation.id
-                                  ? "rotate-180"
-                                  : ""
+                                openSubNav === link.href ? "rotate-180" : ""
                               }`}
                             />
                           </button>
@@ -452,41 +418,38 @@ export default function Header() {
                             style={{
                               display: "grid",
                               gridTemplateRows:
-                                openSubNav === link.subNavigation.id
-                                  ? "1fr"
-                                  : "0fr",
+                                openSubNav === link.href ? "1fr" : "0fr",
                             }}
                           >
                             <div className="min-h-0 pl-4 flex flex-col gap-3 pt-3 pb-1">
-                              {resolveLinks(link.subNavigation.links).map(
-                                (subLink, j) =>
-                                  subLink.isExternal ? (
-                                    <a
-                                      key={j}
-                                      href={subLink.href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={() => {
-                                        setIsMobileMenuOpen(false);
-                                        setOpenSubNav(null);
-                                      }}
-                                      className="font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 py-1 no-underline"
-                                    >
-                                      {subLink.label}
-                                    </a>
-                                  ) : (
-                                    <Link
-                                      key={j}
-                                      href={subLink.href}
-                                      onClick={() => {
-                                        setIsMobileMenuOpen(false);
-                                        setOpenSubNav(null);
-                                      }}
-                                      className="font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 py-1 no-underline"
-                                    >
-                                      {subLink.label}
-                                    </Link>
-                                  ),
+                              {(link.subNavigation ?? []).map((subLink, j) =>
+                                subLink.isExternal ? (
+                                  <a
+                                    key={j}
+                                    href={subLink.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => {
+                                      setIsMobileMenuOpen(false);
+                                      setOpenSubNav(null);
+                                    }}
+                                    className="font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 py-1 no-underline"
+                                  >
+                                    {subLink.label}
+                                  </a>
+                                ) : (
+                                  <Link
+                                    key={j}
+                                    href={subLink.href}
+                                    onClick={() => {
+                                      setIsMobileMenuOpen(false);
+                                      setOpenSubNav(null);
+                                    }}
+                                    className="font-mono text-base text-stone-grey hover:text-silver-white uppercase tracking-wider transition-colors duration-500 py-1 no-underline"
+                                  >
+                                    {subLink.label}
+                                  </Link>
+                                ),
                               )}
                             </div>
                           </div>

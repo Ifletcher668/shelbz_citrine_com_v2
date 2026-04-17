@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { parseWithRelations } from "../../lib/marked-extensions";
 import { useRelations } from "../../lib/RelationsContext";
-import { useMediaMap } from "../../lib/MediaContext";
+import { useStrapiMedia } from "../../lib/MediaContext";
 import ContactFormEmbed from "./ContactFormEmbed";
 
 export default function RichContent({
@@ -11,7 +11,8 @@ export default function RichContent({
   as: Tag = "div",
 }) {
   const relations = useRelations();
-  const mediaMap = useMediaMap();
+  const strapiMedia = useStrapiMedia();
+  const mediaMap = strapiMedia.mediaMap;
   const containerRef = useRef(null);
   const [portals, setPortals] = useState([]);
 

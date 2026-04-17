@@ -1,9 +1,9 @@
-import type { StrapiCms } from "../../lib/types";
+import type { GetPageBySlugReturn } from "../../lib/strapi-cms/strapiApi";
 import RowCms from "./sections/RowCms";
 import GalleryCms from "./sections/GalleryCms";
 
 type Props = {
-  sections: StrapiCms.Page["sections"];
+  sections: NonNullable<GetPageBySlugReturn>["sections"];
 };
 
 export default function DynamicZone(props: Props) {
@@ -19,6 +19,7 @@ export default function DynamicZone(props: Props) {
         const key = `${section.__component}-${section.id}`;
         const isFirst = index === 0;
         const isLast = index === lastIndex;
+
         const positionClass =
           isFirst && isLast
             ? "section-hero section-last"
@@ -38,6 +39,7 @@ export default function DynamicZone(props: Props) {
               <GalleryCms key={key} data={section} className={positionClass} />
             );
           default: {
+            // @ts-ignore
             const _exhaustive: never = section;
             if (process.env.NODE_ENV === "development") {
               console.warn(

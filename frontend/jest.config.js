@@ -13,6 +13,8 @@ const customConfig = {
     '^marked$': '<rootDir>/node_modules/marked/lib/marked.umd.js',
     // Always use our manual framer-motion mock (avoids jsdom layout API issues)
     '^framer-motion$': '<rootDir>/__mocks__/framer-motion.js',
+    // strapi-typed-client is ESM-only; swap in a CJS stub for Jest
+    '^strapi-typed-client$': '<rootDir>/__mocks__/strapi-typed-client.js',
   },
   // Only treat *.test.* and *.spec.* files as tests (fixtures.js lives in __tests__ dirs)
   testMatch: ['**/*.test.[jt]s?(x)', '**/*.spec.[jt]s?(x)'],

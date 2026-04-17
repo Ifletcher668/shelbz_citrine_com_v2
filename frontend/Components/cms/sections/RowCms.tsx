@@ -2,10 +2,10 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Section, Container } from "../../layout/Section";
 import RichContent from "../../shared/RichContent";
-import type { StrapiCms } from "../../../lib/types";
+import { GetPageBySlugRowSection } from "../../../lib/strapi-cms/strapiApi";
 
 interface RowCmsProps {
-  data: StrapiCms.Row | undefined;
+  data: GetPageBySlugRowSection;
   className?: string;
 }
 

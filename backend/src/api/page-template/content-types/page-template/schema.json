@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "page_templates",
+  "info": {
+    "singularName": "page-template",
+    "pluralName": "page-templates",
+    "displayName": "Page Template"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "pages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::page.page",
+      "mappedBy": "page_template"
+    },
+    "Template": {
+      "type": "enumeration",
+      "required": true,
+      "default": "Default",
+      "enum": [
+        "Default",
+        "Gallery Page",
+        "Blog Page"
+      ]
+    },
+    "slug": {
+      "type": "enumeration",
+      "enum": [
+        "default_page",
+        "gallery_page",
+        "blog_page"
+      ]
+    }
+  }
+}

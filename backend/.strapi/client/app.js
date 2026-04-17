@@ -3,6 +3,7 @@
  * Any modifications made will be discarded.
  */
 import usersPermissions from "@strapi/plugin-users-permissions/strapi-admin";
+import cssEditor from "../../src/plugins/css-editor/strapi-admin";
 import wysiwygEditor from "../../src/plugins/wysiwyg-editor/strapi-admin";
 import colorPicker from "../../src/plugins/color-picker/strapi-admin";
 import formLayoutEditor from "../../src/plugins/form-layout-editor/strapi-admin";
@@ -11,6 +12,7 @@ import { renderAdmin } from "@strapi/strapi/admin";
 renderAdmin(document.getElementById("strapi"), {
   plugins: {
     "users-permissions": usersPermissions,
+    "css-editor": cssEditor,
     "wysiwyg-editor": wysiwygEditor,
     "color-picker": colorPicker,
     "form-layout-editor": formLayoutEditor,

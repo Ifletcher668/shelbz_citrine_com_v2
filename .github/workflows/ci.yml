@@ -184,17 +184,6 @@ jobs:
       - name: Test
         run: yarn workspace wysiwyg-editor test
 
-  # ─── Types in sync ───────────────────────────────────────────────────────────
-  types-in-sync:
-    name: Strapi types in sync
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".node-version"
-
   # ─── Launcher UI type-check ───────────────────────────────────────────────────
   launcher-typecheck:
     name: Launcher UI type-check

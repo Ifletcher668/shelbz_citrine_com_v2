@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "medias_metadata",
+  "info": {
+    "singularName": "media-metadata",
+    "pluralName": "medias-metadata",
+    "displayName": "MediaMetadata"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Media": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "videos",
+        "audios",
+        "files"
+      ]
+    },
+    "metadata": {
+      "type": "json",
+      "required": true
+    }
+  }
+}

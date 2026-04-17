@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-theme.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest --config jest.config.js",
-    "strapi-types:generate": "strapi-types generate --url http://localhost:1337",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build",
+    "storybook:themes": "node scripts/generate-storybook-themes.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -44,6 +45,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
+    "css-tree": "^3.2.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.2",
     "framer-motion": "^12.29.2",
@@ -51,6 +53,7 @@
     "lucide-react": "^0.563.0",
     "marked": "^17.0.4",
     "next": "^15.5.10",
+    "pino": "^10.3.1",
     "react": "^18.3.1",
     "react-day-picker": "^9.13.0",
     "react-dom": "^18.3.1",
@@ -65,6 +68,14 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "^8.6",
+    "@storybook/addon-essentials": "^8.6",
+    "@storybook/addon-interactions": "^8.6",
+    "@storybook/nextjs": "^8.6",
+    "@storybook/react": "^8.6",
+    "@storybook/react-webpack5": "^8.6",
+    "@storybook/test": "^8.6",
+    "@testing-library/react": "^16.3.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^25.5.2",
     "@types/react": "^19.2.14",
@@ -73,7 +84,11 @@
     "eslint": "^9.18.0",
     "eslint-config-next": "^15.5.10",
     "postcss": "^8.4.49",
+    "postcss-loader": "^8.2.1",
+    "storybook": "^8.6",
+    "swc-loader": "^0.2.7",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "webpack": "^5.0.0"
   }
 }

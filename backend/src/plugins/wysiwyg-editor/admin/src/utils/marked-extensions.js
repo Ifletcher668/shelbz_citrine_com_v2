@@ -257,7 +257,14 @@ const mdElementExtension = {
       const raw =
         selfCloseMatch[0] +
         (src[selfCloseMatch[0].length] === "\n" ? "\n" : "");
-      return { type: "mdElement", raw, tagName, attrs, selfClose: true, tokens: [] };
+      return {
+        type: "mdElement",
+        raw,
+        tagName,
+        attrs,
+        selfClose: true,
+        tokens: [],
+      };
     }
 
     // Paired: <md-tagname ...>body</md-tagname>
@@ -317,8 +324,10 @@ const mdElementExtension = {
       }
       if (tagName === "md-spacer") {
         const s = attrs.size;
-        if (s === "sm") return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
-        if (s === "lg") return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
+        if (s === "sm")
+          return `<div class="md-spacer-sm" aria-hidden="true"></div>\n`;
+        if (s === "lg")
+          return `<div class="md-spacer-lg" aria-hidden="true"></div>\n`;
         return `<div class="md-spacer" aria-hidden="true"></div>\n`;
       }
       return "";
@@ -502,6 +511,7 @@ const attributedImageExtension = {
     const positional = classes.filter((c) =>
       ALLOWED_FIGURE_POSITIONAL_CLASSES.has(c),
     );
+
     const decoration = classes.filter((c) =>
       ALLOWED_FIGURE_DECORATION_CLASSES.has(c),
     );

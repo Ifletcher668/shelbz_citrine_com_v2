@@ -4,7 +4,8 @@ import { useProcessStatus } from "./hooks/useProcessStatus";
 import { LogViewer } from "./components/LogViewer";
 import type { Tab } from "./components/LogViewer";
 import { Sidebar } from "./components/Sidebar";
-import { PublishFlow } from "./components/PublishFlow";
+import { DeployFlow } from "./components/DeployFlow";
+import { PublishImagesFlow } from "./components/PublishImagesFlow";
 import { SetupScreen } from "./components/SetupScreen";
 import type { ProcessStatus } from "./lib/tauri";
 
@@ -12,7 +13,8 @@ type AppView = "loading" | "setup" | "dashboard";
 
 export default function App() {
   const [view, setView] = useState<AppView>("loading");
-  const [showPublish, setShowPublish] = useState(false);
+  const [showDeploy, setShowDeploy] = useState(false);
+  const [showPublishImages, setShowPublishImages] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("frontend");
   const { status, refresh, setOptimistic } = useProcessStatus();
 
@@ -59,6 +61,7 @@ export default function App() {
     if (!running) {
       if (key === "frontend" && activeTab === "browser-frontend") setActiveTab("frontend");
       if (key === "backend" && activeTab === "browser-backend") setActiveTab("backend");
+      if (key === "storybook" && activeTab === "browser-storybook") setActiveTab("storybook");
     }
   }
 
@@ -69,14 +72,18 @@ export default function App() {
         onTabChange={setActiveTab}
         status={status}
         onAction={handleOptimistic}
-        onPublish={() => setShowPublish(true)}
+        onDeploy={() => setShowDeploy(true)}
+        onPublishImages={() => setShowPublishImages(true)}
         onStarted={() => setTimeout(refresh, 1500)}
       />
       <div className="flex-1 flex flex-col min-w-0">
         <LogViewer active={activeTab} />
       </div>
-      {showPublish && (
-        <PublishFlow status={status} onClose={() => setShowPublish(false)} />
+      {showDeploy && (
+        <DeployFlow status={status} onClose={() => setShowDeploy(false)} />
+      )}
+      {showPublishImages && (
+        <PublishImagesFlow status={status} onClose={() => setShowPublishImages(false)} />
       )}
     </div>
   );

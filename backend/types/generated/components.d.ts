@@ -116,7 +116,16 @@ export interface SectionsMediaGallery extends Struct.ComponentSchema {
   };
   attributes: {
     Images: Schema.Attribute.Media<'images' | 'videos', true>;
+    pagination_count: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    pagination_filter: Schema.Attribute.Enumeration<['year', 'number']>;
     title: Schema.Attribute.String;
+    use_pagination: Schema.Attribute.Boolean;
   };
 }
 
@@ -182,6 +191,22 @@ export interface ThemeLayout extends Struct.ComponentSchema {
       Schema.Attribute.DefaultTo<'cubic-bezier(0.4, 0, 0.2, 1)'>;
     timing_souls: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'cubic-bezier(0.25, 0.1, 0.25, 1)'>;
+  };
+}
+
+export interface ThemePageLayout extends Struct.ComponentSchema {
+  collectionName: 'components_theme_page_layouts';
+  info: {
+    displayName: 'Page Layout';
+    icon: 'layout';
+  };
+  attributes: {
+    left_sidebar: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    right_sidebar: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
   };
 }
 
@@ -279,10 +304,6 @@ export interface ThemeTypography extends Struct.ComponentSchema {
       Schema.Attribute.DefaultTo<'"Cinzel", serif'>;
     font_mono: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'"IBM Plex Mono", "Courier New", monospace'>;
-    font_sans: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'"Cinzel", serif'>;
-    font_serif: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'"Crimson Text", Georgia, serif'>;
     font_ui: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'"Cinzel", serif'>;
     google_fonts_url: Schema.Attribute.String &
@@ -338,6 +359,7 @@ declare module '@strapi/strapi' {
       'sections.row': SectionsRow;
       'step.step': StepStep;
       'theme.layout': ThemeLayout;
+      'theme.page-layout': ThemePageLayout;
       'theme.semantic-colors': ThemeSemanticColors;
       'theme.spacing': ThemeSpacing;
       'theme.typography': ThemeTypography;

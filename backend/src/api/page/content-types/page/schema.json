@@ -33,20 +33,27 @@
         "sections.media-gallery"
       ]
     },
-    "theme_overrides": {
-      "type": "json"
-    },
-    "sub_page": {
+    "parent_page": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::page.page",
-      "inversedBy": "parent_pages"
+      "inversedBy": "sub_pages"
     },
-    "parent_pages": {
+    "sub_pages": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::page.page",
-      "mappedBy": "sub_page"
+      "mappedBy": "parent_page"
+    },
+    "page_template": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::page-template.page-template",
+      "inversedBy": "pages"
+    },
+    "custom_css": {
+      "type": "customField",
+      "customField": "plugin::css-editor.css-editor"
     }
   }
 }

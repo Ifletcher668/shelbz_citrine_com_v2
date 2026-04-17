@@ -1,6 +1,7 @@
 module.exports = ({ env }) => [
   'strapi::logger',
   'strapi::errors',
+  { name: 'global::request-logger', config: {} },
   {
     name: 'strapi::security',
     config: {

@@ -1,3 +1,4 @@
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::process::Child;
 use std::sync::Mutex;
@@ -15,6 +16,10 @@ pub struct AppState {
     pub handles: Mutex<ProcessHandles>,
     /// Path to the persisted config JSON for this app.
     pub config_path: PathBuf,
+    /// Tracks the current URL for each named browser webview (label → url).
+    pub browser_urls: Mutex<HashMap<String, String>>,
+    /// Tracks which browser webviews have fully completed their initial load.
+    pub browser_loaded: Mutex<HashSet<String>>,
 }
 
 #[derive(Serialize, Deserialize, Default)]
@@ -32,6 +37,8 @@ impl AppState {
                 storybook: None,
             }),
             config_path,
+            browser_urls: Mutex::new(HashMap::new()),
+            browser_loaded: Mutex::new(HashSet::new()),
         }
     }
 

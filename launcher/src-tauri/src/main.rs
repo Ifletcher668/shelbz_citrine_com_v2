@@ -52,7 +52,26 @@ fn load_project_root(config_path: &PathBuf) -> PathBuf {
     PathBuf::new()
 }
 
+/// Kill any processes still listening on our managed dev ports from a previous
+/// session that crashed or was force-quit before the normal exit handler ran.
+fn kill_orphaned_dev_ports() {
+    for port in [3000u16, 1337, 6006] {
+        let Ok(out) = std::process::Command::new("lsof")
+            .args(["-ti", &format!(":{port}")])
+            .output()
+        else {
+            continue;
+        };
+        for pid_str in String::from_utf8_lossy(&out.stdout).split_whitespace() {
+            if let Ok(pid) = pid_str.parse::<libc::pid_t>() {
+                unsafe { libc::kill(pid, libc::SIGKILL); }
+            }
+        }
+    }
+}
+
 fn main() {
+    kill_orphaned_dev_ports();
     let cfg_path = config_path();
     let initial_root = load_project_root(&cfg_path);
     let app_state = Arc::new(AppState::new(cfg_path, initial_root));
@@ -77,12 +96,16 @@ fn main() {
             browser::hide_browser,
             browser::reload_browser,
             browser::navigate_browser,
+            browser::go_back,
+            browser::go_forward,
+            browser::get_webview_url,
             // processes
             processes::start_frontend,
             processes::start_backend,
             processes::start_storybook,
             processes::stop_process,
             processes::get_process_status,
+            processes::check_backend_health,
             // git
             git::check_updates,
             git::git_fetch,
@@ -92,7 +115,9 @@ fn main() {
             icloud::icloud_restore,
             icloud::icloud_status,
             // deploy
-            deploy::publish,
+            deploy::deploy,
+            deploy::get_deploy_status,
+            deploy::publish_images,
             // logs
             logs::get_log,
             logs::clear_log,

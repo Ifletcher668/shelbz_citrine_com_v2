@@ -18,6 +18,7 @@
  * </PageLayout>
  */
 import { cn } from "../../lib/utils";
+
 export default function PageLayout({ children, className }) {
   return (
     <main className={cn("min-h-screen bg-void", className)}>{children}</main>

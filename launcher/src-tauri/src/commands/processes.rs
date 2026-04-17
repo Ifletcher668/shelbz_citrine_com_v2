@@ -1,9 +1,12 @@
 use std::fs::{self, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
+use std::net::TcpStream;
 use std::os::unix::process::CommandExt;
 use std::process::{Child, Command, Stdio};
 use std::sync::Arc;
+use std::time::Duration;
 use tauri::{AppHandle, Emitter, State};
+use crate::commands::util::launcher_log;
 use crate::state::AppState;
 
 fn spawn_yarn_process(
@@ -22,18 +25,33 @@ fn spawn_yarn_process(
     // Emit a startup line so the LogViewer shows activity immediately.
     let startup_msg = format!("[launcher] Starting: yarn {script} in {}", project_root.display());
     let _ = app_handle.emit(&event_name, &startup_msg);
-    // Also write it to the log file.
     if let Ok(mut file) = OpenOptions::new().create(true).append(true).open(log_path) {
         let _ = writeln!(file, "{startup_msg}");
     }
+    // Also log to the unified launcher log.
+    let log_dir = log_path.parent().unwrap_or(log_path);
+    launcher_log(&app_handle, log_dir, &format!("[process] Starting: yarn {script}"));
 
     // macOS GUI apps don't inherit the shell PATH, so prepend common tool locations.
     let current_path = std::env::var("PATH").unwrap_or_default();
     let home = std::env::var("HOME").unwrap_or_default();
 
     // Resolve the mise-managed node version from .node-version if present.
-    let node_bin = std::fs::read_to_string(project_root.join(".node-version"))
-        .ok()
+    // Walk up from project_root to find the file (handles subdirectory workspaces).
+    let node_version_content = {
+        let mut dir = project_root.to_path_buf();
+        loop {
+            let candidate = dir.join(".node-version");
+            if candidate.exists() {
+                break std::fs::read_to_string(candidate).ok();
+            }
+            match dir.parent() {
+                Some(p) => dir = p.to_path_buf(),
+                None => break None,
+            }
+        }
+    };
+    let node_bin = node_version_content
         .map(|v| v.trim().to_string())
         .and_then(|v| {
             let mise_path = format!("{home}/.local/share/mise/installs/node/{v}/bin");
@@ -73,6 +91,7 @@ fn spawn_yarn_process(
         if let Ok(mut file) = OpenOptions::new().create(true).append(true).open(log_path) {
             let _ = writeln!(file, "{msg}");
         }
+        launcher_log(&app_handle, log_path.parent().unwrap_or(log_path), &format!("[process] Failed to spawn yarn {script}: {e}"));
         format!("Failed to spawn yarn {script}: {e}")
     })?;
 
@@ -165,7 +184,7 @@ pub async fn start_storybook(
         return Err("Storybook is already running".to_string());
     }
     let log_path = state.log_dir().join("storybook.log");
-    let child = spawn_yarn_process("storybook", &root, &log_path, app, "log:storybook".to_string())?;
+    let child = spawn_yarn_process("storybook", &root.join("frontend"), &log_path, app, "log:storybook".to_string())?;
     handles.storybook = Some(child);
     Ok(())
 }
@@ -185,21 +204,33 @@ fn kill_child(child: &mut Child) {
 
 #[tauri::command]
 pub async fn stop_process(
+    app: AppHandle,
     process: String,
     state: State<'_, Arc<AppState>>,
 ) -> Result<(), String> {
+    let log_dir = state.log_dir();
     let mut handles = state.handles.lock().unwrap();
     match process.as_str() {
         "frontend" => {
-            if let Some(mut child) = handles.frontend.take() { kill_child(&mut child); }
+            if let Some(mut child) = handles.frontend.take() {
+                launcher_log(&app, &log_dir, "[process] Stopping frontend");
+                kill_child(&mut child);
+            }
         }
         "backend" => {
-            if let Some(mut child) = handles.backend.take() { kill_child(&mut child); }
+            if let Some(mut child) = handles.backend.take() {
+                launcher_log(&app, &log_dir, "[process] Stopping backend");
+                kill_child(&mut child);
+            }
         }
         "storybook" => {
-            if let Some(mut child) = handles.storybook.take() { kill_child(&mut child); }
+            if let Some(mut child) = handles.storybook.take() {
+                launcher_log(&app, &log_dir, "[process] Stopping storybook");
+                kill_child(&mut child);
+            }
         }
         "all" => {
+            launcher_log(&app, &log_dir, "[process] Stopping all processes");
             if let Some(mut child) = handles.frontend.take() { kill_child(&mut child); }
             if let Some(mut child) = handles.backend.take() { kill_child(&mut child); }
             if let Some(mut child) = handles.storybook.take() { kill_child(&mut child); }
@@ -254,4 +285,43 @@ pub fn kill_all_processes(state: &Arc<AppState>) {
     if let Some(mut child) = handles.frontend.take() { kill_child(&mut child); }
     if let Some(mut child) = handles.backend.take() { kill_child(&mut child); }
     if let Some(mut child) = handles.storybook.take() { kill_child(&mut child); }
+}
+
+/// Stop only the backend process. Used internally by the deploy pipeline.
+/// Returns true if the backend was running and was stopped, false if it wasn't running.
+pub(crate) fn stop_backend_internal(state: &Arc<AppState>, app: &AppHandle) -> bool {
+    let log_dir = state.log_dir();
+    let mut handles = state.handles.lock().unwrap();
+    if let Some(mut child) = handles.backend.take() {
+        launcher_log(app, &log_dir, "[process] Stopping backend for deploy pipeline…");
+        kill_child(&mut child);
+        true
+    } else {
+        false
+    }
+}
+
+/// Single-shot TCP check: is Strapi accepting connections on port 1337?
+/// Used by the UI to know when the backend is truly ready, not just spawned.
+#[tauri::command]
+pub async fn check_backend_health() -> bool {
+    tokio::task::spawn_blocking(|| {
+        TcpStream::connect_timeout(
+            &"127.0.0.1:1337".parse().unwrap(),
+            Duration::from_millis(500),
+        ).is_ok()
+    }).await.unwrap_or(false)
+}
+
+/// Start only the backend process. Used internally by the deploy pipeline.
+pub(crate) fn start_backend_internal(state: &Arc<AppState>, app: AppHandle) -> Result<(), String> {
+    let mut handles = state.handles.lock().unwrap();
+    if handles.backend.is_some() {
+        return Ok(());
+    }
+    let root = state.root();
+    let log_path = state.log_dir().join("backend.log");
+    let child = spawn_yarn_process("backend", &root, &log_path, app, "log:backend".to_string())?;
+    handles.backend = Some(child);
+    Ok(())
 }
