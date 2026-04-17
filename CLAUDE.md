@@ -1,0 +1,1 @@
+Monorepo for an artist's portfolio and business. This project consists of three primary domains: a NextJs frontend, a Strapi-powered CMS backend, and a launcher designed for localhost development for a non-technical maintainer.
