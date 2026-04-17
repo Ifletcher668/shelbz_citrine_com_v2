@@ -29,8 +29,8 @@ function bootstrapTypes() {
     execFileSync("node", args, { stdio: "inherit" });
   } catch {
     // Strapi offline — fall back to committed schema snapshot
-    const committed = path.resolve(__dirname, "strapi-schema", "schema-meta.ts");
-    const dest = path.join(getStrapiDist(), "schema-meta.ts");
+    const committed = path.resolve(__dirname, "strapi-schema", "types.d.ts");
+    const dest = path.join(getStrapiDist(), "types.d.ts");
     if (fs.existsSync(committed)) {
       fs.copyFileSync(committed, dest);
     }
@@ -38,12 +38,12 @@ function bootstrapTypes() {
 }
 
 // client.js dynamically imports schema-meta.js (for validateSchema only).
-// The generator writes schema-meta.ts but not .js, causing a webpack warning.
+// The generator writes types.d.ts but not .js, causing a webpack warning.
 // Copy it once so the module resolver can find it.
 function ensureSchemaMetaJs() {
   try {
     const distDir = getStrapiDist();
-    const metaTs = path.join(distDir, "schema-meta.ts");
+    const metaTs = path.join(distDir, "types.d.ts");
     const metaJs = path.join(distDir, "schema-meta.js");
     if (fs.existsSync(metaTs) && !fs.existsSync(metaJs)) {
       fs.writeFileSync(metaJs, fs.readFileSync(metaTs, "utf-8"), "utf-8");

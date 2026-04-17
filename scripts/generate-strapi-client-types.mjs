@@ -18,16 +18,17 @@ if (process.env.STRAPI_API_TOKEN)
 
 execFileSync("node", args, { stdio: "inherit" });
 
-const src = path.join(pkgDir, "dist", "schema-meta.ts");
+const src = path.join(pkgDir, "dist", "types.d.ts");
 const dest = path.resolve(
   __dirname,
   "..",
   "frontend",
   "strapi-schema",
-  "schema-meta.ts",
+  "types.d.ts",
 );
+
 fs.mkdirSync(path.dirname(dest), { recursive: true });
 fs.copyFileSync(src, dest);
 console.log(
-  "Schema written to frontend/strapi-schema/schema-meta.ts — commit this file.",
+  "Schema written to frontend/strapi-schema/types.d.ts — commit this file.",
 );

@@ -26,7 +26,7 @@
     "icloud:status": "yarn workspace shelbz-citrine-backend icloud:status",
     "launcher:dev": "cd launcher/src-tauri && cargo tauri dev",
     "launcher:build": "cd launcher/src-tauri && cargo tauri build",
-    "generate:schema": "node scripts/generate-schema.mjs"
+    "generate:strapi-client-types": "node scripts/generate-strapi-client-types.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
