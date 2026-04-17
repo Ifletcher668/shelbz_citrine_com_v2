@@ -17,18 +17,21 @@ function getStrapiDist() {
 // Next.js page compilation begins. withStrapiTypes starts an async SSE
 // watcher that loses the race against compilation, so we eagerly generate here.
 function bootstrapTypes() {
-  try {
+  if (process.env.NODE_ENV === "development") {
     const pkgDir = path.dirname(
       _require.resolve("strapi-typed-client/package.json"),
     );
     const binPath = path.join(pkgDir, "dist", "cli", "index.js");
     const url = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
     const args = [binPath, "generate", "--url", url, "--force"];
-    if (process.env.STRAPI_API_TOKEN)
+
+    if (process.env.STRAPI_API_TOKEN) {
       args.push("--token", process.env.STRAPI_API_TOKEN);
+    }
+
     execFileSync("node", args, { stdio: "inherit" });
-  } catch {
-    // Strapi offline — fall back to committed schema snapshot
+  } else {
+    // Strapi will be offline — fall back to committed schema snapshot
     const committed = path.resolve(__dirname, "strapi-schema", "types.d.ts");
     const dest = path.join(getStrapiDist(), "types.d.ts");
     if (fs.existsSync(committed)) {
