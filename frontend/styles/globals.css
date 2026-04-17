@@ -1,9 +1,3 @@
-/* ============================================
-   Heritage Jewelry Global Styles
-   "Souls-like Gallery: Gritty Minimalism"
-   Elden Ring × Dark Souls × Metropolitan Museum
-   ============================================ */
-
 /* Font Imports - Souls-like Typography */
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap");
 
@@ -17,18 +11,18 @@
        Named by purpose, not appearance.
        Each drives multiple CSS variables via theme.css.
        ============================================ */
-  --color-bg-base: #000000; /* page / root background */
-  --color-bg-raised: #0a0a0a; /* cards, elevated surfaces */
-  --color-bg-inset: #141414; /* form inputs, code blocks */
-  --color-text-muted: #5a5a5a; /* disabled, subdued text */
-  --color-text-body: #8c8273; /* default body text */
-  --color-text-heading: #e5e0d8; /* headings, bright text */
-  --color-accent: #b4aa96; /* links, borders, highlights */
-  --color-interactive: #291d0466; /* button face / fill */
-  --color-neutral: #424852; /* secondary UI elements */
-  --color-info: #b8c5d6; /* info callouts, cool highlights */
-  --color-danger: #4a1a1a; /* destructive actions, warnings */
-  --color-success: #2d3a2e; /* success states */
+  /* --color-bg-base: #000000;  */
+  /* --color-bg-raised: #0a0a0a;  */
+  /* --color-bg-inset: #141414;  */
+  /* --color-text-muted: #5a5a5a;  */
+  /* --color-text-body: #8c8273;  */
+  /* --color-text-heading: #e5e0d8;  */
+  /* --color-accent: #b4aa96;  */
+  /* --color-interactive: #291d0466;  */
+  /* --color-neutral: #424852;  */
+  /* --color-info: #b8c5d6;  */
+  /* --color-danger: #4a1a1a;  */
+  /* --color-success: #2d3a2e;  */
 
   /* Aesthetic color aliases — used throughout components as Tailwind utilities.
      Must live in @theme (not :root) for Tailwind v4 to generate utilities. */
@@ -268,8 +262,8 @@
     font-weight: 400;
     line-height: 1.65;
     /* Optimized brutalist texture - lighter grain for smooth scrolling */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-    background-repeat: repeat;
+    /* background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: repeat; */
   }
 
   /* Fog vignette as a fixed pseudo-element for better performance */
@@ -375,7 +369,11 @@
     isolation: isolate;
   }
 
-  /* Links - Minimal underline, cold metal */
+  button {
+    cursor: pointer;
+  }
+
+  /* Links - Minimal underline */
   a {
     transition: color 300ms;
   }
@@ -1286,11 +1284,13 @@
   .md-figure.float-left {
     float: left;
     margin-right: var(--spacing-6);
+    max-width: 33.333%;
   }
 
   .md-figure.float-right {
     float: right;
     margin-left: var(--spacing-6);
+    max-width: 33.333%;
   }
 
   .md-figure img {
