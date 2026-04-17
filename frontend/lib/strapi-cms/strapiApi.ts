@@ -6,6 +6,7 @@ import type {
   FooterGetPayload,
   HeaderGetPayload,
   MediaFile,
+  MediaMetadataGetPayload,
   PageGetPayload,
   StepGroupGetPayload,
   ThemeGetPayload,
@@ -14,26 +15,14 @@ import strapiClient from "./strapiClient";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
 
-// ─── Exported types ────────────────────────────────────────────────────────
-// All types use GetPayload<> generics from strapi-typed-client.
-// Literal tuple syntax (e.g. `["slug"]`) in type position gives exact field
-// narrowing without needing `as const` on runtime objects.
-
+// DO NOT USE THESE TYPES
 export type PageSummary = PageGetPayload<{
-  populate: { sub_page: { fields: ["slug"] } };
-}>;
-
-export type FullPage = PageGetPayload<{
   populate: {
-    sections: {
-      on: {
-        "sections.row": { populate: { columns: true } };
-        "sections.media-gallery": { populate: { Images: true } };
-      };
-    };
-    sub_page: { fields: ["slug"] };
+    parent_page: { fields: ["slug"] };
   };
 }>;
+
+export type PageTemplateSlug = "default_page" | "gallery_page" | "blog_page";
 
 export type FullHeader = HeaderGetPayload<{
   populate: {
@@ -46,12 +35,18 @@ export type FullHeader = HeaderGetPayload<{
       populate: {
         links: {
           populate: {
-            page: { fields: ["slug"] };
+            page: {
+              fields: ["slug"];
+              populate: { parent_page: { fields: ["slug"] } };
+            };
             sub_navigation: {
               populate: {
                 links: {
                   populate: {
-                    page: { fields: ["slug"] };
+                    page: {
+                      fields: ["slug"];
+                      populate: { parent_page: { fields: ["slug"] } };
+                    };
                   };
                 };
               };
@@ -74,12 +69,18 @@ export type FullFooter = FooterGetPayload<{
       populate: {
         links: {
           populate: {
-            page: { fields: ["slug"] };
+            page: {
+              fields: ["slug"];
+              populate: { parent_page: { fields: ["slug"] } };
+            };
             sub_navigation: {
               populate: {
                 links: {
                   populate: {
-                    page: { fields: ["slug"] };
+                    page: {
+                      fields: ["slug"];
+                      populate: { parent_page: { fields: ["slug"] } };
+                    };
                   };
                 };
               };
@@ -88,15 +89,6 @@ export type FullFooter = FooterGetPayload<{
         };
       };
     };
-  };
-}>;
-
-export type FullTheme = ThemeGetPayload<{
-  populate: {
-    colors: true;
-    typography: true;
-    spacing: true;
-    layout: true;
   };
 }>;
 
@@ -120,12 +112,14 @@ export type FullButton = ButtonGetPayload<{
 export async function getPages(): Promise<PageSummary[]> {
   return strapiClient.pages.find({
     status: "published",
-    populate: { sub_page: { fields: ["slug"] } },
+    populate: {
+      parent_page: { fields: ["slug"] },
+    },
     pagination: { pageSize: 100 },
   }) as Promise<PageSummary[]>;
 }
 
-export async function getPageBySlug(slug: string): Promise<FullPage | null> {
+export async function getPageBySlug(slug: string) {
   const results = await strapiClient.pages.find({
     status: "published",
     filters: { slug: { $eq: slug } },
@@ -136,12 +130,41 @@ export async function getPageBySlug(slug: string): Promise<FullPage | null> {
           "sections.media-gallery": { populate: { Images: true } },
         },
       },
-      sub_page: { fields: ["slug"] },
-      parent_pages: true,
+      parent_page: true,
+      page_template: true,
+      sub_pages: true,
     },
   });
-  return (results[0] ?? null) as FullPage | null;
+  return results[0] ?? null;
 }
+export type GetPageBySlugReturn = Awaited<ReturnType<typeof getPageBySlug>>;
+export type GetPageBySlugMediaGallerySection = Extract<
+  NonNullable<NonNullable<GetPageBySlugReturn>["sections"]>[number],
+  { __component: "sections.media-gallery" }
+>;
+export type GetPageBySlugRowSection = Extract<
+  NonNullable<NonNullable<GetPageBySlugReturn>["sections"]>[number],
+  { __component: "sections.row" }
+>;
+
+export type PageBySlug = typeof getPageBySlug;
+
+export type FullMediaMetadata = MediaMetadataGetPayload<{
+  populate: { Media: true };
+}> & { metadata: Record<string, unknown> };
+
+export async function getMediaMetadata() {
+  const results = await strapiClient.mediasMetadata.find({
+    populate: {
+      Media: true,
+    },
+  });
+
+  return (results ?? []) as FullMediaMetadata[];
+}
+export type GetMediaMetadataReturn = Awaited<
+  ReturnType<typeof getMediaMetadata>
+>;
 
 // ─── Single types ──────────────────────────────────────────────────────────
 
@@ -157,12 +180,18 @@ export async function getHeader(): Promise<FullHeader | null> {
         populate: {
           links: {
             populate: {
-              page: { fields: ["slug"] },
+              page: {
+                fields: ["slug", "publishedAt"],
+                populate: { parent_page: { fields: ["slug"] } },
+              },
               sub_navigation: {
                 populate: {
                   links: {
                     populate: {
-                      page: { fields: ["slug"] },
+                      page: {
+                        fields: ["slug", "publishedAt"],
+                        populate: { parent_page: { fields: ["slug"] } },
+                      },
                     },
                   },
                 },
@@ -187,12 +216,18 @@ export async function getFooter(): Promise<FullFooter | null> {
         populate: {
           links: {
             populate: {
-              page: { fields: ["slug"] },
+              page: {
+                fields: ["slug", "publishedAt"],
+                populate: { parent_page: { fields: ["slug"] } },
+              },
               sub_navigation: {
                 populate: {
                   links: {
                     populate: {
-                      page: { fields: ["slug"] },
+                      page: {
+                        fields: ["slug", "publishedAt"],
+                        populate: { parent_page: { fields: ["slug"] } },
+                      },
                     },
                   },
                 },
@@ -205,7 +240,7 @@ export async function getFooter(): Promise<FullFooter | null> {
   }) as Promise<FullFooter | null>;
 }
 
-export async function getActiveTheme(): Promise<FullTheme | null> {
+export async function getActiveTheme() {
   try {
     const results = await strapiClient.themes.find({
       filters: { is_active: { $eq: true } },
@@ -216,10 +251,25 @@ export async function getActiveTheme(): Promise<FullTheme | null> {
         layout: true,
       },
     });
-    return (results[0] ?? null) as FullTheme | null;
+    return results[0] ?? null;
   } catch {
     return null;
   }
+}
+export type GetActiveThemeReturn = Awaited<ReturnType<typeof getActiveTheme>>;
+
+export async function getNotFoundPageNavigationData() {
+  const documentId = "pnq4ycxac21bpfd8xs84log0";
+
+  return strapiClient.navigations.findOne(documentId, {
+    fields: ["id"],
+    populate: {
+      links: {
+        fields: ["id", "url", "label", "path"],
+        populate: { page: { fields: ["title", "slug", "publishedAt"] } },
+      },
+    },
+  });
 }
 
 // ─── Media helpers ─────────────────────────────────────────────────────────
