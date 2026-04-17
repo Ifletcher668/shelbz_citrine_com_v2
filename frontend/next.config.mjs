@@ -28,7 +28,12 @@ function bootstrapTypes() {
       args.push("--token", process.env.STRAPI_API_TOKEN);
     execFileSync("node", args, { stdio: "inherit" });
   } catch {
-    // Non-fatal: if Strapi is offline the SSE watcher will regenerate once it connects
+    // Strapi offline — fall back to committed schema snapshot
+    const committed = path.resolve(__dirname, "strapi-schema", "schema-meta.ts");
+    const dest = path.join(getStrapiDist(), "schema-meta.ts");
+    if (fs.existsSync(committed)) {
+      fs.copyFileSync(committed, dest);
+    }
   }
 }
 
