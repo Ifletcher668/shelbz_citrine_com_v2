@@ -17,10 +17,7 @@ function getStrapiDist() {
 // Next.js page compilation begins. withStrapiTypes starts an async SSE
 // watcher that loses the race against compilation, so we eagerly generate here.
 function bootstrapTypes() {
-  console.log("Bootstrapping types");
   if (process.env.NODE_ENV === "development") {
-    console.log("It's dev");
-    console.log(process.env.NODE_ENV);
     const pkgDir = path.dirname(
       _require.resolve("strapi-typed-client/package.json"),
     );
@@ -34,14 +31,11 @@ function bootstrapTypes() {
 
     execFileSync("node", args, { stdio: "inherit" });
   } else {
-    console.log("Supposed to be getting the stored file!");
     // Strapi will be offline — fall back to committed schema snapshot
     const committed = path.resolve(__dirname, "strapi-schema", "types.d.ts");
-    console.log("committed", committed);
     const dest = path.join(getStrapiDist(), "types.d.ts");
-    console.log("dest", dest);
+
     if (fs.existsSync(committed)) {
-      console.log("committed exists. copying the file now");
       fs.copyFileSync(committed, dest);
     }
   }
