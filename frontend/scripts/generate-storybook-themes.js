@@ -4,8 +4,6 @@
  * Optional developer utility: fetches ALL themes from Strapi and regenerates
  * .storybook/themes.ts so Storybook's toolbar includes real production themes.
  *
- * Usage:
- *   NEXT_PUBLIC_STRAPI_URL=http://localhost:1337 node scripts/generate-storybook-themes.js
  *
  * The output file is committed to the repo so Storybook works offline.
  * Re-run this script whenever themes change in Strapi.
