@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ProcessStatus, startFrontend, startBackend, startStorybook, stopProcess, openUrl } from "../lib/tauri";
+import {
+  ProcessStatus,
+  startFrontend,
+  startBackend,
+  startStorybook,
+  stopProcess,
+  openUrl,
+} from "../lib/tauri";
 
 interface Props {
   status: ProcessStatus;
@@ -13,16 +20,26 @@ const SERVICE_URLS: Record<keyof ProcessStatus, string> = {
   storybook: "http://localhost:6006",
 };
 
-const services: { key: keyof ProcessStatus; label: string; start: () => Promise<unknown> }[] = [
-  { key: "frontend", label: "Development Website", start: startFrontend },
-  { key: "backend", label: "CMS Admin", start: startBackend },
+const services: {
+  key: keyof ProcessStatus;
+  label: string;
+  start: () => Promise<unknown>;
+}[] = [
+  { key: "frontend", label: "Frontend", start: startFrontend },
+  { key: "backend", label: "Backend", start: startBackend },
   { key: "storybook", label: "Storybook", start: startStorybook },
 ];
 
 export function StatusPanel({ status, onAction, disabled }: Props) {
-  const [errors, setErrors] = useState<Partial<Record<keyof ProcessStatus, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ProcessStatus, string>>
+  >({});
 
-  async function handleToggle(key: keyof ProcessStatus, running: boolean, start: () => Promise<unknown>) {
+  async function handleToggle(
+    key: keyof ProcessStatus,
+    running: boolean,
+    start: () => Promise<unknown>,
+  ) {
     setErrors((prev) => ({ ...prev, [key]: undefined }));
     onAction(key, !running);
     try {
@@ -76,7 +93,9 @@ export function StatusPanel({ status, onAction, disabled }: Props) {
               </div>
             </div>
             {error && (
-              <p className="text-xs text-red-400 mt-1 font-mono break-all">{error}</p>
+              <p className="text-xs text-red-400 mt-1 font-mono break-all">
+                {error}
+              </p>
             )}
           </div>
         );

@@ -59,6 +59,7 @@ export default function App() {
     if (!running) {
       if (key === "frontend" && activeTab === "browser-frontend") setActiveTab("frontend");
       if (key === "backend" && activeTab === "browser-backend") setActiveTab("backend");
+      if (key === "storybook" && activeTab === "browser-storybook") setActiveTab("storybook");
     }
   }
 

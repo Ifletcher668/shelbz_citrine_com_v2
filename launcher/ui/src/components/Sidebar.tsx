@@ -2,23 +2,30 @@ import { useState } from "react";
 import { GitStatus } from "./GitStatus";
 import { StatusPanel } from "./StatusPanel";
 import { ActionBar } from "./ActionBar";
-import { reloadBrowser } from "../lib/tauri";
+import { ICloudPanel } from "./ICloudPanel";
+import { reloadBrowser, getLog, clearLog } from "../lib/tauri";
 import type { ProcessStatus } from "../lib/tauri";
 
-const LOG_TABS = ["frontend", "backend", "storybook"] as const;
-const BROWSER_TABS = ["browser-frontend", "browser-backend"] as const;
+const LOG_TABS = ["launcher", "frontend", "backend", "storybook"] as const;
+const BROWSER_TABS = [
+  "browser-frontend",
+  "browser-backend",
+  "browser-storybook",
+] as const;
 
 export type Tab = (typeof LOG_TABS)[number] | (typeof BROWSER_TABS)[number];
 
 const LOG_LABELS: Record<(typeof LOG_TABS)[number], string> = {
-  frontend: "Development Website",
-  backend: "CMS Admin",
+  launcher: "Launcher",
+  frontend: "Frontend",
+  backend: "Backend",
   storybook: "Storybook",
 };
 
 const BROWSER_LABELS: Record<(typeof BROWSER_TABS)[number], string> = {
   "browser-frontend": "Dev Browser",
   "browser-backend": "CMS Browser",
+  "browser-storybook": "Storybook Browser",
 };
 
 interface Props {
@@ -33,7 +40,9 @@ interface Props {
 function SectionHeading({ children }: { children: string }) {
   return (
     <div className="px-3 pt-3 pb-1">
-      <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">{children}</span>
+      <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+        {children}
+      </span>
     </div>
   );
 }
@@ -55,7 +64,9 @@ function TabButton({
       disabled={disabled}
       title={disabled ? "Server not running" : undefined}
       className={`text-left text-xs px-4 py-1.5 w-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
-        active ? "text-zinc-100 bg-zinc-800" : "text-zinc-500 hover:text-zinc-300"
+        active
+          ? "text-zinc-100 bg-zinc-800"
+          : "text-zinc-500 hover:text-zinc-300"
       }`}
     >
       {label}
@@ -78,7 +89,12 @@ function BrowserTabRow({
 }) {
   return (
     <div className="flex items-center">
-      <TabButton label={name} active={active} onClick={onSelect} disabled={disabled} />
+      <TabButton
+        label={name}
+        active={active}
+        onClick={onSelect}
+        disabled={disabled}
+      />
       <button
         onClick={() => reloadBrowser(label).catch(console.error)}
         disabled={disabled}
@@ -91,14 +107,37 @@ function BrowserTabRow({
   );
 }
 
-export function Sidebar({ active, onTabChange, status, onAction, onPublish, onStarted }: Props) {
+const LOG_TAB_SET = new Set<string>(["frontend", "backend", "storybook"]);
+
+export function Sidebar({
+  active,
+  onTabChange,
+  status,
+  onAction,
+  onPublish,
+  onStarted,
+}: Props) {
   const [hovered, setHovered] = useState(false);
   const [pinned, setPinned] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopyAll() {
+    if (!LOG_TAB_SET.has(active)) return;
+    const lines = await getLog(active).catch(() => [] as string[]);
+    await navigator.clipboard.writeText(lines.join("\n")).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  function handleClear() {
+    if (!LOG_TAB_SET.has(active)) return;
+    clearLog(active).catch(console.error);
+  }
   const expanded = hovered || pinned;
 
   return (
     <div
-      className={`flex-shrink-0 flex flex-col bg-zinc-950 border-r border-zinc-800 transition-[width] duration-200 overflow-hidden ${
+      className={`shrink-0 flex flex-col bg-zinc-950 border-r border-zinc-800 transition-[width] duration-200 overflow-hidden ${
         expanded ? "w-60" : "w-10"
       }`}
       onMouseEnter={() => setHovered(true)}
@@ -138,14 +177,35 @@ export function Sidebar({ active, onTabChange, status, onAction, onPublish, onSt
         <StatusPanel status={status} onAction={onAction} />
         <ActionBar onPublish={onPublish} onStarted={onStarted} />
 
+        <SectionHeading>iCloud</SectionHeading>
+        <ICloudPanel />
+
         <SectionHeading>Logs</SectionHeading>
         {LOG_TABS.map((tab) => (
-          <TabButton
-            key={tab}
-            label={LOG_LABELS[tab]}
-            active={active === tab}
-            onClick={() => onTabChange(tab)}
-          />
+          <div className="flex gap-3 group">
+            <TabButton
+              key={tab}
+              label={LOG_LABELS[tab]}
+              active={active === tab}
+              onClick={() => onTabChange(tab)}
+            />
+            <div className="flex gap-3 px-0 pb-1 overflow-hidden max-w-0 group-hover:max-w-xs group-hover:px-4 group-hover:pr-12 transition-all duration-300 whitespace-nowrap">
+              <button
+                onClick={handleCopyAll}
+                disabled={!LOG_TAB_SET.has(active)}
+                className="text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors disabled:opacity-30"
+              >
+                {copied ? "Copied!" : "Copy All"}
+              </button>
+              <button
+                onClick={handleClear}
+                disabled={!LOG_TAB_SET.has(active)}
+                className="text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors disabled:opacity-30"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
         ))}
 
         <SectionHeading>Browsers</SectionHeading>
@@ -162,6 +222,13 @@ export function Sidebar({ active, onTabChange, status, onAction, onPublish, onSt
           active={active === "browser-backend"}
           disabled={!status.backend}
           onSelect={() => onTabChange("browser-backend")}
+        />
+        <BrowserTabRow
+          label="browser-storybook"
+          name={BROWSER_LABELS["browser-storybook"]}
+          active={active === "browser-storybook"}
+          disabled={!status.storybook}
+          onSelect={() => onTabChange("browser-storybook")}
         />
       </div>
     </div>
