@@ -89,7 +89,12 @@ const nextConfig = {
   },
 };
 
-export default withStrapiTypes({
-  strapiUrl: process.env.NEXT_PUBLIC_STRAPI_URL,
-  token: process.env.STRAPI_API_TOKEN,
-})(nextConfig);
+// Only use the SSE watcher in dev — in build/CI our bootstrapTypes() fallback
+// already placed the committed types.d.ts, and withStrapiTypes would just try
+// (and fail) to re-fetch from a Strapi that isn't running.
+export default process.env.NODE_ENV === "development"
+  ? withStrapiTypes({
+      strapiUrl: process.env.NEXT_PUBLIC_STRAPI_URL,
+      token: process.env.STRAPI_API_TOKEN,
+    })(nextConfig)
+  : nextConfig;
