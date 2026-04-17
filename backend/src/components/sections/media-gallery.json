@@ -17,6 +17,40 @@
         "images",
         "videos"
       ]
+    },
+    "use_pagination": {
+      "type": "boolean"
+    },
+    "pagination_filter": {
+      "type": "enumeration",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "use_pagination"
+            },
+            true
+          ]
+        }
+      },
+      "enum": [
+        "year",
+        "number"
+      ]
+    },
+    "pagination_count": {
+      "type": "integer",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "pagination_filter"
+            },
+            "number"
+          ]
+        }
+      },
+      "min": 1
     }
   }
 }
