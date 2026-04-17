@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_theme_page_layouts",
+  "info": {
+    "displayName": "Page Layout",
+    "icon": "layout"
+  },
+  "options": {},
+  "attributes": {
+    "left_sidebar": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "right_sidebar": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    }
+  },
+  "config": {}
+}
