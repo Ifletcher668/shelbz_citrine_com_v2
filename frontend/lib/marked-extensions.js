@@ -245,6 +245,13 @@ const mdElementExtension = {
     const attrs = parseDataAttrs(openMatch[2]);
     if (!isAllowedElement(tagName, attrs)) return;
 
+    // md-divider and md-spacer are always self-closing; treat <md-spacer> same as <md-spacer />
+    if (tagName === "md-divider" || tagName === "md-spacer") {
+      const raw =
+        openMatch[0] + (src[openMatch[0].length] === "\n" ? "\n" : "");
+      return { type: "mdElement", raw, tagName, attrs, selfClose: true, tokens: [] };
+    }
+
     const closeTag = `</${tagName}>`;
     const openTag = `<${tagName}`;
     const rest = src.slice(openMatch[0].length);
@@ -659,10 +666,20 @@ wysiwygMarked.use({
     tooltipExtension,
   ],
   renderer: {
+    // Plain [text](url) links — open external (http/https) links in a new tab
+    link({ href, title, text }) {
+      const url = sanitizeUrl(href);
+      const titleAttr = title ? ` title="${escapeAttr(title)}"` : "";
+      const isExternal = /^https?:\/\//i.test(url);
+      const targetAttr = isExternal
+        ? ' target="_blank" rel="noopener noreferrer"'
+        : "";
+      return `<a href="${url}"${titleAttr}${targetAttr}>${text}</a>`;
+    },
     // Plain ![alt](url) images (no {.class} suffix) — wrap in figure for consistency
     image({ href, title, text }) {
       const url = sanitizeUrl(href);
-      const titleAttr = title ? ` title="${title}"` : "";
+      const titleAttr = title ? ` title="${escapeAttr(title)}"` : "";
       return `<figure class="md-figure"><img src="${url}" alt="${text}"${titleAttr} data-strapi-img /></figure>`;
     },
   },
