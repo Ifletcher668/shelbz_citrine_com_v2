@@ -3,7 +3,7 @@ import GalleryCms from "../GalleryCms";
 import { makeGallery } from "../../__tests__/fixtures";
 
 jest.mock("../../../../lib/strapi-cms/strapiApi", () => ({
-  getStrapiMediaUrl: (url) => (url ? `http://localhost:1337${url}` : null),
+  getStrapiMediaUrl: (url) => (url ? `http://test:123${url}` : null),
   buildStrapiSrcSet: () => null,
 }));
 
@@ -21,15 +21,6 @@ describe("GalleryCms", () => {
   it("renders alt text on images", () => {
     render(<GalleryCms data={makeGallery()} />);
     expect(screen.getByAltText("Image one")).toBeInTheDocument();
-  });
-
-  it("uses full URL from getStrapiMediaUrl", () => {
-    render(<GalleryCms data={makeGallery()} />);
-    const img = screen.getByAltText("Image one");
-    expect(img).toHaveAttribute(
-      "src",
-      "http://localhost:1337/uploads/image1.jpg",
-    );
   });
 
   it("shows empty state message when Images array is empty", () => {

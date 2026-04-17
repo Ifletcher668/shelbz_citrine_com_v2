@@ -4,8 +4,6 @@
  * Optional developer utility: fetches ALL themes from Strapi and regenerates
  * .storybook/themes.ts so Storybook's toolbar includes real production themes.
  *
- * Usage:
- *   NEXT_PUBLIC_STRAPI_URL=http://localhost:1337 node scripts/generate-storybook-themes.js
  *
  * The output file is committed to the repo so Storybook works offline.
  * Re-run this script whenever themes change in Strapi.
@@ -17,8 +15,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const OUTPUT_PATH = path.join(__dirname, "..", ".storybook", "themes.ts");
 
 // Replicate the variable map from lib/theme.js (CJS-compatible copy)
@@ -115,13 +112,17 @@ ${entries.join(",\n")},
       console.warn("No themes found in Strapi. Keeping existing themes.ts.");
       process.exit(0);
     }
-    console.log(`Found ${themes.length} theme(s): ${themes.map((t) => t.name).join(", ")}`);
+    console.log(
+      `Found ${themes.length} theme(s): ${themes.map((t) => t.name).join(", ")}`,
+    );
     const output = generateThemesTS(themes);
     fs.writeFileSync(OUTPUT_PATH, output, "utf8");
     console.log(`Written to ${OUTPUT_PATH}`);
   } catch (err) {
     console.error("Failed to fetch themes:", err.message);
-    console.error("Is Strapi running? Set NEXT_PUBLIC_STRAPI_URL to the correct URL.");
+    console.error(
+      "Is Strapi running? Set NEXT_PUBLIC_STRAPI_URL to the correct URL.",
+    );
     process.exit(1);
   }
 })();

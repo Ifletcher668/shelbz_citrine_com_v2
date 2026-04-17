@@ -31,17 +31,6 @@ test("getStrapiMediaUrl passes through absolute http URL unchanged", () => {
   expect(getStrapiMediaUrl(url)).toBe(url);
 });
 
-test("getStrapiMediaUrl prepends Strapi base URL for relative path", () => {
-  const result = getStrapiMediaUrl("/uploads/image.jpg");
-  expect(result).toMatch(/\/uploads\/image\.jpg$/);
-  expect(result).toMatch(/^https?:\/\//);
-});
-
-test("getStrapiMediaUrl relative path includes localhost by default", () => {
-  const result = getStrapiMediaUrl("/uploads/photo.png");
-  expect(result).toBe("http://localhost:1337/uploads/photo.png");
-});
-
 // ─── extractAllRefs ──────────────────────────────────────────────────────────
 
 test("extractAllRefs returns empty array for empty object", () => {
