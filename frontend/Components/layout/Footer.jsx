@@ -16,23 +16,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const footerData = useFooterData();
 
-  const navLinks = footerData?.navigation?.links?.length
-    ? footerData.navigation.links.map((link) => {
-        let href;
-        if (link.page) {
-          href = link.page.slug === "home" ? "/" : `/${link.page.slug}`;
-        } else if (link.path) {
-          href = link.path;
-        } else {
-          href = link.url ?? "#";
-        }
-        return {
-          href,
-          label: link.label || link.page?.title || "",
-          isExternal: !link.page && !link.path && !!link.url,
-        };
-      })
-    : [];
+  const navLinks = footerData?.navLinks ?? [];
 
   if (!footerData) {
     console.warn(
