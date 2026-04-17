@@ -1,9 +1,49 @@
 import { useEffect, useRef, useState } from "react";
 import { useLogs } from "../hooks/useLogs";
-import { showBrowser, hideBrowser, reloadBrowser, navigateBrowser, openUrl } from "../lib/tauri";
+import {
+  showBrowser,
+  hideBrowser,
+  reloadBrowser,
+  navigateBrowser,
+  openUrl,
+  goBack,
+  goForward,
+  getWebviewUrl,
+  onBrowserLoaded,
+} from "../lib/tauri";
 
-const LOG_TABS = ["frontend", "backend", "storybook"] as const;
-const BROWSER_TABS = ["browser-frontend", "browser-backend"] as const;
+// Persists across BrowserPane mounts so the loading overlay is not re-shown
+// when the user switches tabs and returns to an already-loaded browser.
+const loadedBrowsers = new Set<string>();
+
+type LogLevel = "error" | "warn" | "success" | "info" | "default";
+
+function classifyLine(line: string): LogLevel {
+  const l = line.toLowerCase();
+  if (l.includes("error") || l.includes("[err]") || l.startsWith("error:"))
+    return "error";
+  if (l.includes("warn") || l.includes("warning")) return "warn";
+  if (
+    l.includes("success") ||
+    l.includes("ready") ||
+    l.includes("compiled") ||
+    l.includes("✓")
+  )
+    return "success";
+  if (l.includes("info") || l.includes("[launcher]")) return "info";
+  return "default";
+}
+
+const LINE_COLORS: Record<LogLevel, string> = {
+  error: "text-red-400",
+  warn: "text-yellow-400",
+  info: "text-sky-400",
+  success: "text-emerald-400",
+  default: "text-zinc-300",
+};
+
+const LOG_TABS = ["launcher", "frontend", "backend", "storybook"] as const;
+const BROWSER_TABS = ["browser-frontend", "browser-backend", "browser-storybook"] as const;
 const TABS = [...LOG_TABS, ...BROWSER_TABS] as const;
 
 export type Tab = (typeof TABS)[number];
@@ -11,20 +51,23 @@ type LogTab = (typeof LOG_TABS)[number];
 type BrowserTab = (typeof BROWSER_TABS)[number];
 
 const TAB_LABELS: Record<Tab, string> = {
-  frontend: "Development Website",
-  backend: "CMS Admin",
+  launcher: "Launcher",
+  frontend: "Frontend",
+  backend: "Backend",
   storybook: "Storybook",
-  "browser-frontend": "Dev Browser",
-  "browser-backend": "CMS Browser",
+  "browser-frontend": "Frontend",
+  "browser-backend": "Backend",
+  "browser-storybook": "Storybook",
 };
 
 const BROWSER_URLS: Record<BrowserTab, string> = {
   "browser-frontend": "http://localhost:3000",
   "browser-backend": "http://localhost:1337/admin/",
+  "browser-storybook": "http://localhost:6006",
 };
 
 function isBrowserTab(tab: Tab): tab is BrowserTab {
-  return tab === "browser-frontend" || tab === "browser-backend";
+  return tab === "browser-frontend" || tab === "browser-backend" || tab === "browser-storybook";
 }
 
 function LogPane({ process }: { process: string }) {
@@ -83,10 +126,15 @@ function LogPane({ process }: { process: string }) {
         className="flex-1 overflow-y-auto p-2 space-y-0.5 select-text cursor-text"
       >
         {lines.length === 0 ? (
-          <p className="text-xs text-zinc-600 italic select-none">No output yet.</p>
+          <p className="text-xs text-zinc-600 italic select-none">
+            No output yet.
+          </p>
         ) : (
           lines.map((line, i) => (
-            <p key={i} className="text-xs font-mono text-zinc-300 whitespace-pre-wrap break-all leading-4">
+            <p
+              key={i}
+              className={`text-xs font-mono whitespace-pre-wrap break-all leading-4 ${LINE_COLORS[classifyLine(line)]}`}
+            >
               {line}
             </p>
           ))
@@ -108,17 +156,32 @@ function LogPane({ process }: { process: string }) {
 function BrowserPane({ label, url }: { label: BrowserTab; url: string }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [urlInput, setUrlInput] = useState(url);
+  const [isLoading, setIsLoading] = useState(!loadedBrowsers.has(label));
+  const inputFocused = useRef(false);
 
   useEffect(() => {
     setUrlInput(url);
   }, [url]);
+
+  // Listen for the backend signal that the browser has finished its initial load.
+  useEffect(() => {
+    const unlistenPromise = onBrowserLoaded(label, () => {
+      loadedBrowsers.add(label);
+      setIsLoading(false);
+    });
+    return () => {
+      unlistenPromise.then((unlisten) => unlisten());
+    };
+  }, [label]);
 
   useEffect(() => {
     const el = panelRef.current;
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    showBrowser(label, url, rect.x, rect.y, rect.width, rect.height).catch(console.error);
+    showBrowser(label, url, rect.x, rect.y, rect.width, rect.height).catch(
+      console.error,
+    );
 
     const observer = new ResizeObserver(() => {
       const r = el.getBoundingClientRect();
@@ -131,6 +194,20 @@ function BrowserPane({ label, url }: { label: BrowserTab; url: string }) {
       hideBrowser(label).catch(console.error);
     };
   }, [label, url]);
+
+  // Poll current URL every 2s, but don't overwrite while user is typing
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!inputFocused.current) {
+        getWebviewUrl(label)
+          .then((u) => {
+            if (u) setUrlInput(u);
+          })
+          .catch(() => {});
+      }
+    }, 2000);
+    return () => clearInterval(id);
+  }, [label]);
 
   function handleNavigate(e: React.FormEvent) {
     e.preventDefault();
@@ -145,19 +222,62 @@ function BrowserPane({ label, url }: { label: BrowserTab; url: string }) {
       >
         <button
           type="button"
-          onClick={() => reloadBrowser(label).catch(console.error)}
-          title="Reload"
+          onClick={() => goBack(label).catch(console.error)}
+          title="Back"
           className="text-sm text-zinc-500 hover:text-zinc-200 transition-colors px-1 shrink-0"
+        >
+          ←
+        </button>
+        <button
+          type="button"
+          onClick={() => goForward(label).catch(console.error)}
+          title="Forward"
+          className="text-sm text-zinc-500 hover:text-zinc-200 transition-colors px-1 shrink-0"
+        >
+          →
+        </button>
+        <button
+          type="button"
+          onClick={() => !isLoading && reloadBrowser(label).catch(console.error)}
+          title={isLoading ? "Loading…" : "Reload"}
+          className={`text-sm px-1 shrink-0 transition-colors ${
+            isLoading
+              ? "text-zinc-500 cursor-default animate-spin"
+              : "text-zinc-500 hover:text-zinc-200"
+          }`}
         >
           ⟳
         </button>
-        <input
-          type="text"
-          value={urlInput}
-          onChange={(e) => setUrlInput(e.target.value)}
-          onFocus={(e) => e.target.select()}
-          className="flex-1 bg-zinc-900 border border-zinc-700 rounded px-2 py-0.5 text-xs text-zinc-300 focus:outline-none focus:border-zinc-500 min-w-0"
-        />
+        <button
+          type="button"
+          onClick={() => navigateBrowser(label, url).catch(console.error)}
+          title="Home"
+          className="text-sm text-zinc-500 hover:text-zinc-200 transition-colors px-1 shrink-0"
+        >
+          ⌂
+        </button>
+        <div className="flex-1 relative min-w-0">
+          <input
+            type="text"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onFocus={(e) => {
+              inputFocused.current = true;
+              e.target.select();
+            }}
+            onBlur={() => {
+              inputFocused.current = false;
+            }}
+            className={`w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-0.5 text-xs text-zinc-300 focus:outline-none focus:border-zinc-500 transition-opacity ${
+              isLoading ? "opacity-60" : ""
+            }`}
+          />
+          {isLoading && (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-zinc-500 animate-pulse pointer-events-none select-none">
+              loading…
+            </span>
+          )}
+        </div>
         <button
           type="button"
           onClick={() => openUrl(urlInput).catch(console.error)}

@@ -43,7 +43,12 @@ export const icloudRestore = () => invoke("icloud_restore");
 export const icloudStatus = () => invoke<string>("icloud_status");
 
 // Deploy
+export interface DeployStatus {
+  last_deployed_at: string | null;
+  hook_configured: boolean;
+}
 export const publish = () => invoke("publish");
+export const getDeployStatus = () => invoke<DeployStatus>("get_deploy_status");
 
 // Logs
 export const getLog = (name: string) => invoke<string[]>("get_log", { name });
@@ -64,6 +69,9 @@ export const showBrowser = (label: string, url: string, x: number, y: number, wi
 export const hideBrowser = (label: string) => invoke<void>("hide_browser", { label });
 export const reloadBrowser = (label: string) => invoke<void>("reload_browser", { label });
 export const navigateBrowser = (label: string, url: string) => invoke<void>("navigate_browser", { label, url });
+export const goBack = (label: string) => invoke<void>("go_back", { label });
+export const goForward = (label: string) => invoke<void>("go_forward", { label });
+export const getWebviewUrl = (label: string) => invoke<string>("get_webview_url", { label });
 
 // Event listeners
 export const onLog = (process: string, cb: (line: string) => void): Promise<UnlistenFn> =>
@@ -72,8 +80,20 @@ export const onLog = (process: string, cb: (line: string) => void): Promise<Unli
 export const onPublishStep = (cb: (msg: string) => void): Promise<UnlistenFn> =>
   listen<string>("publish:step", (e) => cb(e.payload));
 
+export const onPublishCiLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
+  listen<string>("publish:ci:log", (e) => cb(e.payload));
+
 export const onInstallLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
   listen<string>("install:log", (e) => cb(e.payload));
 
 export const onCloneLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
   listen<string>("clone:log", (e) => cb(e.payload));
+
+export const onIcloudSaveLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
+  listen<string>("icloud:save", (e) => cb(e.payload));
+
+export const onIcloudRestoreLog = (cb: (line: string) => void): Promise<UnlistenFn> =>
+  listen<string>("icloud:restore", (e) => cb(e.payload));
+
+export const onBrowserLoaded = (label: string, cb: () => void): Promise<UnlistenFn> =>
+  listen<void>(`browser:loaded:${label}`, () => cb());
