@@ -2,6 +2,6 @@ import { createContext, useContext } from "react";
 
 export const MediaContext = createContext({});
 
-export function useMediaMap() {
+export function useStrapiMedia() {
   return useContext(MediaContext);
 }
