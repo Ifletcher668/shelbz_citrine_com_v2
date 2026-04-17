@@ -22,7 +22,7 @@ function bootstrapTypes() {
       _require.resolve("strapi-typed-client/package.json"),
     );
     const binPath = path.join(pkgDir, "dist", "cli", "index.js");
-    const url = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+    const url = process.env.NEXT_PUBLIC_STRAPI_URL;
     const args = [binPath, "generate", "--url", url, "--force"];
 
     if (process.env.STRAPI_API_TOKEN) {
