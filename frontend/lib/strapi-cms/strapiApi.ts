@@ -276,7 +276,7 @@ export function getStrapiMediaUrl(
 ): string | null {
   if (!url) return null;
   if (url.startsWith("http")) return url;
-  return `http://localhost:1337/${url}`;
+  return `http://localhost:1337${url}`;
 }
 
 type SrcSetMedia = {
