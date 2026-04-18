@@ -12,8 +12,6 @@ import type {
 } from "strapi-typed-client";
 import strapiClient from "./strapiClient";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
-
 // DO NOT USE THESE TYPES
 export type PageSummary = PageGetPayload<{
   populate: {
@@ -278,7 +276,7 @@ export function getStrapiMediaUrl(
 ): string | null {
   if (!url) return null;
   if (url.startsWith("http")) return url;
-  return `${STRAPI_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+  return `http://localhost:1337/${url}`;
 }
 
 type SrcSetMedia = {
@@ -365,7 +363,7 @@ export async function fetchMediaData(
 
   try {
     const res = await fetch(
-      `${STRAPI_URL}/api/upload/files?${filterQs}&pagination[pageSize]=100`,
+      `http://localhost:1337/api/upload/files?${filterQs}&pagination[pageSize]=100`,
       { headers },
     );
     if (!res.ok) return {};

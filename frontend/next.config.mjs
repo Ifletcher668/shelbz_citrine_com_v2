@@ -22,7 +22,7 @@ function bootstrapTypes() {
       _require.resolve("strapi-typed-client/package.json"),
     );
     const binPath = path.join(pkgDir, "dist", "cli", "index.js");
-    const url = process.env.NEXT_PUBLIC_STRAPI_URL;
+    const url = "http://localhost:1337";
     const args = [binPath, "generate", "--url", url, "--force"];
 
     if (process.env.STRAPI_API_TOKEN) {
@@ -80,7 +80,7 @@ const nextConfig = {
 // (and fail) to re-fetch from a Strapi that isn't running.
 export default process.env.NODE_ENV === "development"
   ? withStrapiTypes({
-      strapiUrl: process.env.NEXT_PUBLIC_STRAPI_URL,
+      strapiUrl: "http://localhost:1337/",
       token: process.env.STRAPI_API_TOKEN,
     })(nextConfig)
   : nextConfig;
