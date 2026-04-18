@@ -17,7 +17,7 @@ interface Props {
 
 const SERVICE_URLS: Record<keyof ProcessStatus, string> = {
   frontend: "http://localhost:3000",
-  backend: `${process.env.STRAPI_URL}admin/`,
+  backend: "http://localhost:1337/admin/",
   storybook: "http://localhost:6006",
 };
 

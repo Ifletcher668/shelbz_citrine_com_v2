@@ -66,7 +66,7 @@ const TAB_LABELS: Record<Tab, string> = {
 
 const BROWSER_URLS: Record<BrowserTab, string> = {
   "browser-frontend": "http://localhost:3000",
-  "browser-backend": `${process.env.STRAPI_URL}admin/`,
+  "browser-backend": "http://localhost:1337/admin/",
   "browser-storybook": "http://localhost:6006",
 };
 

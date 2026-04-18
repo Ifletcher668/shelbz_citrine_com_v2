@@ -14,8 +14,6 @@
 
 const fs = require("fs");
 const path = require("path");
-
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const OUTPUT_PATH = path.join(__dirname, "..", ".storybook", "themes.ts");
 
 // Replicate the variable map from lib/theme.js (CJS-compatible copy)
@@ -69,7 +67,8 @@ function themeToCSS(theme) {
 }
 
 async function fetchThemes() {
-  const url = `${STRAPI_URL}/api/themes?populate[colors]=*&populate[typography]=*&populate[spacing]=*&populate[layout]=*`;
+  const url =
+    "http://localhost:1337/api/themes?populate[colors]=*&populate[typography]=*&populate[spacing]=*&populate[layout]=*";
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Strapi responded with ${res.status} for ${url}`);
@@ -105,7 +104,7 @@ ${entries.join(",\n")},
 }
 
 (async () => {
-  console.log(`Fetching themes from ${STRAPI_URL}...`);
+  console.log(`Fetching themes from "http://localhost:1337/"...`);
   try {
     const themes = await fetchThemes();
     if (themes.length === 0) {
@@ -120,9 +119,7 @@ ${entries.join(",\n")},
     console.log(`Written to ${OUTPUT_PATH}`);
   } catch (err) {
     console.error("Failed to fetch themes:", err.message);
-    console.error(
-      "Is Strapi running? Set NEXT_PUBLIC_STRAPI_URL to the correct URL.",
-    );
+
     process.exit(1);
   }
 })();
