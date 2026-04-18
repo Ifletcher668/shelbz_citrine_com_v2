@@ -43,7 +43,11 @@ const LINE_COLORS: Record<LogLevel, string> = {
 };
 
 const LOG_TABS = ["launcher", "frontend", "backend", "storybook"] as const;
-const BROWSER_TABS = ["browser-frontend", "browser-backend", "browser-storybook"] as const;
+const BROWSER_TABS = [
+  "browser-frontend",
+  "browser-backend",
+  "browser-storybook",
+] as const;
 const TABS = [...LOG_TABS, ...BROWSER_TABS] as const;
 
 export type Tab = (typeof TABS)[number];
@@ -62,12 +66,16 @@ const TAB_LABELS: Record<Tab, string> = {
 
 const BROWSER_URLS: Record<BrowserTab, string> = {
   "browser-frontend": "http://localhost:3000",
-  "browser-backend": "http://localhost:1337/admin/",
+  "browser-backend": `${process.env.STRAPI_URL}admin/`,
   "browser-storybook": "http://localhost:6006",
 };
 
 function isBrowserTab(tab: Tab): tab is BrowserTab {
-  return tab === "browser-frontend" || tab === "browser-backend" || tab === "browser-storybook";
+  return (
+    tab === "browser-frontend" ||
+    tab === "browser-backend" ||
+    tab === "browser-storybook"
+  );
 }
 
 function LogPane({ process }: { process: string }) {
@@ -238,7 +246,9 @@ function BrowserPane({ label, url }: { label: BrowserTab; url: string }) {
         </button>
         <button
           type="button"
-          onClick={() => !isLoading && reloadBrowser(label).catch(console.error)}
+          onClick={() =>
+            !isLoading && reloadBrowser(label).catch(console.error)
+          }
           title={isLoading ? "Loading…" : "Reload"}
           className={`text-sm px-1 shrink-0 transition-colors ${
             isLoading

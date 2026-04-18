@@ -17,7 +17,7 @@ interface Props {
 
 const SERVICE_URLS: Record<keyof ProcessStatus, string> = {
   frontend: "http://localhost:3000",
-  backend: "http://localhost:1337/admin",
+  backend: `${process.env.STRAPI_URL}admin/`,
   storybook: "http://localhost:6006",
 };
 
@@ -32,9 +32,13 @@ const services: {
 ];
 
 export function StatusPanel({ status, onAction, disabled }: Props) {
-  const [errors, setErrors] = useState<Partial<Record<keyof ProcessStatus, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ProcessStatus, string>>
+  >({});
   // Track when we're waiting for the backend to become healthy before starting another service.
-  const [waitingFor, setWaitingFor] = useState<keyof ProcessStatus | null>(null);
+  const [waitingFor, setWaitingFor] = useState<keyof ProcessStatus | null>(
+    null,
+  );
   const cancelRef = useRef(false);
 
   async function waitForBackendHealth(): Promise<boolean> {
@@ -144,7 +148,9 @@ export function StatusPanel({ status, onAction, disabled }: Props) {
                 />
                 <span className="text-sm text-zinc-200">{label}</span>
                 {isWaiting && (
-                  <span className="text-[10px] text-zinc-500">waiting for backend…</span>
+                  <span className="text-[10px] text-zinc-500">
+                    waiting for backend…
+                  </span>
                 )}
               </div>
               <div className="flex items-center gap-1.5">
@@ -171,7 +177,9 @@ export function StatusPanel({ status, onAction, disabled }: Props) {
               </div>
             </div>
             {error && (
-              <p className="text-xs text-red-400 mt-1 font-mono break-all">{error}</p>
+              <p className="text-xs text-red-400 mt-1 font-mono break-all">
+                {error}
+              </p>
             )}
           </div>
         );
