@@ -7,10 +7,5 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Only the production site (main branch) runs a real build.
-# Branch deploys and deploy previews are disabled — CI checks gate what reaches main.
-[context.deploy-preview]
-  command = "echo 'Deploy previews disabled' && exit 0"
-
 [context.branch-deploy]
   command = "echo 'Branch deploys disabled' && exit 0"
