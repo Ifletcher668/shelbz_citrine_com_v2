@@ -80,7 +80,7 @@ const nextConfig = {
 // (and fail) to re-fetch from a Strapi that isn't running.
 export default process.env.NODE_ENV === "development"
   ? withStrapiTypes({
-      strapiUrl: "http://localhost:1337/",
+      strapiUrl: "http://localhost:1337",
       token: process.env.STRAPI_API_TOKEN,
     })(nextConfig)
   : nextConfig;
