@@ -276,7 +276,8 @@ export function getStrapiMediaUrl(
 ): string | null {
   if (!url) return null;
   if (url.startsWith("http")) return url;
-  return `http://localhost:1337${url}`;
+  if (process.env.NODE_ENV === "production") return url;
+  return `${process.env.STRAPI_URL ?? "http://localhost:1337"}${url}`;
 }
 
 type SrcSetMedia = {
@@ -363,7 +364,7 @@ export async function fetchMediaData(
 
   try {
     const res = await fetch(
-      `http://localhost:1337/api/upload/files?${filterQs}&pagination[pageSize]=100`,
+      `${process.env.STRAPI_URL ?? "http://localhost:1337"}/api/upload/files?${filterQs}&pagination[pageSize]=100`,
       { headers },
     );
     if (!res.ok) return {};
