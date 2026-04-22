@@ -19,7 +19,7 @@ module.exports = ({ env }) => [
   {
     name: "strapi::cors",
     config: {
-      origin: env("CORS_ORIGINS").split(","),
+      origin: env("CORS_ORIGINS", "http://localhost:3000,http://localhost:1337").split(","),
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
       headers: ["Content-Type", "Authorization", "Origin", "Accept"],
       keepHeaderOnError: true,

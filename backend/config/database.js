@@ -1,15 +1,29 @@
 const path = require('path');
 
-module.exports = ({ env }) => ({
-  connection: {
-    client: 'sqlite',
+module.exports = ({ env }) => {
+  const client = env('DATABASE_CLIENT', 'sqlite');
+
+  if (client === 'postgres') {
+    return {
+      connection: {
+        client: 'postgres',
+        connection: env('DATABASE_URL'),
+        ssl: { rejectUnauthorized: false },
+      },
+    };
+  }
+
+  return {
     connection: {
-      filename: path.join(
-        __dirname,
-        '..',
-        env('DATABASE_FILENAME', '.tmp/data.db')
-      ),
+      client: 'sqlite',
+      connection: {
+        filename: path.join(
+          __dirname,
+          '..',
+          env('DATABASE_FILENAME', '.tmp/data.db')
+        ),
+      },
+      useNullAsDefault: true,
     },
-    useNullAsDefault: true,
-  },
-});
+  };
+};
