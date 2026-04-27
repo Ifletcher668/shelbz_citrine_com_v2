@@ -19,6 +19,8 @@
   "scripts": {
     "frontend": "yarn workspace shelbz-citrine-frontend dev",
     "backend": "yarn workspace shelbz-citrine-backend develop",
+    "build:backend": "yarn install && yarn workspace shelbz-citrine-backend build",
+    "build:frontend": "yarn install && yarn workspace shelbz-citrine-frontend build",
     "dev": "concurrently \"yarn frontend\" \"yarn backend\"",
     "images:publish": "yarn workspace shelbz-citrine-backend images:publish",
     "icloud:save": "yarn workspace shelbz-citrine-backend icloud:save",

@@ -116,9 +116,9 @@ export async function getPages(): Promise<PageSummary[]> {
   }) as Promise<PageSummary[]>;
 }
 
-export async function getPageBySlug(slug: string) {
+export async function getPageBySlug(slug: string, preview = false) {
   const results = await strapiClient.pages.find({
-    status: "published",
+    status: preview ? "draft" : "published",
     filters: { slug: { $eq: slug } },
     populate: {
       sections: {
