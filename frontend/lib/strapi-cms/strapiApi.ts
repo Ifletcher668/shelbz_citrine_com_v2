@@ -106,9 +106,11 @@ export type FullButton = ButtonGetPayload<{
 
 // ─── Page queries ──────────────────────────────────────────────────────────
 
+const isPreviewBuild = process.env.PREVIEW_BUILD === "true";
+
 export async function getPages(): Promise<PageSummary[]> {
   return strapiClient.pages.find({
-    status: "published",
+    status: isPreviewBuild ? "draft" : "published",
     populate: {
       parent_page: { fields: ["slug"] },
     },
@@ -116,9 +118,9 @@ export async function getPages(): Promise<PageSummary[]> {
   }) as Promise<PageSummary[]>;
 }
 
-export async function getPageBySlug(slug: string, preview = false) {
+export async function getPageBySlug(slug: string) {
   const results = await strapiClient.pages.find({
-    status: preview ? "draft" : "published",
+    status: isPreviewBuild ? "draft" : "published",
     filters: { slug: { $eq: slug } },
     populate: {
       sections: {
