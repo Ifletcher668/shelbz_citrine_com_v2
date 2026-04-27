@@ -1,7 +1,7 @@
 [build]
-  base = "frontend"
+  base = ""
   publish = "out"
-  command = "yarn build"
+  command = "yarn build:frontend"
   ignore = "exit 0"  # Skip git-triggered builds; deploys must be triggered via deploy hook to ensure the production Strapi site is up and running
 
 [build.environment]
