@@ -1,1 +1,1 @@
-Monorepo for an artist's portfolio and business. This project consists of three primary domains: a NextJs frontend, a Strapi-powered CMS backend, and a launcher designed for localhost development for a non-technical maintainer.
+JAMstack Monorepo for a professional portfolio and jewelry business. Frontend is hosted on Netlify. Backend is hosted on Render. Database is on Neon. Media Library is hosted on Contentful.

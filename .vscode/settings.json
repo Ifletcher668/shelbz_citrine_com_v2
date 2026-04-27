@@ -1,18 +1,13 @@
 {
-  "rust-analyzer.linkedProjects": [
-    "launcher/src-tauri/Cargo.toml"
-  ],
-  "typescript.tsdk": "frontend/node_modules/typescript/lib",
-  "typescript.preferences.importModuleSpecifier": "relative",
+  "js/ts.tsdk.path": "frontend/node_modules/typescript/lib",
+  "js/ts.preferences.importModuleSpecifier": "relative",
   "eslint.workingDirectories": ["frontend"],
   "search.exclude": {
     "**/node_modules": true,
     "**/.next": true,
-    "**/dist": true,
-    "launcher/target": true
+    "**/dist": true
   },
   "files.exclude": {
-    "**/.next": true,
-    "launcher/target": true
+    "**/.next": true
   }
 }

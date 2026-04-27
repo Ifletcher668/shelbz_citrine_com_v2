@@ -24,8 +24,6 @@
     "icloud:save": "yarn workspace shelbz-citrine-backend icloud:save",
     "icloud:restore": "yarn workspace shelbz-citrine-backend icloud:restore",
     "icloud:status": "yarn workspace shelbz-citrine-backend icloud:status",
-    "launcher:dev": "cd launcher/src-tauri && cargo tauri dev",
-    "launcher:build": "cd launcher/src-tauri && cargo tauri build",
     "generate:strapi-client-types": "node scripts/generate-strapi-client-types.mjs"
   },
   "devDependencies": {
