@@ -38,9 +38,7 @@ module.exports = ({ env }) => ({
           : doc.slug;
 
         const hookUrl = env("NETLIFY_PREVIEW_SERVER_HOOK");
-        const secret = env("PREVIEW_SECRET");
         const base = env("FRONTEND_URL", "http://localhost:3000");
-        const previewPath = `/api/preview?secret=${encodeURIComponent(secret)}&slug=${encodeURIComponent(pagePath)}`;
 
         try {
           const hookRes = await fetch(hookUrl, {
@@ -52,13 +50,13 @@ module.exports = ({ env }) => ({
           if (hookRes.ok) {
             const data = await hookRes.json();
             const serverBase = data?.url?.replace(/\/$/, "");
-            if (serverBase) return `${serverBase}${previewPath}`;
+            if (serverBase) return `${serverBase}/${pagePath}/`;
           }
         } catch (err) {
           strapi.log.warn(`[preview] Netlify hook failed: ${err.message}`);
         }
 
-        return `${base}${previewPath}`;
+        return `${base}/${pagePath}/`;
       },
     },
   },

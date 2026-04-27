@@ -123,7 +123,7 @@ export const getStaticProps: GetStaticProps<{
   mediaMap: Record<string, StrapiMediaRecord>;
   mediaMetadata: FullMediaMetadata[];
 }> = async (context) => {
-  const { params, preview } = context;
+  const { params } = context;
   try {
     // Strapi slugs are short (e.g. "2023"), not full paths ("gallery/2023").
     // The last segment of the URL path is the actual page slug.
@@ -132,7 +132,7 @@ export const getStaticProps: GetStaticProps<{
       ? params.slug[params.slug.length - 1]
       : (params?.slug ?? "");
     const t0 = Date.now();
-    const page = await getPageBySlug(slug, preview ?? false);
+    const page = await getPageBySlug(slug);
     logCmsFetch(slug, !!page, Date.now() - t0);
 
     if (!page) {
