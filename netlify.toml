@@ -11,5 +11,5 @@
   command = "echo 'Branch deploys disabled' && exit 0"
 
 [dev]
-  command = "yarn frontend"
+  command = "cd .. && yarn frontend"
   targetPort = 3000
