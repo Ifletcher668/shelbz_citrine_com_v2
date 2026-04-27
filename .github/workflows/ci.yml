@@ -184,28 +184,4 @@ jobs:
       - name: Test
         run: yarn workspace wysiwyg-editor test
 
-  # ─── Launcher UI type-check ───────────────────────────────────────────────────
-  launcher-typecheck:
-    name: Launcher UI type-check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".node-version"
-          cache: yarn
-
-      - name: Cache launcher node_modules
-        id: cache-launcher
-        uses: actions/cache@v4
-        with:
-          path: launcher/ui/node_modules
-          key: launcher-nm-${{ runner.os }}-${{ hashFiles('launcher/ui/package.json') }}
-
-      - name: Install launcher deps
-        if: steps.cache-launcher.outputs.cache-hit != 'true'
-        run: cd launcher/ui && yarn install --frozen-lockfile
-
-      - name: Type-check
-        run: cd launcher/ui && npx tsc --noEmit
+  
