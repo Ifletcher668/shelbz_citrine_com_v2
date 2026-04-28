@@ -16,8 +16,11 @@ function getStrapiDist() {
 // Synchronously generate types on every startup so they are fresh before
 // Next.js page compilation begins. withStrapiTypes starts an async SSE
 // watcher that loses the race against compilation, so we eagerly generate here.
+const isLocalDev =
+  process.env.NODE_ENV === "development" && !process.env.NETLIFY;
+
 function bootstrapTypes() {
-  if (process.env.NODE_ENV === "development") {
+  if (isLocalDev) {
     const pkgDir = path.dirname(
       _require.resolve("strapi-typed-client/package.json"),
     );
@@ -78,7 +81,7 @@ const nextConfig = {
 // Only use the SSE watcher in dev — in build/CI our bootstrapTypes() fallback
 // already placed the committed types.d.ts, and withStrapiTypes would just try
 // (and fail) to re-fetch from a Strapi that isn't running.
-export default process.env.NODE_ENV === "development"
+export default isLocalDev
   ? withStrapiTypes({
       strapiUrl: "http://localhost:1337",
       token: process.env.STRAPI_API_TOKEN,
