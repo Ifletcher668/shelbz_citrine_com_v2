@@ -1,3 +1,14 @@
+async function waitForPreviewServer(url, maxWaitMs = 120000, intervalMs = 3000) {
+  const deadline = Date.now() + maxWaitMs;
+  while (Date.now() < deadline) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return;
+    } catch {}
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+}
+
 module.exports = ({ env }) => ({
   auth: {
     secret: env("ADMIN_JWT_SECRET"),
@@ -50,7 +61,11 @@ module.exports = ({ env }) => ({
           if (hookRes.ok) {
             const data = await hookRes.json();
             const serverBase = data?.url?.replace(/\/$/, "");
-            if (serverBase) return `${serverBase}/${pagePath}/`;
+            if (serverBase) {
+              const pageUrl = `${serverBase}/${pagePath}/`;
+              await waitForPreviewServer(pageUrl);
+              return pageUrl;
+            }
           }
         } catch (err) {
           strapi.log.warn(`[preview] Netlify hook failed: ${err.message}`);
