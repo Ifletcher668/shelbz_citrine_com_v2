@@ -66,6 +66,21 @@ const nextConfig = {
   },
   // Trailing slashes for cleaner URLs on static hosts
   trailingSlash: true,
+  // Allow Strapi admin to embed the preview server in an iframe.
+  // next.config headers() is incompatible with output:export, so only apply in non-production.
+  ...(process.env.NODE_ENV !== "production" && {
+    async headers() {
+      return [
+        {
+          source: "/(.*)",
+          headers: [
+            { key: "X-Frame-Options", value: "ALLOWALL" },
+            { key: "Content-Security-Policy", value: "frame-ancestors *" },
+          ],
+        },
+      ];
+    },
+  }),
   // Pin module resolution to this package only — prevents webpack from
   // walking up to parent package.json files in the monorepo and resolving
   // packages (e.g. lightningcss native binaries) from the wrong node_modules.
